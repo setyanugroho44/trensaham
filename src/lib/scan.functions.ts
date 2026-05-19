@@ -66,13 +66,13 @@ export const runScan = createServerFn({ method: "POST" })
         }
         // Multi-scale zigzag thresholds disesuaikan per timeframe agar
         // pivot mewakili swing yang signifikan & pola merentang banyak candle.
-        // Daily: 4–54%, Weekly: 55–80%, Monthly: 81–200%.
+        // Daily: 5–9%, Weekly: 10–15%, Monthly: 16–22%.
         const scales =
           data.timeframe === "1mo"
-            ? [81, 200]
+            ? [16, 22]
             : data.timeframe === "1wk"
-              ? [25, 80]
-              : [5, 24];
+              ? [10, 15]
+              : [5, 9];
         const allPatterns = scales.flatMap((th) => {
           const pivots = zigzag(bars, th);
           return detectPatterns(pivots, bars, {
