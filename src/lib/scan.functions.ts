@@ -69,10 +69,10 @@ export const runScan = createServerFn({ method: "POST" })
         // Daily: 5–9%, Weekly: 10–15%, Monthly: 16–22%.
         const scales =
           data.timeframe === "1mo"
-            ? [16, 22]
+            ? [18, 30]
             : data.timeframe === "1wk"
-              ? [10, 15]
-              : [5, 9];
+              ? [11, 17]
+              : [5, 10];
         const allPatterns = scales.flatMap((th) => {
           const pivots = zigzag(bars, th);
           return detectPatterns(pivots, bars, {
