@@ -45,6 +45,10 @@ function WatchlistPage() {
       toast.warning("Enter at least one valid stock code");
       return;
     }
+    if (symbols.length + codes.length > MAX_SYMBOLS) {
+      toast.error(`Watchlist is limited to ${MAX_SYMBOLS} symbols. You currently have ${symbols.length}.`);
+      return;
+    }
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return;
     setLoading(true);
