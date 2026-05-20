@@ -119,7 +119,9 @@ function DashboardPage() {
       (r) =>
         r.timeframe === timeframe &&
         r.confidence * 100 >= minConf &&
-        (r.status !== "developing" || (r.progress_pct ?? 0) >= minProgress),
+        (r.status !== "developing" || (r.progress_pct ?? 0) >= minProgress) &&
+        // Abaikan pola dengan PRZ di bawah 60
+        !(r.prz_high != null && r.prz_high < 60),
     );
     // Dedupe: same symbol + pattern + direction + status + PRZ → keep latest only
     const seen = new Map<string, PatternRow>();
