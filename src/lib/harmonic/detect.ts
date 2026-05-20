@@ -1,7 +1,7 @@
 import type { Bar, DetectedPattern, Direction, Pivot } from "./types";
 import { PATTERNS, scoreRatio, type PatternSpec } from "./patterns";
 
-const DEFAULT_TOL = 0.04; // 4%
+const DEFAULT_TOL = 0.05; // 5%
 
 function legAbs(a: Pivot, b: Pivot) {
   return Math.abs(b.price - a.price);
