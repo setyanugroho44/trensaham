@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Activity, ListChecks, TrendingDown, LogOut } from "lucide-react";
+import { Activity, ListChecks, TrendingDown, User, LogOut } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +19,7 @@ const items = [
   { title: "Dashboard", url: "/dashboard", icon: Activity },
   { title: "Watchlist", url: "/watchlist", icon: ListChecks },
   { title: "Trailing Stop", url: "/trailing-stop", icon: TrendingDown },
+  { title: "Profil", url: "/profile", icon: User },
 ];
 
 export function AppSidebar() {
