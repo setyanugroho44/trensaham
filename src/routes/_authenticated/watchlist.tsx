@@ -81,7 +81,7 @@ function WatchlistPage() {
       <Card>
         <CardHeader>
           <CardTitle>Add symbols</CardTitle>
-          <CardDescription>Paste multiple codes separated by spaces, commas, or new lines.</CardDescription>
+          <CardDescription>Paste multiple codes separated by spaces, commas, or new lines. We recommend 20–50 symbols for good coverage. Maximum {MAX_SYMBOLS} symbols allowed.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <Textarea
