@@ -17,6 +17,7 @@ function WatchlistPage() {
   const [symbols, setSymbols] = useState<{ id: string; symbol: string }[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const MAX_SYMBOLS = 50;
 
   const load = async () => {
     const { data, error } = await supabase
