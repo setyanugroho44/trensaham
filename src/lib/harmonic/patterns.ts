@@ -52,13 +52,6 @@ export const PATTERNS: PatternSpec[] = [
     AD: r(1.618, 1.618, 1.618),
   },
   {
-    name: "Deep Crab",
-    AB: r(0.886, 0.886, 0.886),
-    BC: r(0.382, 0.886),
-    CD: r(2.0, 3.618),
-    AD: r(1.618, 1.618, 1.618),
-  },
-  {
     name: "Shark",
     AB: r(0.382, 0.618),
     BC: r(1.13, 1.618),
