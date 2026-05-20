@@ -1,5 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Activity, ListChecks, TrendingDown, User, LogOut } from "lucide-react";
+import { Activity, ListChecks, TrendingDown, User, LogOut, Shield } from "lucide-react";
+import { useEffect, useState } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
+import { isCurrentUserAdmin } from "@/lib/admin.functions";
 
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: Activity },
@@ -28,6 +30,12 @@ export function AppSidebar() {
   const { isMobile, setOpenMobile } = useSidebar();
   const path = useLocation({ select: (l) => l.pathname });
   const isActive = (url: string) => path === url || path.startsWith(url + "/");
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    isCurrentUserAdmin().then(({ isAdmin }) => setIsAdmin(isAdmin)).catch(() => {});
+  }, [user]);
 
   const handleNavClick = () => {
     if (isMobile) setOpenMobile(false);
@@ -55,6 +63,16 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {isAdmin && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={isActive("/admin")} tooltip="Admin">
+                    <Link to="/admin" onClick={handleNavClick}>
+                      <Shield className="h-5 w-5" />
+                      <span className="text-base">Admin</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
