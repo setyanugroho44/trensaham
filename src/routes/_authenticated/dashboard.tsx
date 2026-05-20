@@ -155,6 +155,20 @@ function DashboardPage() {
         </Button>
       </div>
 
+      {watchlistCount === 0 && (
+        <Alert>
+          <Info className="h-4 w-4" />
+          <AlertTitle>Watchlist kosong</AlertTitle>
+          <AlertDescription>
+            Anda belum memiliki saham di watchlist.{" "}
+            <Link to="/watchlist" className="font-medium underline">
+              Tambahkan simbol saham
+            </Link>{" "}
+            agar scanner dapat bekerja.
+          </AlertDescription>
+        </Alert>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Filters</CardTitle>
