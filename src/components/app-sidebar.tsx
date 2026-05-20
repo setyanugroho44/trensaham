@@ -30,6 +30,12 @@ export function AppSidebar() {
   const { isMobile, setOpenMobile } = useSidebar();
   const path = useLocation({ select: (l) => l.pathname });
   const isActive = (url: string) => path === url || path.startsWith(url + "/");
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    isCurrentUserAdmin().then(({ isAdmin }) => setIsAdmin(isAdmin)).catch(() => {});
+  }, [user]);
 
   const handleNavClick = () => {
     if (isMobile) setOpenMobile(false);
@@ -57,6 +63,16 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {isAdmin && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={isActive("/admin")} tooltip="Admin">
+                    <Link to="/admin" onClick={handleNavClick}>
+                      <Shield className="h-5 w-5" />
+                      <span className="text-base">Admin</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
