@@ -27,14 +27,21 @@ function SignupPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: `${window.location.origin}/login` },
     });
     setSubmitting(false);
-    if (error) toast.error(error.message);
-    else toast.success("Account created");
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    if (data.user && !data.session) {
+      toast.success("Cek email Anda untuk verifikasi sebelum login.", { duration: 8000 });
+    } else {
+      toast.success("Account created");
+    }
   };
 
   return (
