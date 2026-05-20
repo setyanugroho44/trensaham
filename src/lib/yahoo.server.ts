@@ -88,5 +88,45 @@ export async function fetchYahooBars(symbol: string, tf: Timeframe): Promise<Bar
     bars.push({ time: ts[i], open: o, high: h, low: l, close: c });
   }
 
+  if (bars.length === 0) {
+    // Yahoo responded 200 but with empty series — fallback to Stooq.
+    const fb = await fetchStooqBars(symbol, tf);
+    if (fb.length) return fb;
+  }
   return bars;
+}
+
+/** Stooq fallback: free CSV endpoint. e.g. https://stooq.com/q/d/l/?s=eraa.jk&i=d */
+export async function fetchStooqBars(symbol: string, tf: Timeframe): Promise<Bar[]> {
+  const sym = (symbol.includes(".") ? symbol : `${symbol}.jk`).toLowerCase();
+  const interval = tf === "1mo" ? "m" : tf === "1wk" ? "w" : "d";
+  const url = `https://stooq.com/q/d/l/?s=${encodeURIComponent(sym)}&i=${interval}`;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
+        Accept: "text/csv,*/*",
+      },
+    });
+    if (!res.ok) return [];
+    const text = await res.text();
+    if (!text || text.startsWith("<") || text.toLowerCase().includes("no data")) return [];
+    const lines = text.trim().split(/\r?\n/);
+    if (lines.length < 2) return [];
+    const bars: Bar[] = [];
+    for (let i = 1; i < lines.length; i++) {
+      const parts = lines[i].split(",");
+      if (parts.length < 5) continue;
+      const [date, o, h, l, c] = parts;
+      const t = Math.floor(Date.parse(date) / 1000);
+      const op = Number(o), hi = Number(h), lo = Number(l), cl = Number(c);
+      if (!Number.isFinite(t) || !Number.isFinite(op) || !Number.isFinite(hi) || !Number.isFinite(lo) || !Number.isFinite(cl)) continue;
+      bars.push({ time: t, open: op, high: hi, low: lo, close: cl });
+    }
+    return bars;
+  } catch (e) {
+    console.warn(`Stooq fallback failed for ${symbol}:`, (e as Error).message);
+    return [];
+  }
 }
