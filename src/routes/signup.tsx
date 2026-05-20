@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
-  head: () => ({ meta: [{ title: "Sign up — IDX Harmonic Scanner" }] }),
+  head: () => ({ meta: [{ title: "Daftar — IDX Harmonic Scanner" }] }),
 });
 
 function SignupPage() {
@@ -40,7 +40,7 @@ function SignupPage() {
     if (data.user && !data.session) {
       toast.success("Cek email Anda untuk verifikasi sebelum login.", { duration: 8000 });
     } else {
-      toast.success("Account created");
+      toast.success("Akun berhasil dibuat");
     }
   };
 
@@ -48,8 +48,8 @@ function SignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Create account</CardTitle>
-          <CardDescription>Start scanning IDX harmonic patterns</CardDescription>
+          <CardTitle>Buat Akun</CardTitle>
+          <CardDescription>Mulai memindai pola harmonic saham IDX</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
@@ -58,16 +58,17 @@ function SignupPage() {
               <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
+              <Label htmlFor="password">Kata Sandi</Label>
+              <Input id="password" type="password" required minLength={1} value={password} onChange={(e) => setPassword(e.target.value)} />
+              <p className="text-xs text-muted-foreground">Bebas — boleh menggunakan kata sandi sederhana.</p>
             </div>
             <Button type="submit" className="w-full" disabled={submitting}>
-              {submitting ? "Creating…" : "Create account"}
+              {submitting ? "Memproses…" : "Daftar"}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
-              Have an account?{" "}
+              Sudah punya akun?{" "}
               <Link to="/login" className="text-primary underline">
-                Sign in
+                Masuk
               </Link>
             </p>
           </form>
