@@ -252,7 +252,7 @@ function ChartPage() {
         <Card className="overflow-hidden">
           <div className="relative h-40 w-full overflow-hidden sm:h-52">
             <img
-              src={harmonicPatternImg}
+              src={PATTERN_IMAGES[pattern.pattern_name] ?? harmonicPatternImg}
               alt={`${pattern.pattern_name} harmonic pattern illustration`}
               loading="lazy"
               width={1024}
