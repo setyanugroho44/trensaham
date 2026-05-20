@@ -91,7 +91,7 @@ function ProfilePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Informasi Pribadi</CardTitle>
+          <CardTitle>Profile</CardTitle>
           <CardDescription>Email tidak dapat diubah.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -107,7 +107,7 @@ function ProfilePage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 maxLength={100}
-                placeholder="Nama lengkap"
+                placeholder="Nama"
                 disabled={loading}
               />
             </div>
@@ -129,7 +129,7 @@ function ProfilePage() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 maxLength={500}
-                placeholder="Alamat lengkap"
+                placeholder="Alamat"
                 disabled={loading}
                 rows={3}
               />
