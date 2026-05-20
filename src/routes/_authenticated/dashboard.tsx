@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Loader2, Play, TrendingDown, TrendingUp, X } from "lucide-react";
+import { Loader2, Play, TrendingDown, TrendingUp, X, Info } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -21,6 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
@@ -72,6 +73,7 @@ function DashboardPage() {
   const [minProgress, setMinProgress] = useState<number>(7);
   const [scanning, setScanning] = useState(false);
   const [rows, setRows] = useState<PatternRow[]>([]);
+  const [watchlistCount, setWatchlistCount] = useState<number | null>(null);
   const scanFn = useServerFn(runScan);
 
   const load = async () => {
@@ -84,8 +86,16 @@ function DashboardPage() {
     else setRows((data as PatternRow[]) ?? []);
   };
 
+  const loadWatchlistCount = async () => {
+    const { count, error } = await supabase
+      .from("watchlist_symbols")
+      .select("*", { count: "exact", head: true });
+    if (!error) setWatchlistCount(count ?? 0);
+  };
+
   useEffect(() => {
     load();
+    loadWatchlistCount();
   }, []);
 
   const onScan = async () => {
@@ -144,6 +154,20 @@ function DashboardPage() {
           {scanning ? "Scanning…" : "Scan Now"}
         </Button>
       </div>
+
+      {watchlistCount === 0 && (
+        <Alert>
+          <Info className="h-4 w-4" />
+          <AlertTitle>Watchlist kosong</AlertTitle>
+          <AlertDescription>
+            Anda belum memiliki saham di watchlist.{" "}
+            <Link to="/watchlist" className="font-medium underline">
+              Tambahkan simbol saham
+            </Link>{" "}
+            agar scanner dapat bekerja.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <Card>
         <CardHeader>

@@ -17,6 +17,7 @@ function WatchlistPage() {
   const [symbols, setSymbols] = useState<{ id: string; symbol: string }[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const MAX_SYMBOLS = 50;
 
   const load = async () => {
     const { data, error } = await supabase
@@ -42,6 +43,10 @@ function WatchlistPage() {
     );
     if (codes.length === 0) {
       toast.warning("Enter at least one valid stock code");
+      return;
+    }
+    if (symbols.length + codes.length > MAX_SYMBOLS) {
+      toast.error(`Watchlist is limited to ${MAX_SYMBOLS} symbols. You currently have ${symbols.length}.`);
       return;
     }
     const { data: u } = await supabase.auth.getUser();
@@ -76,7 +81,7 @@ function WatchlistPage() {
       <Card>
         <CardHeader>
           <CardTitle>Add symbols</CardTitle>
-          <CardDescription>Paste multiple codes separated by spaces, commas, or new lines.</CardDescription>
+          <CardDescription>Paste multiple codes separated by spaces, commas, or new lines. We recommend 20–50 symbols for good coverage. Maximum {MAX_SYMBOLS} symbols allowed.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <Textarea
