@@ -25,13 +25,18 @@ const items = [
 
 export function AppSidebar() {
   const { user, signOut } = useAuth();
+  const { isMobile, setOpenMobile } = useSidebar();
   const path = useLocation({ select: (l) => l.pathname });
   const isActive = (url: string) => path === url || path.startsWith(url + "/");
+
+  const handleNavClick = () => {
+    if (isMobile) setOpenMobile(false);
+  };
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <Link to="/dashboard" className="px-2 py-1 text-sm font-semibold tracking-tight">
+        <Link to="/dashboard" onClick={handleNavClick} className="px-2 py-1 text-sm font-semibold tracking-tight">
           IDX Harmonic
         </Link>
       </SidebarHeader>
@@ -43,9 +48,9 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
-                    <Link to={item.url}>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
+                    <Link to={item.url} onClick={handleNavClick}>
+                      <item.icon className="h-5 w-5" />
+                      <span className="text-base">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
