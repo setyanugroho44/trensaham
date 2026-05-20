@@ -162,31 +162,38 @@ function ChartPage() {
             { time: lastTime as any, value: pattern.prz_low },
           ]);
 
-          // Garis proyeksi C → PRZ (midpoint). Untuk pola developing,
-          // tunjukkan arah perkiraan kaki C-D menuju zona reversal.
+          // Garis proyeksi kaki C → PRZ. Tunjukkan arah perkiraan
+          // kaki C-D menuju zona reversal (dua garis ke prz_low & prz_high).
           if (!pattern.d_date || pattern.d_price == null) {
             const cTime = Date.parse(pattern.c_date) / 1000;
-            const przMid = (pattern.prz_low + pattern.prz_high) / 2;
-            const projLine = chart.addSeries(LineSeries, {
-              color: "rgba(168, 85, 247, 0.9)",
-              lineWidth: 2,
-              lineStyle: 2, // dashed
-              lastValueVisible: false,
-              priceLineVisible: false,
-            });
-            projLine.setData([
-              { time: cTime as any, value: pattern.c_price },
-              { time: lastTime as any, value: przMid },
-            ]);
-            projLine.setMarkers([
-              {
-                time: lastTime as any,
-                position: "inBar" as const,
+            const mkProj = (target: number, withMarker: boolean, label?: string) => {
+              const s = chart.addSeries(LineSeries, {
                 color: "rgba(168, 85, 247, 0.9)",
-                shape: "circle" as const,
-                text: "D?",
-              },
-            ]);
+                lineWidth: 2,
+                lineStyle: 2, // dashed
+                lastValueVisible: false,
+                priceLineVisible: false,
+              });
+              s.setData([
+                { time: cTime as any, value: pattern.c_price },
+                { time: lastTime as any, value: target },
+              ]);
+              if (withMarker) {
+                s.setMarkers([
+                  {
+                    time: lastTime as any,
+                    position: "inBar" as const,
+                    color: "rgba(168, 85, 247, 0.9)",
+                    shape: "circle" as const,
+                    text: label ?? "D?",
+                  },
+                ]);
+              }
+            };
+            const przMid = (pattern.prz_low + pattern.prz_high) / 2;
+            mkProj(pattern.prz_high, false);
+            mkProj(pattern.prz_low, false);
+            mkProj(przMid, true, "D?");
           }
         }
       }
