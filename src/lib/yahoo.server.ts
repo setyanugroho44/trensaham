@@ -60,11 +60,15 @@ export async function fetchYahooBars(symbol: string, tf: Timeframe): Promise<Bar
     break;
   }
   if (!res || !res.ok) {
-    if (res?.status === 429) {
-      // Rate limited — return empty bars instead of crashing the scan.
-      console.warn(`Yahoo rate-limited for ${ticker}; skipping.`);
+    if (res?.status === 429 || (res && res.status >= 500)) {
+      console.warn(`Yahoo ${res.status} for ${ticker}; trying Stooq fallback.`);
+      const fb = await fetchStooqBars(symbol, tf);
+      if (fb.length) return fb;
       return [];
     }
+    // Try Stooq as a last resort before giving up entirely.
+    const fb = await fetchStooqBars(symbol, tf);
+    if (fb.length) return fb;
     throw new Error(`Yahoo fetch failed: ${res?.status ?? "no response"}`);
   }
 
