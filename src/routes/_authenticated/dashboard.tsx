@@ -86,8 +86,16 @@ function DashboardPage() {
     else setRows((data as PatternRow[]) ?? []);
   };
 
+  const loadWatchlistCount = async () => {
+    const { count, error } = await supabase
+      .from("watchlist_symbols")
+      .select("*", { count: "exact", head: true });
+    if (!error) setWatchlistCount(count ?? 0);
+  };
+
   useEffect(() => {
     load();
+    loadWatchlistCount();
   }, []);
 
   const onScan = async () => {
