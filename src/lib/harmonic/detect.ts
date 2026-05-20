@@ -118,13 +118,25 @@ export function detectPatterns(
     prz: { low: number; high: number },
   ): number {
     if (RETRACEMENT_PATTERNS.has(name)) return X.price;
-    // extension patterns: Butterfly, Crab, Deep Crab
+    // extension patterns: Butterfly, Crab
     return dir === "bullish" ? prz.low : prz.high;
+  }
+
+  // Helper: pola dianggap "besar" jika kaki XA cukup signifikan (% terhadap harga)
+  // dan rentang waktu X→C cukup panjang (minimal minSpan bar).
+  function isLargeEnough(X: Pivot, C: Pivot): boolean {
+    const legPct = Math.abs(X.price - C.price) / Math.max(1e-9, Math.abs(X.price));
+    if (legPct < minLegPct) return false;
+    if (C.index - X.index < minSpan) return false;
+    return true;
   }
 
   // Try last 5 pivots for completed
   if (pivots.length >= 5) {
     const [X, A, B, C, D] = pivots.slice(-5);
+    if (!isLargeEnough(X, C)) {
+      // skip completed eval — pattern terlalu kecil
+    } else
     for (const dir of ["bullish", "bearish"] as Direction[]) {
       for (const spec of PATTERNS) {
         const r = evalSpec(X, A, B, C, D, spec, dir, tol);
