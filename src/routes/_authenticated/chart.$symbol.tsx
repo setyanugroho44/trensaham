@@ -11,6 +11,21 @@ import { ArrowLeft, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Bar } from "@/lib/harmonic/types";
 import harmonicPatternImg from "@/assets/harmonic-pattern.jpg";
+import gartleyImg from "@/assets/gartley.png";
+import batImg from "@/assets/bat.png";
+import butterflyImg from "@/assets/butterfly.png";
+import crabImg from "@/assets/crab.png";
+import sharkImg from "@/assets/shark.png";
+import cypherImg from "@/assets/cypher.png";
+
+const PATTERN_IMAGES: Record<string, string> = {
+  Gartley: gartleyImg,
+  Bat: batImg,
+  Butterfly: butterflyImg,
+  Crab: crabImg,
+  Shark: sharkImg,
+  Cypher: cypherImg,
+};
 
 const searchSchema = z.object({
   tf: z.enum(["1d", "1wk", "1mo"]).optional().default("1wk"),
