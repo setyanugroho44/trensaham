@@ -161,7 +161,7 @@ export function detectPatterns(
   // Try last 4 pivots for developing (X-A-B-C, D not yet formed)
   if (pivots.length >= 4) {
     const [X, A, B, C] = pivots.slice(-4);
-    if (!isLargeEnough(X, C)) return Array.from(new Map(out.map(p => [`${p.name}-${p.direction}-${p.status}`, p])).values()).sort((a, b) => b.confidence - a.confidence);
+    if (isLargeEnough(X, C))
     for (const dir of ["bullish", "bearish"] as Direction[]) {
       for (const spec of PATTERNS) {
         const r = evalSpec(X, A, B, C, null, spec, dir, tol);
