@@ -18,7 +18,6 @@ export type PatternName =
   | "Bat"
   | "Butterfly"
   | "Crab"
-  | "Deep Crab"
   | "Shark"
   | "Cypher"
   | "AB=CD";

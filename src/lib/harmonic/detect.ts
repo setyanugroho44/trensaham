@@ -88,6 +88,8 @@ function evalSpec(
 export type DetectOptions = {
   tolerance?: number; // fraction, default 0.05
   minConfidence?: number; // default 0.4
+  minBarsSpan?: number; // minimum bars from X to C (or D), default 20
+  minLegPct?: number; // minimum |XA|/A as fraction, default 0.08 (8%)
 };
 
 export function detectPatterns(
@@ -97,6 +99,8 @@ export function detectPatterns(
 ): DetectedPattern[] {
   const tol = opts.tolerance ?? DEFAULT_TOL;
   const minConf = opts.minConfidence ?? 0.4;
+  const minSpan = opts.minBarsSpan ?? 20;
+  const minLegPct = opts.minLegPct ?? 0.08;
   const out: DetectedPattern[] = [];
   if (pivots.length < 4) return out;
 
@@ -114,13 +118,25 @@ export function detectPatterns(
     prz: { low: number; high: number },
   ): number {
     if (RETRACEMENT_PATTERNS.has(name)) return X.price;
-    // extension patterns: Butterfly, Crab, Deep Crab
+    // extension patterns: Butterfly, Crab
     return dir === "bullish" ? prz.low : prz.high;
+  }
+
+  // Helper: pola dianggap "besar" jika kaki XA cukup signifikan (% terhadap harga)
+  // dan rentang waktu X→C cukup panjang (minimal minSpan bar).
+  function isLargeEnough(X: Pivot, C: Pivot): boolean {
+    const legPct = Math.abs(X.price - C.price) / Math.max(1e-9, Math.abs(X.price));
+    if (legPct < minLegPct) return false;
+    if (C.index - X.index < minSpan) return false;
+    return true;
   }
 
   // Try last 5 pivots for completed
   if (pivots.length >= 5) {
     const [X, A, B, C, D] = pivots.slice(-5);
+    if (!isLargeEnough(X, C)) {
+      // skip completed eval — pattern terlalu kecil
+    } else
     for (const dir of ["bullish", "bearish"] as Direction[]) {
       for (const spec of PATTERNS) {
         const r = evalSpec(X, A, B, C, D, spec, dir, tol);
@@ -145,6 +161,7 @@ export function detectPatterns(
   // Try last 4 pivots for developing (X-A-B-C, D not yet formed)
   if (pivots.length >= 4) {
     const [X, A, B, C] = pivots.slice(-4);
+    if (isLargeEnough(X, C))
     for (const dir of ["bullish", "bearish"] as Direction[]) {
       for (const spec of PATTERNS) {
         const r = evalSpec(X, A, B, C, null, spec, dir, tol);
