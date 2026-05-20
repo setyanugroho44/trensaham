@@ -88,6 +88,8 @@ function evalSpec(
 export type DetectOptions = {
   tolerance?: number; // fraction, default 0.05
   minConfidence?: number; // default 0.4
+  minBarsSpan?: number; // minimum bars from X to C (or D), default 20
+  minLegPct?: number; // minimum |XA|/A as fraction, default 0.08 (8%)
 };
 
 export function detectPatterns(
@@ -97,6 +99,8 @@ export function detectPatterns(
 ): DetectedPattern[] {
   const tol = opts.tolerance ?? DEFAULT_TOL;
   const minConf = opts.minConfidence ?? 0.4;
+  const minSpan = opts.minBarsSpan ?? 20;
+  const minLegPct = opts.minLegPct ?? 0.08;
   const out: DetectedPattern[] = [];
   if (pivots.length < 4) return out;
 
