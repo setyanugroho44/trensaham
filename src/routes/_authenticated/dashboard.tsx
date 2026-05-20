@@ -44,7 +44,7 @@ type PatternRow = {
   created_at: string;
 };
 
-const PATTERNS = ["Gartley", "Bat", "Butterfly", "Crab", "Deep Crab", "Shark", "Cypher", "AB=CD"];
+
 
 function playBeep() {
   try {
@@ -67,8 +67,6 @@ function playBeep() {
 
 function DashboardPage() {
   const [timeframe, setTimeframe] = useState<"1d" | "1wk" | "1mo">("1d");
-  const [direction, setDirection] = useState<"all" | "bullish" | "bearish">("all");
-  const [pattern, setPattern] = useState<string>("all");
   const [minConf, setMinConf] = useState<number>(50);
   const [minProgress, setMinProgress] = useState<number>(7);
   const [scanning, setScanning] = useState(false);
@@ -120,8 +118,6 @@ function DashboardPage() {
     const base = rows.filter(
       (r) =>
         r.timeframe === timeframe &&
-        (direction === "all" || r.direction === direction) &&
-        (pattern === "all" || r.pattern_name === pattern) &&
         r.confidence * 100 >= minConf &&
         (r.status !== "developing" || (r.progress_pct ?? 0) >= minProgress),
     );
@@ -137,7 +133,7 @@ function DashboardPage() {
     return Array.from(seen.values()).sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     );
-  }, [rows, direction, pattern, minConf, minProgress, timeframe]);
+  }, [rows, minConf, minProgress, timeframe]);
 
   const completed = filtered.filter((r) => r.status === "completed");
   const developing = filtered.filter((r) => r.status === "developing");
@@ -174,7 +170,7 @@ function DashboardPage() {
           <CardTitle className="text-base">Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-muted-foreground">Timeframe</label>
               <Select value={timeframe} onValueChange={(v) => setTimeframe(v as typeof timeframe)}>
@@ -183,29 +179,6 @@ function DashboardPage() {
                   <SelectItem value="1d">Daily</SelectItem>
                   <SelectItem value="1wk">Weekly</SelectItem>
                   <SelectItem value="1mo">Monthly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Direction</label>
-              <Select value={direction} onValueChange={(v) => setDirection(v as typeof direction)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="bullish">Bullish</SelectItem>
-                  <SelectItem value="bearish">Bearish</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Pattern</label>
-              <Select value={pattern} onValueChange={setPattern}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  {PATTERNS.map((p) => (
-                    <SelectItem key={p} value={p}>{p}</SelectItem>
-                  ))}
                 </SelectContent>
               </Select>
             </div>
