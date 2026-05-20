@@ -1,5 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Activity, ListChecks, TrendingDown, User, LogOut } from "lucide-react";
+import { Activity, ListChecks, TrendingDown, User, LogOut, Shield } from "lucide-react";
+import { useEffect, useState } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
+import { isCurrentUserAdmin } from "@/lib/admin.functions";
 
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: Activity },
