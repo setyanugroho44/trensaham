@@ -73,6 +73,7 @@ function DashboardPage() {
   const [minProgress, setMinProgress] = useState<number>(7);
   const [scanning, setScanning] = useState(false);
   const [rows, setRows] = useState<PatternRow[]>([]);
+  const [watchlistCount, setWatchlistCount] = useState<number | null>(null);
   const scanFn = useServerFn(runScan);
 
   const load = async () => {
