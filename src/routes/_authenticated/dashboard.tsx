@@ -68,7 +68,7 @@ function playBeep() {
 function DashboardPage() {
   const [timeframe, setTimeframe] = useState<"1d" | "1wk" | "1mo">("1d");
   const [minConf, setMinConf] = useState<number>(50);
-  const [minProgress, setMinProgress] = useState<number>(7);
+  const [minProgress, setMinProgress] = useState<number>(10);
   const [scanning, setScanning] = useState(false);
   const [rows, setRows] = useState<PatternRow[]>([]);
   const [watchlistCount, setWatchlistCount] = useState<number | null>(null);
