@@ -45,6 +45,7 @@ function TrailingStopPage() {
   const [symbol, setSymbol] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
   const fetchBars = useServerFn(fetchBarsForSymbol);
 
   const calculate = async () => {
