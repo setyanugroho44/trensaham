@@ -165,6 +165,36 @@ function TrailingStopPage() {
           </CardContent>
         </Card>
       )}
+
+      <Card className="bg-muted/40 border-dashed">
+        <button
+          onClick={() => setTooltipOpen((v) => !v)}
+          className="w-full flex items-center justify-between gap-3 py-4 px-5 text-left"
+          type="button"
+        >
+          <div className="flex items-center gap-3">
+            <Info className="h-5 w-5 text-primary shrink-0" />
+            <span className="text-sm font-medium text-foreground">Kombinasi dengan Pola Harmonik</span>
+          </div>
+          {tooltipOpen ? (
+            <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
+          )}
+        </button>
+        {tooltipOpen && (
+          <CardContent className="pb-4 px-5 pt-0">
+            <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+              <p>
+                Tool ini dirancang untuk dipadukan dengan pola harmonik. Setelah harga mencapai <strong>PRZ</strong> (Potential Reversal Zone) dan berbalik arah, ambil <strong>taking profit sebagian</strong> di level Fibonacci <strong>0,382</strong>.
+              </p>
+              <p>
+                Kemudian pasang <strong>trailing stop</strong> pada posisi sisa agar profit dapat terus berjalan mengikuti tren hingga tren tersebut benar-benar patah.
+              </p>
+            </div>
+          </CardContent>
+        )}
+      </Card>
     </div>
   );
 }
