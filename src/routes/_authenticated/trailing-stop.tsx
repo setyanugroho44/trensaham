@@ -104,6 +104,23 @@ function TrailingStopPage() {
         </p>
       </div>
 
+      <Card className="bg-muted/40 border-dashed">
+        <CardContent className="py-4 px-5">
+          <div className="flex items-start gap-3">
+            <Info className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+            <div className="space-y-1 text-sm text-muted-foreground leading-relaxed">
+              <p className="font-medium text-foreground">Kombinasi dengan Pola Harmonik</p>
+              <p>
+                Tool ini dirancang untuk dipadukan dengan pola harmonik. Setelah harga mencapai <strong>PRZ</strong> (Potential Reversal Zone) dan berbalik arah, ambil <strong>taking profit sebagian</strong> di level Fibonacci <strong>0,382</strong>.
+              </p>
+              <p>
+                Kemudian pasang <strong>trailing stop</strong> pada posisi sisa agar profit dapat terus berjalan mengikuti tren hingga tren tersebut benar-benar patah.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Kode Saham</CardTitle>
