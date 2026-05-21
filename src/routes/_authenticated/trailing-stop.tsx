@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { Info } from "lucide-react";
 import { fetchBarsForSymbol } from "@/lib/scan.functions";
 import type { Bar } from "@/lib/harmonic/types";
 
