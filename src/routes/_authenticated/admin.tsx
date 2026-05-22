@@ -310,6 +310,37 @@ function AdminPage() {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={!!subRow} onOpenChange={(o) => !o && setSubRow(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Kelola Langganan</DialogTitle>
+            <DialogDescription>{subRow?.email}</DialogDescription>
+          </DialogHeader>
+          {subRow && (
+            <div className="space-y-3 text-sm">
+              <div className="rounded border p-3 space-y-1">
+                <div>Tier: <span className="font-medium">{subRow.tier}</span></div>
+                <div>Trial berakhir: <span className="font-medium">{subRow.trial_ends_at ? new Date(subRow.trial_ends_at).toLocaleString("id-ID") : "—"}</span></div>
+                <div>Pro berakhir: <span className="font-medium">{subRow.pro_ends_at ? new Date(subRow.pro_ends_at).toLocaleString("id-ID") : "—"}</span></div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Perpanjangan ditambahkan dari tanggal berakhir saat ini (jika masih aktif) atau dari hari ini.
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <Button disabled={subBusy} onClick={() => onSubAction("extend_6")}>+ 6 Bulan Pro</Button>
+                <Button disabled={subBusy} onClick={() => onSubAction("extend_12")}>+ 12 Bulan Pro</Button>
+                <Button disabled={subBusy} variant="outline" onClick={() => onSubAction("set_trial_14")}>Reset Trial 14 hari</Button>
+                <Button disabled={subBusy} variant="destructive" onClick={() => onSubAction("deactivate")}>Nonaktifkan</Button>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setSubRow(null)}>Tutup</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+
       <AlertDialog open={!!deleting} onOpenChange={(o) => !o && setDeleting(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
