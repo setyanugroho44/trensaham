@@ -132,9 +132,10 @@ function DashboardPage() {
         seen.set(key, r);
       }
     }
-    return Array.from(seen.values()).sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-    );
+    return Array.from(seen.values()).sort((a, b) => {
+      if (b.confidence !== a.confidence) return b.confidence - a.confidence;
+      return (b.progress_pct ?? 0) - (a.progress_pct ?? 0);
+    });
   }, [rows, minConf, minProgress, timeframe]);
 
   const completed = filtered.filter((r) => r.status === "completed");
@@ -253,9 +254,9 @@ function PatternsTable({
             <th className="px-3 py-2">Symbol</th>
             <th className="px-3 py-2">Pattern</th>
             <th className="px-3 py-2">Dir</th>
+            <th className="px-3 py-2">{kind === "developing" ? "Progress" : "D Date"}</th>
             <th className="px-3 py-2">Conf.</th>
             <th className="px-3 py-2">PRZ</th>
-            <th className="px-3 py-2">{kind === "developing" ? "Progress" : "D Date"}</th>
             <th className="px-3 py-2">Invalidate</th>
             <th className="px-3 py-2 w-8"></th>
           </tr>
@@ -285,6 +286,13 @@ function PatternsTable({
                   </Badge>
                 )}
               </td>
+              <td className="px-3 py-2 text-xs">
+                {kind === "developing"
+                  ? `${Math.round(r.progress_pct ?? 0)}%`
+                  : r.d_date
+                    ? new Date(r.d_date).toLocaleDateString()
+                    : "—"}
+              </td>
               <td className="px-3 py-2">
                 <div className="flex items-center gap-2">
                   <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
@@ -300,13 +308,6 @@ function PatternsTable({
                 {r.prz_low != null && r.prz_high != null
                   ? `${r.prz_low.toFixed(2)} – ${r.prz_high.toFixed(2)}`
                   : "—"}
-              </td>
-              <td className="px-3 py-2 text-xs">
-                {kind === "developing"
-                  ? `${Math.round(r.progress_pct ?? 0)}%`
-                  : r.d_date
-                    ? new Date(r.d_date).toLocaleDateString()
-                    : "—"}
               </td>
               <td className="px-3 py-2 text-xs">{r.invalidation?.toFixed(2) ?? "—"}</td>
               <td className="px-3 py-2 text-right">
