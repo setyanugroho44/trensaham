@@ -4,9 +4,24 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { fetchYahooBars, type Timeframe } from "./yahoo.server";
 import { zigzag } from "./harmonic/zigzag";
 import { detectPatterns } from "./harmonic/detect";
-import { assertAccess } from "./subscription.server";
 
 const TF = z.enum(["1d", "1wk", "1mo"]);
+
+async function assertScanAccess(
+  supabase: {
+    rpc: (
+      fn: "has_active_access",
+      args: { _user_id: string },
+    ) => PromiseLike<{ data: boolean | null; error: { message: string } | null }>;
+  },
+  userId: string,
+) {
+  const { data, error } = await supabase.rpc("has_active_access", { _user_id: userId });
+  if (error) throw new Error(error.message);
+  if (!data) {
+    throw new Error("Akun Anda tidak aktif. Upgrade ke Pro agar scanner bisa dijalankan kembali.");
+  }
+}
 
 export const fetchBarsForSymbol = createServerFn({ method: "POST" })
   .inputValidator((d: { symbol: string; timeframe: Timeframe }) =>
@@ -30,12 +45,10 @@ export const runScan = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    await assertAccess(userId);
+    await assertScanAccess(supabase, userId);
 
     // load watchlist
-    const { data: wl, error: wlErr } = await supabase
-      .from("watchlist_symbols")
-      .select("symbol");
+    const { data: wl, error: wlErr } = await supabase.from("watchlist_symbols").select("symbol");
     if (wlErr) throw new Error(wlErr.message);
     const symbols = (wl ?? []).map((r) => r.symbol);
     if (symbols.length === 0) {
@@ -70,17 +83,11 @@ export const runScan = createServerFn({ method: "POST" })
         // pivot mewakili swing yang signifikan & pola merentang banyak candle.
         // Dinaikkan agar pola besar lebih sering muncul, pola sempit terfilter.
         const scales =
-          data.timeframe === "1mo"
-            ? [25, 40]
-            : data.timeframe === "1wk"
-              ? [15, 22]
-              : [8, 14];
+          data.timeframe === "1mo" ? [25, 40] : data.timeframe === "1wk" ? [15, 22] : [8, 14];
         // Minimum bar-span X→C agar pola tidak terlalu sempit di sumbu waktu.
-        const minBarsSpan =
-          data.timeframe === "1mo" ? 8 : data.timeframe === "1wk" ? 16 : 25;
+        const minBarsSpan = data.timeframe === "1mo" ? 8 : data.timeframe === "1wk" ? 16 : 25;
         // Minimum panjang kaki XA (% terhadap harga X) agar pola tidak sempit di sumbu harga.
-        const minLegPct =
-          data.timeframe === "1mo" ? 0.25 : data.timeframe === "1wk" ? 0.18 : 0.12;
+        const minLegPct = data.timeframe === "1mo" ? 0.25 : data.timeframe === "1wk" ? 0.18 : 0.12;
         const allPatterns = scales.flatMap((th) => {
           const pivots = zigzag(bars, th);
           return detectPatterns(pivots, bars, {

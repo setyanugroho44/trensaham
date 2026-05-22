@@ -59,6 +59,19 @@ export async function assertAccess(userId: string) {
   }
 }
 
+export async function assertAccessWithClient(
+  supabase: { rpc: (fn: "has_active_access", args: { _user_id: string }) => PromiseLike<{ data: boolean | null; error: { message: string } | null }> },
+  userId: string,
+) {
+  const { data, error } = await supabase.rpc("has_active_access", { _user_id: userId });
+  if (error) throw new Error(error.message);
+  if (!data) {
+    throw new Error(
+      "Akun Anda tidak aktif. Upgrade ke Pro agar scanner bisa dijalankan kembali.",
+    );
+  }
+}
+
 export async function assertAdminOrSuper(userId: string) {
   const { data } = await supabaseAdmin
     .from("user_roles")
