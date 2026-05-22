@@ -67,6 +67,8 @@ function AdminPage() {
   const [q, setQ] = useState("");
   const [editing, setEditing] = useState<Row | null>(null);
   const [deleting, setDeleting] = useState<Row | null>(null);
+  const [subRow, setSubRow] = useState<Row | null>(null);
+  const [subBusy, setSubBusy] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -151,6 +153,32 @@ function AdminPage() {
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Gagal menghapus");
     }
+  };
+
+  const onSubAction = async (action: "extend_6" | "extend_12" | "set_trial_14" | "deactivate") => {
+    if (!subRow) return;
+    setSubBusy(true);
+    try {
+      await adminExtendSubscription({ data: { user_id: subRow.id, action } });
+      toast.success("Langganan diperbarui");
+      setSubRow(null);
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Gagal memperbarui langganan");
+    } finally {
+      setSubBusy(false);
+    }
+  };
+
+  const subStatus = (u: Row): { label: string; tone: "default" | "secondary" | "destructive" | "outline" } => {
+    const now = Date.now();
+    if (u.tier === "pro" && u.pro_ends_at && new Date(u.pro_ends_at).getTime() > now) {
+      return { label: `Pro s/d ${new Date(u.pro_ends_at).toLocaleDateString("id-ID")}`, tone: "default" };
+    }
+    if (u.trial_ends_at && new Date(u.trial_ends_at).getTime() > now) {
+      return { label: `Trial s/d ${new Date(u.trial_ends_at).toLocaleDateString("id-ID")}`, tone: "secondary" };
+    }
+    return { label: "Expired", tone: "destructive" };
   };
 
   return (
