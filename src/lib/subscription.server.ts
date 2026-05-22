@@ -60,7 +60,7 @@ export async function assertAccess(userId: string) {
 }
 
 export async function assertAccessWithClient(
-  supabase: { rpc: (fn: "has_active_access", args: { _user_id: string }) => Promise<{ data: boolean | null; error: { message: string } | null }> },
+  supabase: { rpc: (fn: "has_active_access", args: { _user_id: string }) => PromiseLike<{ data: boolean | null; error: { message: string } | null }> },
   userId: string,
 ) {
   const { data, error } = await supabase.rpc("has_active_access", { _user_id: userId });
