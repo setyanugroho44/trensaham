@@ -2,79 +2,13 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { loadAccess, assertAdminOrSuper, type AccessInfo } from "./subscription.server";
 
-export type AccessInfo = {
-  hasAccess: boolean;
-  tier: "free" | "pro";
-  trialEndsAt: string | null;
-  proEndsAt: string | null;
-  isAdmin: boolean;
-  isSuperAdmin: boolean;
-  reason: "admin" | "pro" | "trial" | "expired";
-};
-
-async function loadAccess(userId: string): Promise<AccessInfo> {
-  const { data: roles } = await supabaseAdmin
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", userId);
-  const isAdmin = !!roles?.some((r) => r.role === "admin");
-  const isSuperAdmin = !!roles?.some((r) => r.role === "super_admin");
-
-  const { data: sub } = await supabaseAdmin
-    .from("subscriptions")
-    .select("tier, trial_ends_at, pro_ends_at")
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  const now = Date.now();
-  const proActive =
-    sub?.tier === "pro" && sub.pro_ends_at && new Date(sub.pro_ends_at).getTime() > now;
-  const trialActive =
-    sub?.trial_ends_at && new Date(sub.trial_ends_at).getTime() > now;
-
-  const hasAccess = isAdmin || isSuperAdmin || !!proActive || !!trialActive;
-  const reason: AccessInfo["reason"] = isAdmin || isSuperAdmin
-    ? "admin"
-    : proActive
-      ? "pro"
-      : trialActive
-        ? "trial"
-        : "expired";
-
-  return {
-    hasAccess,
-    tier: (sub?.tier as "free" | "pro") ?? "free",
-    trialEndsAt: sub?.trial_ends_at ?? null,
-    proEndsAt: sub?.pro_ends_at ?? null,
-    isAdmin,
-    isSuperAdmin,
-    reason,
-  };
-}
+export type { AccessInfo };
 
 export const getMyAccess = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => loadAccess(context.userId));
-
-export async function assertAccess(userId: string) {
-  const a = await loadAccess(userId);
-  if (!a.hasAccess) {
-    throw new Error(
-      "Akun Anda tidak aktif. Upgrade ke Pro agar scanner bisa dijalankan kembali.",
-    );
-  }
-}
-
-async function assertAdminOrSuper(userId: string) {
-  const { data } = await supabaseAdmin
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", userId)
-    .in("role", ["admin", "super_admin"])
-    .maybeSingle();
-  if (!data) throw new Error("Forbidden");
-}
 
 export const adminExtendSubscription = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -101,7 +35,7 @@ export const adminExtendSubscription = createServerFn({ method: "POST" })
         ? new Date(existing.pro_ends_at)
         : now;
 
-    let row: {
+    const row: {
       user_id: string;
       tier: "free" | "pro";
       pro_ends_at: string | null;

@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { fetchYahooBars, type Timeframe } from "./yahoo.server";
 import { zigzag } from "./harmonic/zigzag";
 import { detectPatterns } from "./harmonic/detect";
-import { assertAccess } from "./subscription.functions";
+import { assertAccess } from "./subscription.server";
 
 const TF = z.enum(["1d", "1wk", "1mo"]);
 
