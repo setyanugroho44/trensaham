@@ -3,13 +3,14 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { runScan } from "@/lib/scan.functions";
+import { getMyAccess, type AccessInfo } from "@/lib/subscription.functions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Loader2, Play, TrendingDown, TrendingUp, X, Info } from "lucide-react";
+import { Loader2, Play, TrendingDown, TrendingUp, X, Info, Lock } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -72,7 +73,9 @@ function DashboardPage() {
   const [scanning, setScanning] = useState(false);
   const [rows, setRows] = useState<PatternRow[]>([]);
   const [watchlistCount, setWatchlistCount] = useState<number | null>(null);
+  const [access, setAccess] = useState<AccessInfo | null>(null);
   const scanFn = useServerFn(runScan);
+  const accessFn = useServerFn(getMyAccess);
 
   const load = async () => {
     const { data, error } = await supabase
@@ -94,6 +97,7 @@ function DashboardPage() {
   useEffect(() => {
     load();
     loadWatchlistCount();
+    accessFn().then(setAccess).catch(() => {});
   }, []);
 
   const onScan = async () => {
