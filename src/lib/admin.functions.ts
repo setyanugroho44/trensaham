@@ -21,9 +21,8 @@ export const isCurrentUserAdmin = createServerFn({ method: "GET" })
       .from("user_roles")
       .select("role")
       .eq("user_id", context.userId)
-      .eq("role", "admin")
-      .maybeSingle();
-    return { isAdmin: !!data };
+      .in("role", ["admin", "super_admin"]);
+    return { isAdmin: (data?.length ?? 0) > 0 };
   });
 
 export const adminListUsers = createServerFn({ method: "GET" })
