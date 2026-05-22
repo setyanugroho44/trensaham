@@ -4,9 +4,19 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { fetchYahooBars, type Timeframe } from "./yahoo.server";
 import { zigzag } from "./harmonic/zigzag";
 import { detectPatterns } from "./harmonic/detect";
-import { assertAccessWithClient } from "./subscription.server";
 
 const TF = z.enum(["1d", "1wk", "1mo"]);
+
+async function assertScanAccess(
+  supabase: { rpc: (fn: "has_active_access", args: { _user_id: string }) => PromiseLike<{ data: boolean | null; error: { message: string } | null }> },
+  userId: string,
+) {
+  const { data, error } = await supabase.rpc("has_active_access", { _user_id: userId });
+  if (error) throw new Error(error.message);
+  if (!data) {
+    throw new Error("Akun Anda tidak aktif. Upgrade ke Pro agar scanner bisa dijalankan kembali.");
+  }
+}
 
 export const fetchBarsForSymbol = createServerFn({ method: "POST" })
   .inputValidator((d: { symbol: string; timeframe: Timeframe }) =>
@@ -30,7 +40,7 @@ export const runScan = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    await assertAccessWithClient(supabase, userId);
+    await assertScanAccess(supabase, userId);
 
     // load watchlist
     const { data: wl, error: wlErr } = await supabase
