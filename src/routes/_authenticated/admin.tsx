@@ -217,7 +217,7 @@ function AdminPage() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
-          <div className="rounded-md border">
+          <div className="rounded-md border overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -225,31 +225,45 @@ function AdminPage() {
                   <TableHead>Nama</TableHead>
                   <TableHead>No HP</TableHead>
                   <TableHead>Role</TableHead>
+                  <TableHead>Langganan</TableHead>
                   <TableHead>Daftar</TableHead>
                   <TableHead className="text-right">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
-                  <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">Memuat…</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground">Memuat…</TableCell></TableRow>
                 ) : filtered.length === 0 ? (
-                  <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">Tidak ada user</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground">Tidak ada user</TableCell></TableRow>
                 ) : (
-                  filtered.map((u) => (
-                    <TableRow key={u.id}>
-                      <TableCell className="font-medium">{u.email}</TableCell>
-                      <TableCell>{u.full_name ?? "—"}</TableCell>
-                      <TableCell>{u.phone ?? "—"}</TableCell>
-                      <TableCell>{u.roles.join(", ") || "user"}</TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        {new Date(u.created_at).toLocaleDateString("id-ID")}
-                      </TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <Button size="sm" variant="outline" onClick={() => setEditing({ ...u })}>Edit</Button>
-                        <Button size="sm" variant="destructive" onClick={() => setDeleting(u)}>Hapus</Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                  filtered.map((u) => {
+                    const s = subStatus(u);
+                    return (
+                      <TableRow key={u.id}>
+                        <TableCell className="font-medium">{u.email}</TableCell>
+                        <TableCell>{u.full_name ?? "—"}</TableCell>
+                        <TableCell>{u.phone ?? "—"}</TableCell>
+                        <TableCell>{u.roles.join(", ") || "user"}</TableCell>
+                        <TableCell>
+                          <span className={
+                            s.tone === "destructive"
+                              ? "text-xs px-2 py-1 rounded bg-destructive/10 text-destructive"
+                              : s.tone === "default"
+                                ? "text-xs px-2 py-1 rounded bg-primary/10 text-primary"
+                                : "text-xs px-2 py-1 rounded bg-muted text-muted-foreground"
+                          }>{s.label}</span>
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground">
+                          {new Date(u.created_at).toLocaleDateString("id-ID")}
+                        </TableCell>
+                        <TableCell className="text-right space-x-2 whitespace-nowrap">
+                          <Button size="sm" variant="outline" onClick={() => setSubRow(u)}>Langganan</Button>
+                          <Button size="sm" variant="outline" onClick={() => setEditing({ ...u })}>Edit</Button>
+                          <Button size="sm" variant="destructive" onClick={() => setDeleting(u)}>Hapus</Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>
