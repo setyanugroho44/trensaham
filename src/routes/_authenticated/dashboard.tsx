@@ -152,10 +152,27 @@ function DashboardPage() {
           <h1 className="text-2xl font-semibold tracking-tight">Scanner Dashboard</h1>
           <p className="text-sm text-muted-foreground">Detect harmonic patterns across your IDX watchlist.</p>
         </div>
-        <Button onClick={onScan} disabled={scanning}>
-          {scanning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />}
-          {scanning ? "Scanning…" : "Scan Now"}
-        </Button>
+        <div className="flex flex-col items-end gap-1">
+          <Button onClick={onScan} disabled={scanning || (access ? !access.hasAccess : false)}>
+            {scanning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : access && !access.hasAccess ? <Lock className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
+            {scanning ? "Scanning…" : "Scan Now"}
+          </Button>
+          {access && !access.hasAccess && (
+            <p className="text-xs text-destructive">
+              Masa aktif Anda berakhir. Upgrade ke <span className="font-semibold">Pro</span> agar scanner kembali berjalan.
+            </p>
+          )}
+          {access?.reason === "trial" && access.trialEndsAt && (
+            <p className="text-xs text-muted-foreground">
+              Trial berakhir {new Date(access.trialEndsAt).toLocaleDateString("id-ID")}
+            </p>
+          )}
+          {access?.reason === "pro" && access.proEndsAt && (
+            <p className="text-xs text-muted-foreground">
+              Pro aktif hingga {new Date(access.proEndsAt).toLocaleDateString("id-ID")}
+            </p>
+          )}
+        </div>
       </div>
 
       {watchlistCount === 0 && (
