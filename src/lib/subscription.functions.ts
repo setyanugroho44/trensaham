@@ -24,13 +24,8 @@ export const getMyAccess = createServerFn({ method: "GET" })
     const proActive =
       sub?.tier === "pro" && sub.pro_ends_at && new Date(sub.pro_ends_at).getTime() > now;
     const trialActive = sub?.trial_ends_at && new Date(sub.trial_ends_at).getTime() > now;
-    const reason: AccessInfo["reason"] = isAdmin || isSuperAdmin
-      ? "admin"
-      : proActive
-        ? "pro"
-        : trialActive
-          ? "trial"
-          : "expired";
+    const reason: AccessInfo["reason"] =
+      isAdmin || isSuperAdmin ? "admin" : proActive ? "pro" : trialActive ? "trial" : "expired";
 
     return {
       hasAccess: isAdmin || isSuperAdmin || !!proActive || !!trialActive,
@@ -45,13 +40,14 @@ export const getMyAccess = createServerFn({ method: "GET" })
 
 export const adminExtendSubscription = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { user_id: string; action: "extend_6" | "extend_12" | "set_trial_14" | "deactivate" }) =>
-    z
-      .object({
-        user_id: z.string().uuid(),
-        action: z.enum(["extend_6", "extend_12", "set_trial_14", "deactivate"]),
-      })
-      .parse(d),
+  .inputValidator(
+    (d: { user_id: string; action: "extend_6" | "extend_12" | "set_trial_14" | "deactivate" }) =>
+      z
+        .object({
+          user_id: z.string().uuid(),
+          action: z.enum(["extend_6", "extend_12", "set_trial_14", "deactivate"]),
+        })
+        .parse(d),
   )
   .handler(async ({ data, context }) => {
     await assertAdminOrSuper(context.userId);
