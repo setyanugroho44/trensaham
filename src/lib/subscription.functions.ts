@@ -108,7 +108,7 @@ export const adminExtendSubscription = createServerFn({ method: "POST" })
       trial_ends_at: string | null;
     } = {
       user_id: data.user_id,
-      tier: existing?.tier ?? "free",
+      tier: (existing?.tier as "free" | "pro") ?? "free",
       pro_ends_at: existing?.pro_ends_at ?? null,
       trial_ends_at: existing?.trial_ends_at ?? null,
     };
