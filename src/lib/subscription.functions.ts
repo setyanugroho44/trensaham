@@ -8,7 +8,40 @@ export type { AccessInfo };
 
 export const getMyAccess = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => loadAccess(context.userId));
+  .handler(async ({ context }) => {
+    const [{ data: roles }, { data: sub }] = await Promise.all([
+      context.supabase.from("user_roles").select("role").eq("user_id", context.userId),
+      context.supabase
+        .from("subscriptions")
+        .select("tier, trial_ends_at, pro_ends_at")
+        .eq("user_id", context.userId)
+        .maybeSingle(),
+    ]);
+
+    const isAdmin = !!roles?.some((r) => r.role === "admin");
+    const isSuperAdmin = !!roles?.some((r) => r.role === "super_admin");
+    const now = Date.now();
+    const proActive =
+      sub?.tier === "pro" && sub.pro_ends_at && new Date(sub.pro_ends_at).getTime() > now;
+    const trialActive = sub?.trial_ends_at && new Date(sub.trial_ends_at).getTime() > now;
+    const reason: AccessInfo["reason"] = isAdmin || isSuperAdmin
+      ? "admin"
+      : proActive
+        ? "pro"
+        : trialActive
+          ? "trial"
+          : "expired";
+
+    return {
+      hasAccess: isAdmin || isSuperAdmin || !!proActive || !!trialActive,
+      tier: (sub?.tier as "free" | "pro") ?? "free",
+      trialEndsAt: sub?.trial_ends_at ?? null,
+      proEndsAt: sub?.pro_ends_at ?? null,
+      isAdmin,
+      isSuperAdmin,
+      reason,
+    };
+  });
 
 export const adminExtendSubscription = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
