@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { loadAccess, assertAdminOrSuper, type AccessInfo } from "./subscription.server";
+import { assertAdminOrSuper, type AccessInfo } from "./subscription.server";
 
 export type { AccessInfo };
 
