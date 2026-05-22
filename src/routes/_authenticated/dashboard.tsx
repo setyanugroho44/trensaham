@@ -3,13 +3,14 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { runScan } from "@/lib/scan.functions";
+import { getMyAccess, type AccessInfo } from "@/lib/subscription.functions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Loader2, Play, TrendingDown, TrendingUp, X, Info } from "lucide-react";
+import { Loader2, Play, TrendingDown, TrendingUp, X, Info, Lock } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -72,7 +73,9 @@ function DashboardPage() {
   const [scanning, setScanning] = useState(false);
   const [rows, setRows] = useState<PatternRow[]>([]);
   const [watchlistCount, setWatchlistCount] = useState<number | null>(null);
+  const [access, setAccess] = useState<AccessInfo | null>(null);
   const scanFn = useServerFn(runScan);
+  const accessFn = useServerFn(getMyAccess);
 
   const load = async () => {
     const { data, error } = await supabase
@@ -94,6 +97,7 @@ function DashboardPage() {
   useEffect(() => {
     load();
     loadWatchlistCount();
+    accessFn().then(setAccess).catch(() => {});
   }, []);
 
   const onScan = async () => {
@@ -148,10 +152,27 @@ function DashboardPage() {
           <h1 className="text-2xl font-semibold tracking-tight">Scanner Dashboard</h1>
           <p className="text-sm text-muted-foreground">Detect harmonic patterns across your IDX watchlist.</p>
         </div>
-        <Button onClick={onScan} disabled={scanning}>
-          {scanning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />}
-          {scanning ? "Scanning…" : "Scan Now"}
-        </Button>
+        <div className="flex flex-col items-end gap-1">
+          <Button onClick={onScan} disabled={scanning || (access ? !access.hasAccess : false)}>
+            {scanning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : access && !access.hasAccess ? <Lock className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
+            {scanning ? "Scanning…" : "Scan Now"}
+          </Button>
+          {access && !access.hasAccess && (
+            <p className="text-xs text-destructive">
+              Masa aktif Anda berakhir. Upgrade ke <span className="font-semibold">Pro</span> agar scanner kembali berjalan.
+            </p>
+          )}
+          {access?.reason === "trial" && access.trialEndsAt && (
+            <p className="text-xs text-muted-foreground">
+              Trial berakhir {new Date(access.trialEndsAt).toLocaleDateString("id-ID")}
+            </p>
+          )}
+          {access?.reason === "pro" && access.proEndsAt && (
+            <p className="text-xs text-muted-foreground">
+              Pro aktif hingga {new Date(access.proEndsAt).toLocaleDateString("id-ID")}
+            </p>
+          )}
+        </div>
       </div>
 
       {watchlistCount === 0 && (

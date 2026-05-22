@@ -38,6 +38,7 @@ import {
   adminUpdateProfile,
   isCurrentUserAdmin,
 } from "@/lib/admin.functions";
+import { adminExtendSubscription } from "@/lib/subscription.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
@@ -52,6 +53,9 @@ type Row = {
   address: string | null;
   phone: string | null;
   roles: string[];
+  tier: "free" | "pro";
+  trial_ends_at: string | null;
+  pro_ends_at: string | null;
 };
 
 function AdminPage() {
@@ -63,6 +67,8 @@ function AdminPage() {
   const [q, setQ] = useState("");
   const [editing, setEditing] = useState<Row | null>(null);
   const [deleting, setDeleting] = useState<Row | null>(null);
+  const [subRow, setSubRow] = useState<Row | null>(null);
+  const [subBusy, setSubBusy] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -149,6 +155,32 @@ function AdminPage() {
     }
   };
 
+  const onSubAction = async (action: "extend_6" | "extend_12" | "set_trial_14" | "deactivate") => {
+    if (!subRow) return;
+    setSubBusy(true);
+    try {
+      await adminExtendSubscription({ data: { user_id: subRow.id, action } });
+      toast.success("Langganan diperbarui");
+      setSubRow(null);
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Gagal memperbarui langganan");
+    } finally {
+      setSubBusy(false);
+    }
+  };
+
+  const subStatus = (u: Row): { label: string; tone: "default" | "secondary" | "destructive" | "outline" } => {
+    const now = Date.now();
+    if (u.tier === "pro" && u.pro_ends_at && new Date(u.pro_ends_at).getTime() > now) {
+      return { label: `Pro s/d ${new Date(u.pro_ends_at).toLocaleDateString("id-ID")}`, tone: "default" };
+    }
+    if (u.trial_ends_at && new Date(u.trial_ends_at).getTime() > now) {
+      return { label: `Trial s/d ${new Date(u.trial_ends_at).toLocaleDateString("id-ID")}`, tone: "secondary" };
+    }
+    return { label: "Expired", tone: "destructive" };
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -185,7 +217,7 @@ function AdminPage() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
-          <div className="rounded-md border">
+          <div className="rounded-md border overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -193,31 +225,45 @@ function AdminPage() {
                   <TableHead>Nama</TableHead>
                   <TableHead>No HP</TableHead>
                   <TableHead>Role</TableHead>
+                  <TableHead>Langganan</TableHead>
                   <TableHead>Daftar</TableHead>
                   <TableHead className="text-right">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
-                  <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">Memuat…</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground">Memuat…</TableCell></TableRow>
                 ) : filtered.length === 0 ? (
-                  <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">Tidak ada user</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground">Tidak ada user</TableCell></TableRow>
                 ) : (
-                  filtered.map((u) => (
-                    <TableRow key={u.id}>
-                      <TableCell className="font-medium">{u.email}</TableCell>
-                      <TableCell>{u.full_name ?? "—"}</TableCell>
-                      <TableCell>{u.phone ?? "—"}</TableCell>
-                      <TableCell>{u.roles.join(", ") || "user"}</TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        {new Date(u.created_at).toLocaleDateString("id-ID")}
-                      </TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <Button size="sm" variant="outline" onClick={() => setEditing({ ...u })}>Edit</Button>
-                        <Button size="sm" variant="destructive" onClick={() => setDeleting(u)}>Hapus</Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                  filtered.map((u) => {
+                    const s = subStatus(u);
+                    return (
+                      <TableRow key={u.id}>
+                        <TableCell className="font-medium">{u.email}</TableCell>
+                        <TableCell>{u.full_name ?? "—"}</TableCell>
+                        <TableCell>{u.phone ?? "—"}</TableCell>
+                        <TableCell>{u.roles.join(", ") || "user"}</TableCell>
+                        <TableCell>
+                          <span className={
+                            s.tone === "destructive"
+                              ? "text-xs px-2 py-1 rounded bg-destructive/10 text-destructive"
+                              : s.tone === "default"
+                                ? "text-xs px-2 py-1 rounded bg-primary/10 text-primary"
+                                : "text-xs px-2 py-1 rounded bg-muted text-muted-foreground"
+                          }>{s.label}</span>
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground">
+                          {new Date(u.created_at).toLocaleDateString("id-ID")}
+                        </TableCell>
+                        <TableCell className="text-right space-x-2 whitespace-nowrap">
+                          <Button size="sm" variant="outline" onClick={() => setSubRow(u)}>Langganan</Button>
+                          <Button size="sm" variant="outline" onClick={() => setEditing({ ...u })}>Edit</Button>
+                          <Button size="sm" variant="destructive" onClick={() => setDeleting(u)}>Hapus</Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>
@@ -263,6 +309,37 @@ function AdminPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={!!subRow} onOpenChange={(o) => !o && setSubRow(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Kelola Langganan</DialogTitle>
+            <DialogDescription>{subRow?.email}</DialogDescription>
+          </DialogHeader>
+          {subRow && (
+            <div className="space-y-3 text-sm">
+              <div className="rounded border p-3 space-y-1">
+                <div>Tier: <span className="font-medium">{subRow.tier}</span></div>
+                <div>Trial berakhir: <span className="font-medium">{subRow.trial_ends_at ? new Date(subRow.trial_ends_at).toLocaleString("id-ID") : "—"}</span></div>
+                <div>Pro berakhir: <span className="font-medium">{subRow.pro_ends_at ? new Date(subRow.pro_ends_at).toLocaleString("id-ID") : "—"}</span></div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Perpanjangan ditambahkan dari tanggal berakhir saat ini (jika masih aktif) atau dari hari ini.
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <Button disabled={subBusy} onClick={() => onSubAction("extend_6")}>+ 6 Bulan Pro</Button>
+                <Button disabled={subBusy} onClick={() => onSubAction("extend_12")}>+ 12 Bulan Pro</Button>
+                <Button disabled={subBusy} variant="outline" onClick={() => onSubAction("set_trial_14")}>Reset Trial 14 hari</Button>
+                <Button disabled={subBusy} variant="destructive" onClick={() => onSubAction("deactivate")}>Nonaktifkan</Button>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setSubRow(null)}>Tutup</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
 
       <AlertDialog open={!!deleting} onOpenChange={(o) => !o && setDeleting(null)}>
         <AlertDialogContent>

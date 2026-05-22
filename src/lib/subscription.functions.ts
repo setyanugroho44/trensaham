@@ -1,0 +1,75 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { loadAccess, assertAdminOrSuper, type AccessInfo } from "./subscription.server";
+
+export type { AccessInfo };
+
+export const getMyAccess = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => loadAccess(context.userId));
+
+export const adminExtendSubscription = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { user_id: string; action: "extend_6" | "extend_12" | "set_trial_14" | "deactivate" }) =>
+    z
+      .object({
+        user_id: z.string().uuid(),
+        action: z.enum(["extend_6", "extend_12", "set_trial_14", "deactivate"]),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdminOrSuper(context.userId);
+
+    const { data: existing } = await supabaseAdmin
+      .from("subscriptions")
+      .select("*")
+      .eq("user_id", data.user_id)
+      .maybeSingle();
+
+    const now = new Date();
+    const base =
+      existing?.pro_ends_at && new Date(existing.pro_ends_at) > now
+        ? new Date(existing.pro_ends_at)
+        : now;
+
+    const row: {
+      user_id: string;
+      tier: "free" | "pro";
+      pro_ends_at: string | null;
+      trial_ends_at: string | null;
+    } = {
+      user_id: data.user_id,
+      tier: (existing?.tier as "free" | "pro") ?? "free",
+      pro_ends_at: existing?.pro_ends_at ?? null,
+      trial_ends_at: existing?.trial_ends_at ?? null,
+    };
+
+    if (data.action === "extend_6") {
+      const end = new Date(base);
+      end.setMonth(end.getMonth() + 6);
+      row.tier = "pro";
+      row.pro_ends_at = end.toISOString();
+    } else if (data.action === "extend_12") {
+      const end = new Date(base);
+      end.setMonth(end.getMonth() + 12);
+      row.tier = "pro";
+      row.pro_ends_at = end.toISOString();
+    } else if (data.action === "set_trial_14") {
+      const end = new Date(now);
+      end.setDate(end.getDate() + 14);
+      row.trial_ends_at = end.toISOString();
+    } else if (data.action === "deactivate") {
+      row.tier = "free";
+      row.pro_ends_at = null;
+      row.trial_ends_at = null;
+    }
+
+    const { error } = await supabaseAdmin
+      .from("subscriptions")
+      .upsert(row, { onConflict: "user_id" });
+    if (error) throw new Error(error.message);
+    return { ok: true, subscription: row };
+  });

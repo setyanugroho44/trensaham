@@ -8,7 +8,7 @@ async function assertAdmin(userId: string) {
     .from("user_roles")
     .select("role")
     .eq("user_id", userId)
-    .eq("role", "admin")
+    .in("role", ["admin", "super_admin"])
     .maybeSingle();
   if (error) throw new Error(error.message);
   if (!data) throw new Error("Forbidden: admin only");
@@ -21,9 +21,8 @@ export const isCurrentUserAdmin = createServerFn({ method: "GET" })
       .from("user_roles")
       .select("role")
       .eq("user_id", context.userId)
-      .eq("role", "admin")
-      .maybeSingle();
-    return { isAdmin: !!data };
+      .in("role", ["admin", "super_admin"]);
+    return { isAdmin: (data?.length ?? 0) > 0 };
   });
 
 export const adminListUsers = createServerFn({ method: "GET" })
@@ -61,7 +60,13 @@ export const adminListUsers = createServerFn({ method: "GET" })
       .select("user_id, role")
       .in("user_id", ids.length ? ids : ["00000000-0000-0000-0000-000000000000"]);
 
+    const { data: subs } = await supabaseAdmin
+      .from("subscriptions")
+      .select("user_id, tier, trial_ends_at, pro_ends_at")
+      .in("user_id", ids.length ? ids : ["00000000-0000-0000-0000-000000000000"]);
+
     const pMap = new Map((profiles ?? []).map((p) => [p.user_id, p]));
+    const sMap = new Map((subs ?? []).map((s) => [s.user_id, s]));
     const rMap = new Map<string, string[]>();
     for (const r of roles ?? []) {
       const arr = rMap.get(r.user_id) ?? [];
@@ -76,6 +81,9 @@ export const adminListUsers = createServerFn({ method: "GET" })
         address: pMap.get(u.id)?.address ?? null,
         phone: pMap.get(u.id)?.phone ?? null,
         roles: rMap.get(u.id) ?? [],
+        tier: (sMap.get(u.id)?.tier as "free" | "pro") ?? "free",
+        trial_ends_at: sMap.get(u.id)?.trial_ends_at ?? null,
+        pro_ends_at: sMap.get(u.id)?.pro_ends_at ?? null,
       })),
     };
   });
