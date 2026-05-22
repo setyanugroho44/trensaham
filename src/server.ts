@@ -25,6 +25,17 @@ function brandedErrorResponse(): Response {
   });
 }
 
+function hydrateProcessEnv(env: unknown) {
+  if (!env || typeof env !== "object" || typeof process === "undefined") return;
+  const bindings = env as Record<string, unknown>;
+  for (const key of ["SUPABASE_URL", "SUPABASE_PUBLISHABLE_KEY", "SUPABASE_SERVICE_ROLE_KEY"]) {
+    const value = bindings[key];
+    if (typeof value === "string" && value && !process.env[key]) {
+      process.env[key] = value;
+    }
+  }
+}
+
 function isCatastrophicSsrErrorBody(body: string, responseStatus: number): boolean {
   let payload: unknown;
   try {
@@ -69,6 +80,7 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      hydrateProcessEnv(env);
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);
