@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { fetchYahooBars, type Timeframe } from "./yahoo.server";
 import { zigzag } from "./harmonic/zigzag";
 import { detectPatterns } from "./harmonic/detect";
-import { assertAccess } from "./subscription.server";
+import { assertAccessWithClient } from "./subscription.server";
 
 const TF = z.enum(["1d", "1wk", "1mo"]);
 
@@ -30,7 +30,7 @@ export const runScan = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    await assertAccess(userId);
+    await assertAccessWithClient(supabase, userId);
 
     // load watchlist
     const { data: wl, error: wlErr } = await supabase
