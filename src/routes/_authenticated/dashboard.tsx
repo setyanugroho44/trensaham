@@ -286,6 +286,13 @@ function PatternsTable({
                   </Badge>
                 )}
               </td>
+              <td className="px-3 py-2 text-xs">
+                {kind === "developing"
+                  ? `${Math.round(r.progress_pct ?? 0)}%`
+                  : r.d_date
+                    ? new Date(r.d_date).toLocaleDateString()
+                    : "—"}
+              </td>
               <td className="px-3 py-2">
                 <div className="flex items-center gap-2">
                   <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
@@ -301,13 +308,6 @@ function PatternsTable({
                 {r.prz_low != null && r.prz_high != null
                   ? `${r.prz_low.toFixed(2)} – ${r.prz_high.toFixed(2)}`
                   : "—"}
-              </td>
-              <td className="px-3 py-2 text-xs">
-                {kind === "developing"
-                  ? `${Math.round(r.progress_pct ?? 0)}%`
-                  : r.d_date
-                    ? new Date(r.d_date).toLocaleDateString()
-                    : "—"}
               </td>
               <td className="px-3 py-2 text-xs">{r.invalidation?.toFixed(2) ?? "—"}</td>
               <td className="px-3 py-2 text-right">
