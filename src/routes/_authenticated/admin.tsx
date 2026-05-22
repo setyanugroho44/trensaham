@@ -38,6 +38,7 @@ import {
   adminUpdateProfile,
   isCurrentUserAdmin,
 } from "@/lib/admin.functions";
+import { adminExtendSubscription } from "@/lib/subscription.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
@@ -52,6 +53,9 @@ type Row = {
   address: string | null;
   phone: string | null;
   roles: string[];
+  tier: "free" | "pro";
+  trial_ends_at: string | null;
+  pro_ends_at: string | null;
 };
 
 function AdminPage() {
