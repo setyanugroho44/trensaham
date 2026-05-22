@@ -150,7 +150,7 @@ function DashboardPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Scanner Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Detect harmonic patterns across your IDX watchlist.</p>
+          <p className="text-sm text-muted-foreground">Deteksi Pola Harmonik di Watchlist IDX-mu Secara Real-Time.</p>
         </div>
         <div className="flex flex-col items-end gap-1">
           <Button onClick={onScan} disabled={scanning || (access ? !access.hasAccess : false)}>
