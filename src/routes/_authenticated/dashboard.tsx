@@ -285,17 +285,18 @@ function PatternsTable({
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.id} className="border-t border-border hover:bg-muted/30">
-              <td className="px-3 py-2 font-medium">
-                <Link
-                  to="/chart/$symbol"
-                  params={{ symbol: r.symbol }}
-                  search={{ tf: timeframe, pid: r.id }}
-                  className="text-primary hover:underline"
-                >
-                  {r.symbol}
-                </Link>
-              </td>
+            <tr
+              key={r.id}
+              className="border-t border-border hover:bg-muted/30 cursor-pointer"
+              onClick={() =>
+                navigate({
+                  to: "/chart/$symbol",
+                  params: { symbol: r.symbol },
+                  search: { tf: timeframe, pid: r.id },
+                })
+              }
+            >
+              <td className="px-3 py-2 font-medium">{r.symbol}</td>
               <td className="px-3 py-2">{r.pattern_name}</td>
               <td className="px-3 py-2">
                 {r.direction === "bullish" ? (
@@ -334,7 +335,7 @@ function PatternsTable({
               <td className="px-3 py-2 text-xs">{r.invalidation?.toFixed(2) ?? "—"}</td>
               <td className="px-3 py-2 text-right">
                 <button
-                  onClick={() => setPendingDelete(r)}
+                  onClick={(e) => { e.stopPropagation(); setPendingDelete(r); }}
                   className="rounded-full p-1 text-muted-foreground hover:bg-destructive/20 hover:text-destructive"
                   aria-label="Delete pattern"
                 >
