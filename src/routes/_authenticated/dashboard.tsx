@@ -245,6 +245,7 @@ function PatternsTable({
   timeframe: string;
   onDeleted: () => void;
 }) {
+  const navigate = useNavigate();
   const [pendingDelete, setPendingDelete] = useState<PatternRow | null>(null);
 
   const confirmDelete = async () => {
