@@ -73,11 +73,11 @@ export async function assertAccessWithClient(
 }
 
 export async function assertAdminOrSuper(userId: string) {
-  const { data } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from("user_roles")
     .select("role")
     .eq("user_id", userId)
-    .in("role", ["admin", "super_admin"])
-    .maybeSingle();
-  if (!data) throw new Error("Forbidden");
+    .in("role", ["admin", "super_admin"]);
+  if (error) throw new Error(error.message);
+  if (!data || data.length === 0) throw new Error("Forbidden");
 }
