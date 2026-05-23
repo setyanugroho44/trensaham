@@ -159,7 +159,7 @@ function DashboardPage() {
           </Button>
           {access && !access.hasAccess && (
             <p className="text-xs text-destructive">
-              Masa aktif Anda berakhir. Upgrade ke <span className="font-semibold">Pro</span> agar scanner kembali berjalan.
+              Masa aktif Anda berakhir. Upgrade ke akun <span className="font-semibold">Berlangganan</span> agar scanner kembali berjalan.
             </p>
           )}
           {access?.reason === "trial" && access.trialEndsAt && (
@@ -169,7 +169,7 @@ function DashboardPage() {
           )}
           {access?.reason === "pro" && access.proEndsAt && (
             <p className="text-xs text-muted-foreground">
-              Pro aktif hingga {new Date(access.proEndsAt).toLocaleDateString("id-ID")}
+               aktif hingga {new Date(access.proEndsAt).toLocaleDateString("id-ID")}
             </p>
           )}
         </div>
@@ -263,7 +263,7 @@ function PatternsTable({
     return (
       <Card>
         <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          No {kind} patterns. Try running a scan or adjusting filters.
+          Tidak ditemukan pola {kind}. Tekan tombol scan, rubah filter atau tambah kode saham di watchlist.
         </CardContent>
       </Card>
     );
