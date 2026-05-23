@@ -13,6 +13,58 @@ async function assertAdmin(userId: string) {
   if (!data || data.length === 0) throw new Error("Forbidden: admin only");
 }
 
+async function assertSuperAdmin(userId: string) {
+  const { data, error } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("role", "super_admin");
+  if (error) throw new Error(error.message);
+  if (!data || data.length === 0) throw new Error("Forbidden: super admin only");
+}
+
+export const isCurrentUserSuperAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId)
+      .eq("role", "super_admin");
+    return { isSuperAdmin: (data?.length ?? 0) > 0 };
+  });
+
+export const promoteAdminByEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { email: string }) =>
+    z.object({ email: z.string().email().max(255) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertSuperAdmin(context.userId);
+    const email = data.email.trim().toLowerCase();
+
+    // find user by email via paginated listUsers
+    let found: { id: string; email?: string } | null = null;
+    let page = 1;
+    while (page <= 25) {
+      const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
+      if (error) throw new Error(error.message);
+      const u = list.users.find((x) => (x.email ?? "").toLowerCase() === email);
+      if (u) { found = { id: u.id, email: u.email ?? undefined }; break; }
+      if (list.users.length < 200) break;
+      page += 1;
+    }
+    if (!found) throw new Error("User dengan email tersebut tidak ditemukan");
+
+    const { error: insErr } = await supabaseAdmin
+      .from("user_roles")
+      .insert({ user_id: found.id, role: "admin" });
+    if (insErr && !insErr.message.toLowerCase().includes("duplicate")) {
+      throw new Error(insErr.message);
+    }
+    return { ok: true, user_id: found.id, email: found.email };
+  });
+
 export const isCurrentUserAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
