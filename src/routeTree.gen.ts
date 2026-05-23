@@ -20,6 +20,7 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedChartSymbolRouteImport } from './routes/_authenticated/chart.$symbol'
+import { Route as AuthenticatedAdminPagesRouteImport } from './routes/_authenticated/admin.pages'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 
 const SignupRoute = SignupRouteImport.update({
@@ -78,6 +79,11 @@ const AuthenticatedChartSymbolRoute =
     path: '/chart/$symbol',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAdminPagesRoute = AuthenticatedAdminPagesRouteImport.update({
+  id: '/pages',
+  path: '/pages',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
     id: '/lovable/email/queue/process',
@@ -89,12 +95,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/trailing-stop': typeof AuthenticatedTrailingStopRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/p/$slug': typeof PSlugRoute
+  '/admin/pages': typeof AuthenticatedAdminPagesRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
@@ -102,12 +109,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/trailing-stop': typeof AuthenticatedTrailingStopRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/p/$slug': typeof PSlugRoute
+  '/admin/pages': typeof AuthenticatedAdminPagesRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
@@ -117,12 +125,13 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/trailing-stop': typeof AuthenticatedTrailingStopRoute
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
   '/p/$slug': typeof PSlugRoute
+  '/_authenticated/admin/pages': typeof AuthenticatedAdminPagesRoute
   '/_authenticated/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/trailing-stop'
     | '/watchlist'
     | '/p/$slug'
+    | '/admin/pages'
     | '/chart/$symbol'
     | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/trailing-stop'
     | '/watchlist'
     | '/p/$slug'
+    | '/admin/pages'
     | '/chart/$symbol'
     | '/lovable/email/queue/process'
   id:
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/_authenticated/trailing-stop'
     | '/_authenticated/watchlist'
     | '/p/$slug'
+    | '/_authenticated/admin/pages'
     | '/_authenticated/chart/$symbol'
     | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
@@ -257,6 +269,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChartSymbolRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/pages': {
+      id: '/_authenticated/admin/pages'
+      path: '/pages'
+      fullPath: '/admin/pages'
+      preLoaderRoute: typeof AuthenticatedAdminPagesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
       path: '/lovable/email/queue/process'
@@ -267,8 +286,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminPagesRoute: typeof AuthenticatedAdminPagesRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminPagesRoute: AuthenticatedAdminPagesRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedTrailingStopRoute: typeof AuthenticatedTrailingStopRoute
@@ -277,7 +307,7 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedTrailingStopRoute: AuthenticatedTrailingStopRoute,
@@ -300,3 +330,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
