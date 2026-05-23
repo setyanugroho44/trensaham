@@ -143,7 +143,7 @@ export const runScan = createServerFn({ method: "POST" })
       done++;
     }
 
-    await supabase
+    await supabaseAdmin
       .from("scan_runs")
       .update({
         status: errors.length === symbols.length ? "failed" : "completed",
