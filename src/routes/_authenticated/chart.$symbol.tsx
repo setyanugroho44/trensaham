@@ -155,27 +155,23 @@ function ChartPage() {
 
         if (pattern.prz_low != null && pattern.prz_high != null) {
           const lastTime = bars[bars.length - 1].time;
-          const startTime = pattern.c_date ? Date.parse(pattern.c_date) / 1000 : bars[Math.max(0, bars.length - 30)].time;
-          const area = chart.addSeries(AreaSeries, {
-            topColor: "rgba(168, 85, 247, 0.25)",
-            bottomColor: "rgba(168, 85, 247, 0.05)",
-            lineColor: "rgba(168, 85, 247, 0.6)",
-            lineWidth: 1,
+          // 2 garis horizontal penuh untuk menandai batas atas & bawah PRZ
+          candle.createPriceLine({
+            price: pattern.prz_high,
+            color: "rgba(168, 85, 247, 0.9)",
+            lineWidth: 2,
+            lineStyle: 0,
+            axisLabelVisible: true,
+            title: "PRZ High",
           });
-          area.setData([
-            { time: startTime as any, value: pattern.prz_high },
-            { time: lastTime as any, value: pattern.prz_high },
-          ]);
-          const area2 = chart.addSeries(AreaSeries, {
-            topColor: "rgba(168, 85, 247, 0.05)",
-            bottomColor: "rgba(168, 85, 247, 0.0)",
-            lineColor: "rgba(168, 85, 247, 0.6)",
-            lineWidth: 1,
+          candle.createPriceLine({
+            price: pattern.prz_low,
+            color: "rgba(168, 85, 247, 0.9)",
+            lineWidth: 2,
+            lineStyle: 0,
+            axisLabelVisible: true,
+            title: "PRZ Low",
           });
-          area2.setData([
-            { time: startTime as any, value: pattern.prz_low },
-            { time: lastTime as any, value: pattern.prz_low },
-          ]);
 
           // Garis proyeksi C → PRZ (midpoint). Untuk pola developing,
           // tunjukkan arah perkiraan kaki C-D menuju zona reversal.
@@ -330,6 +326,14 @@ function ChartPage() {
               <div className="mt-1 text-xs text-muted-foreground">
                 Zona harga di mana pola berpotensi selesai dan berbalik arah.
               </div>
+              {["Crab", "Deep Crab", "Butterfly"].includes(pattern.pattern_name) && (
+                <div className="mt-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+                  <strong>Peringatan pola extension:</strong> {pattern.pattern_name} cenderung
+                  rawan <em>overshoot</em> di area PRZ. Jika ingin masuk posisi, jangan langsung
+                  entry saat harga menyentuh zona — tunggu konfirmasi <strong>rejection</strong>{" "}
+                  terbentuk (mis. candle reversal / pin bar / engulfing) sebelum mengambil posisi.
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-3 border-t pt-4 text-sm sm:grid-cols-4">
