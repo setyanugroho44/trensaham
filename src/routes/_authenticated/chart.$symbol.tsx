@@ -326,7 +326,14 @@ function ChartPage() {
               <div className="mt-1 text-xs text-muted-foreground">
                 Zona harga di mana pola berpotensi selesai dan berbalik arah.
               </div>
-            </div>
+              {["Crab", "Deep Crab", "Butterfly"].includes(pattern.pattern_name) && (
+                <div className="mt-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+                  <strong>Peringatan pola extension:</strong> {pattern.pattern_name} cenderung
+                  rawan <em>overshoot</em> di area PRZ. Jika ingin masuk posisi, jangan langsung
+                  entry saat harga menyentuh zona — tunggu konfirmasi <strong>rejection</strong>{" "}
+                  terbentuk (mis. candle reversal / pin bar / engulfing) sebelum mengambil posisi.
+                </div>
+              )}
 
             <div className="grid grid-cols-2 gap-3 border-t pt-4 text-sm sm:grid-cols-4">
               <Detail label="Invalidation" value={pattern.invalidation?.toFixed(2) ?? "—"} />
