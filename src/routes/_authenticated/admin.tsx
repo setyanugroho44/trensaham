@@ -86,6 +86,10 @@ function AdminPage() {
           return;
         }
         setAllowed(true);
+        try {
+          const { isSuperAdmin } = await isCurrentUserSuperAdmin();
+          setIsSuper(isSuperAdmin);
+        } catch { /* ignore */ }
       } catch (e) {
         toast.error(e instanceof Error ? e.message : "Gagal memeriksa akses");
         navigate({ to: "/dashboard" });
