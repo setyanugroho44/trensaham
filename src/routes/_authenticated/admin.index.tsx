@@ -42,7 +42,7 @@ import {
 } from "@/lib/admin.functions";
 import { adminExtendSubscription } from "@/lib/subscription.functions";
 
-export const Route = createFileRoute("/_authenticated/admin")({
+export const Route = createFileRoute("/_authenticated/admin/")({
   component: AdminPage,
 });
 
