@@ -37,6 +37,8 @@ import {
   adminListUsers,
   adminUpdateProfile,
   isCurrentUserAdmin,
+  isCurrentUserSuperAdmin,
+  promoteAdminByEmail,
 } from "@/lib/admin.functions";
 import { adminExtendSubscription } from "@/lib/subscription.functions";
 
@@ -62,6 +64,7 @@ function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [allowed, setAllowed] = useState(false);
+  const [isSuper, setIsSuper] = useState(false);
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<Row[]>([]);
   const [q, setQ] = useState("");
@@ -70,6 +73,8 @@ function AdminPage() {
   const [subRow, setSubRow] = useState<Row | null>(null);
   const [subBusy, setSubBusy] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [promoteEmail, setPromoteEmail] = useState("");
+  const [promoting, setPromoting] = useState(false);
 
   useEffect(() => {
     (async () => {
