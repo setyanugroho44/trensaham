@@ -155,27 +155,23 @@ function ChartPage() {
 
         if (pattern.prz_low != null && pattern.prz_high != null) {
           const lastTime = bars[bars.length - 1].time;
-          const startTime = pattern.c_date ? Date.parse(pattern.c_date) / 1000 : bars[Math.max(0, bars.length - 30)].time;
-          const area = chart.addSeries(AreaSeries, {
-            topColor: "rgba(168, 85, 247, 0.25)",
-            bottomColor: "rgba(168, 85, 247, 0.05)",
-            lineColor: "rgba(168, 85, 247, 0.6)",
-            lineWidth: 1,
+          // 2 garis horizontal penuh untuk menandai batas atas & bawah PRZ
+          candle.createPriceLine({
+            price: pattern.prz_high,
+            color: "rgba(168, 85, 247, 0.9)",
+            lineWidth: 2,
+            lineStyle: 0,
+            axisLabelVisible: true,
+            title: "PRZ High",
           });
-          area.setData([
-            { time: startTime as any, value: pattern.prz_high },
-            { time: lastTime as any, value: pattern.prz_high },
-          ]);
-          const area2 = chart.addSeries(AreaSeries, {
-            topColor: "rgba(168, 85, 247, 0.05)",
-            bottomColor: "rgba(168, 85, 247, 0.0)",
-            lineColor: "rgba(168, 85, 247, 0.6)",
-            lineWidth: 1,
+          candle.createPriceLine({
+            price: pattern.prz_low,
+            color: "rgba(168, 85, 247, 0.9)",
+            lineWidth: 2,
+            lineStyle: 0,
+            axisLabelVisible: true,
+            title: "PRZ Low",
           });
-          area2.setData([
-            { time: startTime as any, value: pattern.prz_low },
-            { time: lastTime as any, value: pattern.prz_low },
-          ]);
 
           // Garis proyeksi C → PRZ (midpoint). Untuk pola developing,
           // tunjukkan arah perkiraan kaki C-D menuju zona reversal.
