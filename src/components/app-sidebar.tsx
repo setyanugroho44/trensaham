@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Activity, ListChecks, TrendingDown, User, LogOut, Shield } from "lucide-react";
+import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Sidebar,
@@ -64,14 +64,24 @@ export function AppSidebar() {
                 </SidebarMenuItem>
               ))}
               {isAdmin && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={isActive("/admin")} tooltip="Admin">
-                    <Link to="/admin" onClick={handleNavClick}>
-                      <Shield className="h-5 w-5" />
-                      <span className="text-base">Admin</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={isActive("/admin/pages")} tooltip="Halaman">
+                      <Link to="/admin/pages" onClick={handleNavClick}>
+                        <FileText className="h-5 w-5" />
+                        <span className="text-base">Halaman</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={path === "/admin"} tooltip="Admin">
+                      <Link to="/admin" onClick={handleNavClick}>
+                        <Shield className="h-5 w-5" />
+                        <span className="text-base">Admin</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </>
               )}
             </SidebarMenu>
           </SidebarGroupContent>
