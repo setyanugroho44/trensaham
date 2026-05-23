@@ -37,6 +37,8 @@ import {
   adminListUsers,
   adminUpdateProfile,
   isCurrentUserAdmin,
+  isCurrentUserSuperAdmin,
+  promoteAdminByEmail,
 } from "@/lib/admin.functions";
 import { adminExtendSubscription } from "@/lib/subscription.functions";
 
@@ -62,6 +64,7 @@ function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [allowed, setAllowed] = useState(false);
+  const [isSuper, setIsSuper] = useState(false);
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<Row[]>([]);
   const [q, setQ] = useState("");
@@ -70,6 +73,8 @@ function AdminPage() {
   const [subRow, setSubRow] = useState<Row | null>(null);
   const [subBusy, setSubBusy] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [promoteEmail, setPromoteEmail] = useState("");
+  const [promoting, setPromoting] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -81,6 +86,10 @@ function AdminPage() {
           return;
         }
         setAllowed(true);
+        try {
+          const { isSuperAdmin } = await isCurrentUserSuperAdmin();
+          setIsSuper(isSuperAdmin);
+        } catch { /* ignore */ }
       } catch (e) {
         toast.error(e instanceof Error ? e.message : "Gagal memeriksa akses");
         navigate({ to: "/dashboard" });
@@ -206,6 +215,49 @@ function AdminPage() {
           </CardContent>
         </Card>
       </div>
+
+      {isSuper && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Angkat Admin Baru</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form
+              className="flex flex-col sm:flex-row gap-2"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!promoteEmail.trim()) return;
+                setPromoting(true);
+                try {
+                  await promoteAdminByEmail({ data: { email: promoteEmail.trim() } });
+                  toast.success(`${promoteEmail} kini admin`);
+                  setPromoteEmail("");
+                  await load();
+                } catch (err) {
+                  toast.error(err instanceof Error ? err.message : "Gagal mengangkat admin");
+                } finally {
+                  setPromoting(false);
+                }
+              }}
+            >
+              <Input
+                type="email"
+                placeholder="email@contoh.com"
+                value={promoteEmail}
+                onChange={(e) => setPromoteEmail(e.target.value)}
+                required
+              />
+              <Button type="submit" disabled={promoting}>
+                {promoting ? "Memproses…" : "Jadikan Admin"}
+              </Button>
+            </form>
+            <p className="text-xs text-muted-foreground mt-2">
+              Hanya super admin yang dapat mengangkat admin baru.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
 
       <Card>
         <CardHeader>
