@@ -26,7 +26,10 @@ function AuthLayout() {
         <AppSidebar />
         <SidebarInset>
           <header className="flex h-14 items-center gap-3 border-b border-border bg-card px-4">
-            <SidebarTrigger className="h-9 w-9 [&>svg]:h-5 [&>svg]:w-5" />
+            <div className="flex flex-col items-center gap-0">
+              <SidebarTrigger className="h-9 w-9 [&>svg]:h-5 [&>svg]:w-5" />
+              <span className="text-[10px] text-muted-foreground leading-none">Menu</span>
+            </div>
             <Link to="/dashboard" className="text-base font-semibold tracking-tight">
               IDX Harmonic Scanner
             </Link>
