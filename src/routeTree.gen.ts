@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as AuthenticatedWatchlistRouteImport } from './routes/_authenticated/watchlist'
 import { Route as AuthenticatedTrailingStopRouteImport } from './routes/_authenticated/trailing-stop'
+import { Route as AuthenticatedReferralRouteImport } from './routes/_authenticated/referral'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -71,6 +72,11 @@ const AuthenticatedTrailingStopRoute =
     path: '/trailing-stop',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedReferralRoute = AuthenticatedReferralRouteImport.update({
+  id: '/referral',
+  path: '/referral',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/verified': typeof VerifiedRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/referral': typeof AuthenticatedReferralRoute
   '/trailing-stop': typeof AuthenticatedTrailingStopRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/p/$slug': typeof PSlugRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/verified': typeof VerifiedRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/referral': typeof AuthenticatedReferralRoute
   '/trailing-stop': typeof AuthenticatedTrailingStopRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/p/$slug': typeof PSlugRoute
@@ -155,6 +163,7 @@ export interface FileRoutesById {
   '/verified': typeof VerifiedRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/referral': typeof AuthenticatedReferralRoute
   '/_authenticated/trailing-stop': typeof AuthenticatedTrailingStopRoute
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
   '/p/$slug': typeof PSlugRoute
@@ -174,6 +183,7 @@ export interface FileRouteTypes {
     | '/verified'
     | '/dashboard'
     | '/profile'
+    | '/referral'
     | '/trailing-stop'
     | '/watchlist'
     | '/p/$slug'
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/verified'
     | '/dashboard'
     | '/profile'
+    | '/referral'
     | '/trailing-stop'
     | '/watchlist'
     | '/p/$slug'
@@ -209,6 +220,7 @@ export interface FileRouteTypes {
     | '/verified'
     | '/_authenticated/dashboard'
     | '/_authenticated/profile'
+    | '/_authenticated/referral'
     | '/_authenticated/trailing-stop'
     | '/_authenticated/watchlist'
     | '/p/$slug'
@@ -295,6 +307,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTrailingStopRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/referral': {
+      id: '/_authenticated/referral'
+      path: '/referral'
+      fullPath: '/referral'
+      preLoaderRoute: typeof AuthenticatedReferralRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -350,6 +369,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedReferralRoute: typeof AuthenticatedReferralRoute
   AuthenticatedTrailingStopRoute: typeof AuthenticatedTrailingStopRoute
   AuthenticatedWatchlistRoute: typeof AuthenticatedWatchlistRoute
   AuthenticatedChartSymbolRoute: typeof AuthenticatedChartSymbolRoute
@@ -361,6 +381,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedReferralRoute: AuthenticatedReferralRoute,
   AuthenticatedTrailingStopRoute: AuthenticatedTrailingStopRoute,
   AuthenticatedWatchlistRoute: AuthenticatedWatchlistRoute,
   AuthenticatedChartSymbolRoute: AuthenticatedChartSymbolRoute,
