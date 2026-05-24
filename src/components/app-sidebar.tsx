@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, FileText } from "lucide-react";
+import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, FileText, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Sidebar,
