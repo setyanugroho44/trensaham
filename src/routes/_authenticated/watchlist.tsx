@@ -35,7 +35,10 @@ function WatchlistPage() {
 
   useEffect(() => {
     load();
-  }, []);
+    fetchAccess()
+      .then((a) => setTier(a.tier))
+      .catch(() => {});
+  }, [fetchAccess]);
 
   const addBulk = async () => {
     const codes = Array.from(
