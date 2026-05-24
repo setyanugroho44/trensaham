@@ -89,7 +89,7 @@ function WatchlistPage() {
       <Card>
         <CardHeader>
           <CardTitle>Tambah Saham</CardTitle>
-          <CardDescription>Paste beberapa kode saham pisahkan dengan spasi, koma, atau baris baru. Direkomendasikan minimum 20 Maksimal {MAX_SYMBOLS}.</CardDescription>
+          <CardDescription>{tierLabel} maksimal {MAX_SYMBOLS} kode saham. Paste beberapa kode saham pisahkan dengan spasi, koma, atau baris baru.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <Textarea
