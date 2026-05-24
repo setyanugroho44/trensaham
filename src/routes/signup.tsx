@@ -30,7 +30,7 @@ function SignupPage() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: `https://analisasahamindo.com/login` },
+      options: { emailRedirectTo: `https://analisasahamindo.com/verified` },
     });
     setSubmitting(false);
     if (error) {
