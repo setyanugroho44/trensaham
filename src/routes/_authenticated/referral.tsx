@@ -17,7 +17,7 @@ function ReferralPage() {
   const fn = useServerFn(getMyReferralStats);
   const [code, setCode] = useState("");
   const [count, setCount] = useState(0);
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const origin = "https://analisasahamindo.com";
   const link = code ? `${origin}/signup?ref=${code}` : "";
 
   useEffect(() => {
