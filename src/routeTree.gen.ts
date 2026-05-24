@@ -20,7 +20,7 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedChartSymbolRouteImport } from './routes/_authenticated/chart.$symbol'
-import { Route as AuthenticatedAdminPagesRouteImport } from './routes/_authenticated/admin.pages'
+import { Route as AuthenticatedAdminPagesIndexRouteImport } from './routes/_authenticated/admin.pages.index'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as AuthenticatedAdminPagesSlugRouteImport } from './routes/_authenticated/admin.pages.$slug'
 
@@ -80,11 +80,12 @@ const AuthenticatedChartSymbolRoute =
     path: '/chart/$symbol',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedAdminPagesRoute = AuthenticatedAdminPagesRouteImport.update({
-  id: '/admin/pages',
-  path: '/admin/pages',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
+const AuthenticatedAdminPagesIndexRoute =
+  AuthenticatedAdminPagesIndexRouteImport.update({
+    id: '/admin/pages/',
+    path: '/admin/pages/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
     id: '/lovable/email/queue/process',
@@ -93,9 +94,9 @@ const LovableEmailQueueProcessRoute =
   } as any)
 const AuthenticatedAdminPagesSlugRoute =
   AuthenticatedAdminPagesSlugRouteImport.update({
-    id: '/$slug',
-    path: '/$slug',
-    getParentRoute: () => AuthenticatedAdminPagesRoute,
+    id: '/admin/pages/$slug',
+    path: '/admin/pages/$slug',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -107,11 +108,11 @@ export interface FileRoutesByFullPath {
   '/trailing-stop': typeof AuthenticatedTrailingStopRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/p/$slug': typeof PSlugRoute
-  '/admin/pages': typeof AuthenticatedAdminPagesRouteWithChildren
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/pages/$slug': typeof AuthenticatedAdminPagesSlugRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/admin/pages/': typeof AuthenticatedAdminPagesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -122,11 +123,11 @@ export interface FileRoutesByTo {
   '/trailing-stop': typeof AuthenticatedTrailingStopRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/p/$slug': typeof PSlugRoute
-  '/admin/pages': typeof AuthenticatedAdminPagesRouteWithChildren
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/pages/$slug': typeof AuthenticatedAdminPagesSlugRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/admin/pages': typeof AuthenticatedAdminPagesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -139,11 +140,11 @@ export interface FileRoutesById {
   '/_authenticated/trailing-stop': typeof AuthenticatedTrailingStopRoute
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
   '/p/$slug': typeof PSlugRoute
-  '/_authenticated/admin/pages': typeof AuthenticatedAdminPagesRouteWithChildren
   '/_authenticated/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/pages/$slug': typeof AuthenticatedAdminPagesSlugRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/_authenticated/admin/pages/': typeof AuthenticatedAdminPagesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -156,11 +157,11 @@ export interface FileRouteTypes {
     | '/trailing-stop'
     | '/watchlist'
     | '/p/$slug'
-    | '/admin/pages'
     | '/chart/$symbol'
     | '/admin/'
     | '/admin/pages/$slug'
     | '/lovable/email/queue/process'
+    | '/admin/pages/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -171,11 +172,11 @@ export interface FileRouteTypes {
     | '/trailing-stop'
     | '/watchlist'
     | '/p/$slug'
-    | '/admin/pages'
     | '/chart/$symbol'
     | '/admin'
     | '/admin/pages/$slug'
     | '/lovable/email/queue/process'
+    | '/admin/pages'
   id:
     | '__root__'
     | '/'
@@ -187,11 +188,11 @@ export interface FileRouteTypes {
     | '/_authenticated/trailing-stop'
     | '/_authenticated/watchlist'
     | '/p/$slug'
-    | '/_authenticated/admin/pages'
     | '/_authenticated/chart/$symbol'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/pages/$slug'
     | '/lovable/email/queue/process'
+    | '/_authenticated/admin/pages/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -282,11 +283,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChartSymbolRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/admin/pages': {
-      id: '/_authenticated/admin/pages'
+    '/_authenticated/admin/pages/': {
+      id: '/_authenticated/admin/pages/'
       path: '/admin/pages'
-      fullPath: '/admin/pages'
-      preLoaderRoute: typeof AuthenticatedAdminPagesRouteImport
+      fullPath: '/admin/pages/'
+      preLoaderRoute: typeof AuthenticatedAdminPagesIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/lovable/email/queue/process': {
@@ -298,36 +299,23 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/admin/pages/$slug': {
       id: '/_authenticated/admin/pages/$slug'
-      path: '/$slug'
+      path: '/admin/pages/$slug'
       fullPath: '/admin/pages/$slug'
       preLoaderRoute: typeof AuthenticatedAdminPagesSlugRouteImport
-      parentRoute: typeof AuthenticatedAdminPagesRoute
+      parentRoute: typeof AuthenticatedRoute
     }
   }
 }
-
-interface AuthenticatedAdminPagesRouteChildren {
-  AuthenticatedAdminPagesSlugRoute: typeof AuthenticatedAdminPagesSlugRoute
-}
-
-const AuthenticatedAdminPagesRouteChildren: AuthenticatedAdminPagesRouteChildren =
-  {
-    AuthenticatedAdminPagesSlugRoute: AuthenticatedAdminPagesSlugRoute,
-  }
-
-const AuthenticatedAdminPagesRouteWithChildren =
-  AuthenticatedAdminPagesRoute._addFileChildren(
-    AuthenticatedAdminPagesRouteChildren,
-  )
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedTrailingStopRoute: typeof AuthenticatedTrailingStopRoute
   AuthenticatedWatchlistRoute: typeof AuthenticatedWatchlistRoute
-  AuthenticatedAdminPagesRoute: typeof AuthenticatedAdminPagesRouteWithChildren
   AuthenticatedChartSymbolRoute: typeof AuthenticatedChartSymbolRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminPagesSlugRoute: typeof AuthenticatedAdminPagesSlugRoute
+  AuthenticatedAdminPagesIndexRoute: typeof AuthenticatedAdminPagesIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -335,9 +323,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedTrailingStopRoute: AuthenticatedTrailingStopRoute,
   AuthenticatedWatchlistRoute: AuthenticatedWatchlistRoute,
-  AuthenticatedAdminPagesRoute: AuthenticatedAdminPagesRouteWithChildren,
   AuthenticatedChartSymbolRoute: AuthenticatedChartSymbolRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminPagesSlugRoute: AuthenticatedAdminPagesSlugRoute,
+  AuthenticatedAdminPagesIndexRoute: AuthenticatedAdminPagesIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
