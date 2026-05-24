@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { toast } from "sonner";
+import { getMyAccess } from "@/lib/subscription.functions";
 
 export const Route = createFileRoute("/_authenticated/watchlist")({
   component: WatchlistPage,
@@ -17,7 +19,10 @@ function WatchlistPage() {
   const [symbols, setSymbols] = useState<{ id: string; symbol: string }[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const MAX_SYMBOLS = 50;
+  const [tier, setTier] = useState<"free" | "pro">("free");
+  const fetchAccess = useServerFn(getMyAccess);
+  const MAX_SYMBOLS = tier === "pro" ? 50 : 30;
+  const tierLabel = tier === "pro" ? "Pro" : "Free";
 
   const load = async () => {
     const { data, error } = await supabase
