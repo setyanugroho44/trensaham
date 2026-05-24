@@ -21,6 +21,15 @@ function SignupPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref");
+    if (ref && /^[0-9a-f-]{36}$/i.test(ref)) {
+      localStorage.setItem("pending_ref", ref);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!loading && user) navigate({ to: "/dashboard" });
   }, [user, loading, navigate]);
 
