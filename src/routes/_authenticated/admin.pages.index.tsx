@@ -35,7 +35,7 @@ import { isCurrentUserAdmin } from "@/lib/admin.functions";
 import { adminListPages, adminUpsertPage, adminDeletePage } from "@/lib/cms.functions";
 import { Pencil, Trash2, Plus, ExternalLink } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/admin/pages")({
+export const Route = createFileRoute("/_authenticated/admin/pages/")({
   component: AdminPagesPage,
 });
 
