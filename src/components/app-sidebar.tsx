@@ -22,6 +22,7 @@ const items = [
   { title: "Dashboard", url: "/dashboard", icon: Activity },
   { title: "Watchlist", url: "/watchlist", icon: ListChecks },
   { title: "Trailing Stop", url: "/trailing-stop", icon: TrendingDown },
+  { title: "Referral", url: "/referral", icon: Share2 },
   { title: "Profil", url: "/profile", icon: User },
 ];
 
