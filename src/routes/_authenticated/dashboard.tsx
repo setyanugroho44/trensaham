@@ -67,6 +67,7 @@ function playBeep() {
 }
 
 function DashboardPage() {
+  const navigate = useNavigate();
   const [timeframe, setTimeframe] = useState<"1d" | "1wk" | "1mo">("1d");
   const [minConf, setMinConf] = useState<number>(50);
   const [minProgress, setMinProgress] = useState<number>(10);
@@ -76,6 +77,7 @@ function DashboardPage() {
   const [access, setAccess] = useState<AccessInfo | null>(null);
   const scanFn = useServerFn(runScan);
   const accessFn = useServerFn(getMyAccess);
+  const watchlistToastShown = useRef(false);
 
   const load = async () => {
     const { data, error } = await supabase
