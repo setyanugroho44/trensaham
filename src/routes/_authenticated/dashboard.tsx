@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { runScan } from "@/lib/scan.functions";
@@ -67,6 +67,7 @@ function playBeep() {
 }
 
 function DashboardPage() {
+  const navigate = useNavigate();
   const [timeframe, setTimeframe] = useState<"1d" | "1wk" | "1mo">("1d");
   const [minConf, setMinConf] = useState<number>(50);
   const [minProgress, setMinProgress] = useState<number>(10);
@@ -76,6 +77,7 @@ function DashboardPage() {
   const [access, setAccess] = useState<AccessInfo | null>(null);
   const scanFn = useServerFn(runScan);
   const accessFn = useServerFn(getMyAccess);
+  const watchlistToastShown = useRef(false);
 
   const load = async () => {
     const { data, error } = await supabase
@@ -99,6 +101,18 @@ function DashboardPage() {
     loadWatchlistCount();
     accessFn().then(setAccess).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (watchlistCount === 0 && !watchlistToastShown.current) {
+      watchlistToastShown.current = true;
+      toast.warning("Watchlist kosong. Anda perlu menambahkan saham agar scanner dapat bekerja.", {
+        action: {
+          label: "Tambah Sekarang",
+          onClick: () => navigate({ to: "/watchlist" }),
+        },
+      });
+    }
+  }, [watchlistCount, navigate]);
 
   const onScan = async () => {
     setScanning(true);
