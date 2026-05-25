@@ -100,6 +100,19 @@ function DashboardPage() {
     accessFn().then(setAccess).catch(() => {});
   }, []);
 
+  const watchlistToastShown = useRef(false);
+  useEffect(() => {
+    if (watchlistCount === 0 && !watchlistToastShown.current) {
+      watchlistToastShown.current = true;
+      toast.warning("Watchlist kosong. Anda perlu menambahkan saham agar scanner dapat bekerja.", {
+        action: {
+          label: "Tambah Sekarang",
+          onClick: () => navigate({ to: "/watchlist" }),
+        },
+      });
+    }
+  }, [watchlistCount, navigate]);
+
   const onScan = async () => {
     setScanning(true);
     try {
