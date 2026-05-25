@@ -45,8 +45,9 @@ function Landing() {
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
             Scanner Pola Harmonik Saham Indonesia
           </h1>
+          <p>Lihat kemana harga akan bergerak hanya dengan satu tombol.</p>
           <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground">
-            Deteksi otomatis pola harmonik (Gartley, Bat, Crab, Butterfly) pada saham IDX.
+            Deteksi otomatis pola harmonik pada saham Indonesia.
             Hemat waktu analisa, fokus pada eksekusi.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -77,7 +78,7 @@ function Landing() {
           </div>
         </div>
       </section>
-
+      <ul><li><strong>Otomatis</strong> — scan puluhan saham IDX dalam hitungan detik.</li><li><strong>Akurat</strong> — validasi rasio Fibonacci sesuai aturan masing-masing pola.</li><li><strong>Watchlist &amp; Trailing Stop</strong> — pantau saham favorit dan kelola risiko.</li><li><strong>Chart interaktif</strong> — visualisasi pola XABCD lengkap dengan zona PRZ.</li></ul>
       {/* FAQ */}
       <section className="border-b">
         <div className="mx-auto max-w-3xl px-4 py-16">
