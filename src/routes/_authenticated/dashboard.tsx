@@ -102,7 +102,6 @@ function DashboardPage() {
     accessFn().then(setAccess).catch(() => {});
   }, []);
 
-  const watchlistToastShown = useRef(false);
   useEffect(() => {
     if (watchlistCount === 0 && !watchlistToastShown.current) {
       watchlistToastShown.current = true;
