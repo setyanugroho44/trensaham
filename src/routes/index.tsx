@@ -78,7 +78,18 @@ function Landing() {
           </div>
         </div>
       </section>
-      <ul><li><strong>Otomatis</strong> — scan puluhan saham IDX dalam hitungan detik.</li><li><strong>Akurat</strong> — validasi rasio Fibonacci sesuai aturan masing-masing pola.</li><li><strong>Watchlist &amp; Trailing Stop</strong> — pantau saham favorit dan kelola risiko.</li><li><strong>Chart interaktif</strong> — visualisasi pola XABCD lengkap dengan zona PRZ.</li></ul>
+      {/* How it works */}
+      <section className="border-b">
+        <div className="mx-auto max-w-5xl px-4 py-16">
+          <h2 className="text-center text-3xl font-semibold tracking-tight">Mengapa IDX Harmonic?</h2>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <BenefitCard title="Otomatis" desc="Scan puluhan saham IDX dalam hitungan detik." />
+            <BenefitCard title="Akurat" desc="Validasi rasio Fibonacci sesuai aturan masing-masing pola." />
+            <BenefitCard title="Watchlist & Trailing Stop" desc="Pantau saham favorit dan kelola risiko." />
+            <BenefitCard title="Chart Interaktif" desc="Visualisasi pola XABCD lengkap dengan zona PRZ." />
+          </div>
+        </div>
+      </section>
       {/* FAQ */}
       <section className="border-b">
         <div className="mx-auto max-w-3xl px-4 py-16">
@@ -123,6 +134,15 @@ function FeatureCard({ icon: Icon, label }: { icon: React.ElementType; label: st
     <div className="flex flex-col items-center gap-2 rounded-md border bg-card p-4 text-center">
       <Icon className="h-6 w-6 text-primary" />
       <div className="text-sm font-medium">{label}</div>
+    </div>
+  );
+}
+
+function BenefitCard({ title, desc }: { title: string; desc: string }) {
+  return (
+    <div className="flex flex-col items-center gap-2 rounded-md border bg-card p-4 text-center">
+      <div className="text-sm font-semibold">{title}</div>
+      <div className="text-xs text-muted-foreground">{desc}</div>
     </div>
   );
 }
