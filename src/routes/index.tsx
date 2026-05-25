@@ -45,8 +45,9 @@ function Landing() {
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
             Scanner Pola Harmonik Saham Indonesia
           </h1>
-          <p>Lihat kemana harga akan bergerak hanya dengan satu tombol.</p>
+  
           <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground">
+            Lihat kemana harga akan bergerak hanya dengan satu tombol.
             Deteksi otomatis pola harmonik pada saham Indonesia.
             Hemat waktu analisa, fokus pada eksekusi.
           </p>
@@ -55,7 +56,7 @@ function Landing() {
               <Button asChild size="lg"><Link to="/dashboard">Buka Dashboard</Link></Button>
             ) : (
               <>
-                <Button asChild size="lg"><Link to="/signup">Mulai Gratis 14 Hari</Link></Button>
+                <Button asChild size="lg"><Link to="/signup">Daftar</Link></Button>
                 <Button asChild size="lg" variant="outline"><Link to="/login">Sudah punya akun</Link></Button>
               </>
             )}
@@ -68,7 +69,7 @@ function Landing() {
         <div className="mx-auto max-w-5xl px-4 py-16">
           <h2 className="text-center text-3xl font-semibold tracking-tight">Fitur Utama</h2>
           <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-muted-foreground">
-            Semua yang Anda butuhkan untuk memindai dan mengelola posisi berbasis pola harmonik.
+            Scan dan kelola posisi berbasis pola harmonik.
           </p>
           <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
             <FeatureCard icon={Activity} label="Pattern Detection" />
@@ -98,14 +99,13 @@ function Landing() {
             <div>
               <h3 className="font-semibold">Apa itu pola harmonik?</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Pola harmonik adalah struktur harga berbasis rasio Fibonacci (Gartley, Bat, Crab,
-                Butterfly) yang memberi area reversal dengan risk/reward yang terdefinisi.
+                adalah metode analisis teknikal pada grafik saham menggunakan rasio Fibonacci untuk mendeteksi pola geometris yang berulang. Sederhananya, pola ini berdasar pergerakan harga pasar yang memiliki siklus alami seperti gelombang. Dengan menggabungkan geometri dan matematika tersebut, trader bisa memprediksi titik jenuh pasar—yaitu kapan harga yang sedang naik akan berbalik turun, atau kapan harga yang sedang turun akan mulai melonjak naik kembali dengan akurasi yang cukup tinggi
               </p>
             </div>
             <div>
               <h3 className="font-semibold">Apakah ada masa percobaan?</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Ya, semua pengguna baru mendapat 14 hari gratis untuk mencoba seluruh fitur.
+                Ya, gratis 14 hari untuk mencoba seluruh fitur dan dapat diperpanjang setiap kali mereferensikan pada orang lain.
               </p>
             </div>
             <div>
