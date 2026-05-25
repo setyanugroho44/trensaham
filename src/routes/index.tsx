@@ -137,3 +137,12 @@ function FeatureCard({ icon: Icon, label }: { icon: React.ElementType; label: st
     </div>
   );
 }
+
+function BenefitCard({ title, desc }: { title: string; desc: string }) {
+  return (
+    <div className="flex flex-col items-center gap-2 rounded-md border bg-card p-4 text-center">
+      <div className="text-sm font-semibold">{title}</div>
+      <div className="text-xs text-muted-foreground">{desc}</div>
+    </div>
+  );
+}
