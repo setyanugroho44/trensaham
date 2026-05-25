@@ -23,7 +23,6 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedChartSymbolRouteImport } from './routes/_authenticated/chart.$symbol'
-import { Route as AuthenticatedAdminPagesIndexRouteImport } from './routes/_authenticated/admin.pages.index'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as AuthenticatedAdminPagesSlugRouteImport } from './routes/_authenticated/admin.pages.$slug'
 
@@ -98,12 +97,6 @@ const AuthenticatedChartSymbolRoute =
     path: '/chart/$symbol',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedAdminPagesIndexRoute =
-  AuthenticatedAdminPagesIndexRouteImport.update({
-    id: '/admin/pages/',
-    path: '/admin/pages/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
     id: '/lovable/email/queue/process',
@@ -133,7 +126,6 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/pages/$slug': typeof AuthenticatedAdminPagesSlugRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
-  '/admin/pages/': typeof AuthenticatedAdminPagesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -151,7 +143,6 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/pages/$slug': typeof AuthenticatedAdminPagesSlugRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
-  '/admin/pages': typeof AuthenticatedAdminPagesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -171,7 +162,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/pages/$slug': typeof AuthenticatedAdminPagesSlugRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
-  '/_authenticated/admin/pages/': typeof AuthenticatedAdminPagesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -191,7 +181,6 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/pages/$slug'
     | '/lovable/email/queue/process'
-    | '/admin/pages/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -209,7 +198,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/pages/$slug'
     | '/lovable/email/queue/process'
-    | '/admin/pages'
   id:
     | '__root__'
     | '/'
@@ -228,7 +216,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/admin/pages/$slug'
     | '/lovable/email/queue/process'
-    | '/_authenticated/admin/pages/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -342,13 +329,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChartSymbolRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/admin/pages/': {
-      id: '/_authenticated/admin/pages/'
-      path: '/admin/pages'
-      fullPath: '/admin/pages/'
-      preLoaderRoute: typeof AuthenticatedAdminPagesIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
       path: '/lovable/email/queue/process'
@@ -375,7 +355,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedChartSymbolRoute: typeof AuthenticatedChartSymbolRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminPagesSlugRoute: typeof AuthenticatedAdminPagesSlugRoute
-  AuthenticatedAdminPagesIndexRoute: typeof AuthenticatedAdminPagesIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -387,7 +366,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedChartSymbolRoute: AuthenticatedChartSymbolRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminPagesSlugRoute: AuthenticatedAdminPagesSlugRoute,
-  AuthenticatedAdminPagesIndexRoute: AuthenticatedAdminPagesIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
