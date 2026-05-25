@@ -103,9 +103,9 @@ function Landing() {
               </p>
             </div>
             <div>
-              <h3 className="font-semibold">Apakah ada masa percobaan?</h3>
+              <h3 className="font-semibold">Apakah informasinya akurat?</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Ya, gratis 14 hari untuk mencoba seluruh fitur dan dapat diperpanjang setiap kali mereferensikan pada orang lain.
+                Meskipun tingkat keberhasilannya tinggi, tidak ada analisis teknikal yang sempurna dan menjamin keuntungan 100%. Ada free trial yang dapat anda manfaatkan untuk menilai keakuratan pola scanner ini.
               </p>
             </div>
             <div>
