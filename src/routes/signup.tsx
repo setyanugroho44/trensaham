@@ -65,7 +65,7 @@ function SignupPage() {
             <div className="space-y-2">
               <Label htmlFor="password">Kata Sandi</Label>
               <Input id="password" type="password" required minLength={1} value={password} onChange={(e) => setPassword(e.target.value)} />
-              <p className="text-xs text-muted-foreground">Bebas — boleh menggunakan kata sandi sederhana.</p>
+              <p className="text-xs text-muted-foreground">Gunakan kombinasi huruf besar,kecil,angka dan karakter spesial.</p>
             </div>
             <Button type="submit" className="w-full" disabled={submitting}>
               {submitting ? "Memproses…" : "Daftar"}
