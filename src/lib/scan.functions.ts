@@ -84,7 +84,7 @@ export const runScan = createServerFn({ method: "POST" })
         // pivot mewakili swing yang signifikan & pola merentang banyak candle.
         // Dinaikkan agar pola besar lebih sering muncul, pola sempit terfilter.
         const scales =
-          data.timeframe === "1mo" ? [25, 40] : data.timeframe === "1wk" ? [15, 22] : [8, 14];
+          data.timeframe === "1mo" ? [25, 50] : data.timeframe === "1wk" ? [15, 24] : [8, 14];
         // Minimum bar-span X→C agar pola tidak terlalu sempit di sumbu waktu.
         const minBarsSpan = data.timeframe === "1mo" ? 8 : data.timeframe === "1wk" ? 16 : 25;
         // Minimum panjang kaki XA (% terhadap harga X) agar pola tidak sempit di sumbu harga.
