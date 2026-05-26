@@ -105,7 +105,7 @@ function Landing() {
             <div>
               <h3 className="font-semibold">Apakah informasinya akurat?</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Meskipun tingkat keberhasilannya tinggi, tidak ada analisis teknikal yang sempurna dan menjamin keuntungan 100%. Ada free trial yang dapat anda manfaatkan untuk menilai keakuratan pola scanner ini.
+                Meskipun tingkat keberhasilan harmonic pattern cukup tinggi, tidak ada analisis teknikal yang sempurna dan menjamin keuntungan. Ada free trial yang dapat anda manfaatkan untuk menilai keakuratan pola scanner ini.
               </p>
             </div>
             <div>
@@ -115,6 +115,14 @@ function Landing() {
 Ini adalah area yang sering diperhatikan trader untuk mencari peluang entry.
               </p>
             </div>
+            <div>
+              <h3 className="font-semibold">Apakah web app ini merekomendasikan jual/beli ?</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+               Tidak secara langsung.
+Website ini hanya menyediakan informasi teknikal hasil scan pola. Keputusan trading tetap sepenuhnya tanggung jawab pengguna.
+              </p>
+            </div>
+
           </div>
         </div>
       </section>
