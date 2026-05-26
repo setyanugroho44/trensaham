@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { applyReferral } from "@/lib/referral.functions";
+import { captureRefFromUrl, clearPendingRef, getPendingRef } from "@/lib/referral-code";
 
 type AuthContextValue = {
   user: User | null;
@@ -14,14 +15,14 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 async function tryApplyPendingReferral() {
   if (typeof window === "undefined") return;
-  const ref = localStorage.getItem("pending_ref");
+  const ref = getPendingRef();
   if (!ref) return;
   try {
     await applyReferral({ data: { referrer_id: ref } });
   } catch {
     // ignore
   } finally {
-    localStorage.removeItem("pending_ref");
+    clearPendingRef();
   }
 }
 
