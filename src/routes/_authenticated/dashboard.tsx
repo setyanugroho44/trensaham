@@ -173,7 +173,9 @@ function DashboardPage() {
           </Button>
           {access && !access.hasAccess && (
             <p className="text-xs text-destructive">
-              Masa aktif Anda berakhir. Upgrade ke akun <span className="font-semibold">Berlangganan</span> agar scanner kembali berjalan.
+              Masa aktif Anda berakhir.{" "}
+              <Link to="/upgrade" className="font-semibold underline">Upgrade ke Pro</Link>{" "}
+              agar scanner kembali berjalan.
             </p>
           )}
           {access?.reason === "trial" && access.trialEndsAt && (

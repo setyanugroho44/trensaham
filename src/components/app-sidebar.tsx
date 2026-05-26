@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Share2 } from "lucide-react";
+import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Share2, Crown, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Sidebar,
@@ -23,6 +23,7 @@ const items = [
   { title: "Watchlist", url: "/watchlist", icon: ListChecks },
   { title: "Trailing Stop", url: "/trailing-stop", icon: TrendingDown },
   { title: "Referral", url: "/referral", icon: Share2 },
+  { title: "Upgrade Pro", url: "/upgrade", icon: Crown },
   { title: "Profil", url: "/profile", icon: User },
 ];
 
@@ -65,14 +66,24 @@ export function AppSidebar() {
                 </SidebarMenuItem>
               ))}
               {isAdmin && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={path === "/admin"} tooltip="Admin">
-                    <Link to="/admin" onClick={handleNavClick}>
-                      <Shield className="h-5 w-5" />
-                      <span className="text-base">Admin</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={path === "/admin"} tooltip="Admin">
+                      <Link to="/admin" onClick={handleNavClick}>
+                        <Shield className="h-5 w-5" />
+                        <span className="text-base">Admin</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={path === "/admin/payments"} tooltip="Pembayaran">
+                      <Link to="/admin/payments" onClick={handleNavClick}>
+                        <Wallet className="h-5 w-5" />
+                        <span className="text-base">Pembayaran</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </>
               )}
             </SidebarMenu>
           </SidebarGroupContent>
