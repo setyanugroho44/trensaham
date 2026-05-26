@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
 import { getMyReferralStats } from "@/lib/referral.functions";
+import { encodeRef } from "@/lib/referral-code";
 
 export const Route = createFileRoute("/_authenticated/referral")({
   component: ReferralPage,
@@ -18,7 +19,7 @@ function ReferralPage() {
   const [code, setCode] = useState("");
   const [count, setCount] = useState(0);
   const origin = "https://analisasahamindo.com";
-  const link = code ? `${origin}/signup?ref=${code}` : "";
+  const link = code ? `${origin}/?r=${encodeRef(code)}` : "";
 
   useEffect(() => {
     fn().then((r) => {

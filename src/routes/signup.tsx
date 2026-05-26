@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { captureRefFromUrl } from "@/lib/referral-code";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
@@ -21,12 +22,7 @@ function SignupPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const ref = params.get("ref");
-    if (ref && /^[0-9a-f-]{36}$/i.test(ref)) {
-      localStorage.setItem("pending_ref", ref);
-    }
+    captureRefFromUrl();
   }, []);
 
   useEffect(() => {
