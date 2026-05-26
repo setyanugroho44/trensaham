@@ -223,6 +223,54 @@ export type Database = {
           },
         ]
       }
+      payment_requests: {
+        Row: {
+          admin_note: string | null
+          base_amount: number
+          created_at: string
+          id: string
+          plan: string
+          proof_url: string | null
+          status: string
+          total_amount: number
+          unique_code: number
+          updated_at: string
+          user_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          base_amount: number
+          created_at?: string
+          id?: string
+          plan: string
+          proof_url?: string | null
+          status?: string
+          total_amount: number
+          unique_code: number
+          updated_at?: string
+          user_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          base_amount?: number
+          created_at?: string
+          id?: string
+          plan?: string
+          proof_url?: string | null
+          status?: string
+          total_amount?: number
+          unique_code?: number
+          updated_at?: string
+          user_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
