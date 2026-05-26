@@ -17,7 +17,8 @@ export const createPaymentRequest = createServerFn({ method: "POST" })
     z.object({ plan: z.enum(["pro_6m", "pro_12m"]) }).parse(d),
   )
   .handler(async ({ data, context }) => {
-    const { data: existing } = await supabaseAdmin
+    const sb = context.supabase;
+    const { data: existing } = await sb
       .from("payment_requests")
       .select("*")
       .eq("user_id", context.userId)
@@ -32,7 +33,7 @@ export const createPaymentRequest = createServerFn({ method: "POST" })
     const uniqueCode = Math.floor(Math.random() * 900) + 100;
     const totalAmount = plan.base + uniqueCode;
 
-    const { data: row, error } = await supabaseAdmin
+    const { data: row, error } = await sb
       .from("payment_requests")
       .insert({
         user_id: context.userId,
@@ -54,7 +55,7 @@ export const markPaymentSubmitted = createServerFn({ method: "POST" })
     z.object({ id: z.string().uuid(), proof_url: z.string().min(1).max(1000) }).parse(d),
   )
   .handler(async ({ data, context }) => {
-    const { error } = await supabaseAdmin
+    const { error } = await context.supabase
       .from("payment_requests")
       .update({ proof_url: data.proof_url, status: "submitted" })
       .eq("id", data.id)
@@ -67,7 +68,7 @@ export const cancelPaymentRequest = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    const { error } = await supabaseAdmin
+    const { error } = await context.supabase
       .from("payment_requests")
       .update({ status: "cancelled" })
       .eq("id", data.id)
@@ -80,7 +81,7 @@ export const cancelPaymentRequest = createServerFn({ method: "POST" })
 export const listMyPaymentRequests = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await context.supabase
       .from("payment_requests")
       .select("*")
       .eq("user_id", context.userId)
