@@ -109,9 +109,10 @@ function Landing() {
               </p>
             </div>
             <div>
-              <h3 className="font-semibold">Sumber data?</h3>
+              <h3 className="font-semibold">Apa Arti Pola selesai/Developed?</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Data harga diambil dari Yahoo Finance (suffix .JK) untuk saham Indonesia.
+                Pola selesai berarti titik D sudah terbentuk dan harga masuk ke area PRZ (Potential Reversal Zone).
+Ini adalah area yang sering diperhatikan trader untuk mencari peluang entry.
               </p>
             </div>
           </div>
