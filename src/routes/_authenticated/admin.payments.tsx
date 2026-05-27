@@ -163,50 +163,90 @@ function PaymentTable({
 }) {
   if (rows.length === 0) return <p className="text-sm text-muted-foreground">—</p>;
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead className="text-left text-xs uppercase text-muted-foreground">
-          <tr>
-            <th className="py-2">Tanggal</th>
-            <th className="py-2">User</th>
-            <th className="py-2">Paket</th>
-            <th className="py-2">Total</th>
-            <th className="py-2">Status</th>
-            <th className="py-2">Bukti</th>
-            {actions && <th className="py-2">Aksi</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.id} className="border-t border-border">
-              <td className="py-2">{new Date(r.created_at).toLocaleString("id-ID")}</td>
-              <td className="py-2">{r.email ?? r.user_id.slice(0, 8)}</td>
-              <td className="py-2">{r.plan === "pro_6m" ? "6 bulan" : "12 bulan"}</td>
-              <td className="py-2 font-mono">{new Intl.NumberFormat("id-ID").format(r.total_amount)}</td>
-              <td className="py-2"><Badge variant="secondary">{r.status}</Badge></td>
-              <td className="py-2">
-                {r.proof_url ? (
-                  <button className="text-primary underline" onClick={() => onViewProof(r)}>Lihat</button>
-                ) : (
-                  "—"
-                )}
-              </td>
-              {actions && (
-                <td className="py-2">
-                  <div className="flex gap-2">
-                    <Button size="sm" onClick={() => onApprove(r)} disabled={busyId === r.id}>
-                      {busyId === r.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Setujui"}
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => onReject(r)} disabled={busyId === r.id}>
-                      Tolak
-                    </Button>
-                  </div>
-                </td>
+    <>
+      {/* Mobile: stacked 2-row cards */}
+      <div className="space-y-3 sm:hidden">
+        {rows.map((r) => (
+          <div key={r.id} className="rounded-lg border border-border bg-muted/20 p-3 text-sm">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <div className="truncate font-medium">{r.email ?? r.user_id.slice(0, 8)}</div>
+                <div className="text-xs text-muted-foreground">
+                  {new Date(r.created_at).toLocaleString("id-ID")}
+                </div>
+              </div>
+              <Badge variant="secondary" className="shrink-0">{r.status}</Badge>
+            </div>
+            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+              <span>{r.plan === "pro_6m" ? "6 bulan" : "12 bulan"}</span>
+              <span className="font-mono">Rp {new Intl.NumberFormat("id-ID").format(r.total_amount)}</span>
+              {r.proof_url && (
+                <button className="text-primary underline" onClick={() => onViewProof(r)}>
+                  Lihat bukti
+                </button>
               )}
+            </div>
+            {actions && (
+              <div className="mt-3 flex gap-2">
+                <Button size="sm" className="flex-1" onClick={() => onApprove(r)} disabled={busyId === r.id}>
+                  {busyId === r.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Setujui"}
+                </Button>
+                <Button size="sm" variant="outline" className="flex-1" onClick={() => onReject(r)} disabled={busyId === r.id}>
+                  Tolak
+                </Button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: table */}
+      <div className="hidden overflow-x-auto sm:block">
+        <table className="w-full text-sm">
+          <thead className="text-left text-xs uppercase text-muted-foreground">
+            <tr>
+              <th className="py-2">Tanggal</th>
+              <th className="py-2">User</th>
+              <th className="py-2">Paket</th>
+              <th className="py-2">Total</th>
+              <th className="py-2">Status</th>
+              <th className="py-2">Bukti</th>
+              {actions && <th className="py-2">Aksi</th>}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.id} className="border-t border-border">
+                <td className="py-2">{new Date(r.created_at).toLocaleString("id-ID")}</td>
+                <td className="py-2">{r.email ?? r.user_id.slice(0, 8)}</td>
+                <td className="py-2">{r.plan === "pro_6m" ? "6 bulan" : "12 bulan"}</td>
+                <td className="py-2 font-mono">{new Intl.NumberFormat("id-ID").format(r.total_amount)}</td>
+                <td className="py-2"><Badge variant="secondary">{r.status}</Badge></td>
+                <td className="py-2">
+                  {r.proof_url ? (
+                    <button className="text-primary underline" onClick={() => onViewProof(r)}>Lihat</button>
+                  ) : (
+                    "—"
+                  )}
+                </td>
+                {actions && (
+                  <td className="py-2">
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={() => onApprove(r)} disabled={busyId === r.id}>
+                        {busyId === r.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Setujui"}
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => onReject(r)} disabled={busyId === r.id}>
+                        Tolak
+                      </Button>
+                    </div>
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
+

@@ -202,7 +202,21 @@ function ChartPage() {
             }
           }
         }
+
+        // Target konservatif untuk pola completed: retracement 0.382 dari kaki A→D
+        if (pattern.d_price != null) {
+          const target = pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price);
+          candle.createPriceLine({
+            price: target,
+            color: "rgba(16, 185, 129, 0.9)",
+            lineWidth: 2,
+            lineStyle: 2,
+            axisLabelVisible: true,
+            title: "Target 0.382 AD",
+          });
+        }
       }
+
 
       chart.timeScale().fitContent();
       const onResize = () => chart.applyOptions({ width: containerRef.current!.clientWidth });
@@ -341,6 +355,13 @@ function ChartPage() {
               {pattern.status === "developing" && (
                 <Detail label="Progress" value={`${Math.round(pattern.progress_pct ?? 0)}%`} />
               )}
+              {pattern.d_price != null && (
+                <Detail
+                  label="Target 0.382 AD (konservatif)"
+                  value={(pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price)).toFixed(2)}
+                />
+              )}
+
               {pattern.ratios &&
                 Object.entries(pattern.ratios).map(([k, v]) => (
                   <Detail key={k} label={k} value={Number.isFinite(v) ? v.toFixed(3) : "—"} />
