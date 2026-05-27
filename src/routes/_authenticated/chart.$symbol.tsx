@@ -349,13 +349,8 @@ function ChartPage() {
                 Zona harga di mana pola berpotensi selesai dan berbalik arah.
               </div>
               {["Crab", "Deep Crab", "Butterfly"].includes(pattern.pattern_name) && (
-                <div className="mt-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
-                  <strong>Peringatan pola extension:</strong> {pattern.pattern_name} cenderung
-                  rawan <em>overshoot</em> di area PRZ. Jika ingin masuk posisi, jangan langsung
-                  entry saat harga menyentuh zona — tunggu konfirmasi <strong>rejection</strong>{" "}
-                  terbentuk (mis. candle reversal / pin bar / engulfing) sebelum mengambil posisi.
-                </div>
-              )}
+  <ExtensionWarning patternName={pattern.pattern_name} />
+)}
             </div>
 <PivotCard
                 label="T"
@@ -385,7 +380,29 @@ function ChartPage() {
     </div>
   );
 }
-
+function ExtensionWarning({ patternName }: { patternName: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="mt-3 rounded-lg border border-amber-500/40 bg-amber-500/10 overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between px-3 py-2 text-xs font-semibold text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 transition-colors"
+      >
+        <span>⚠ Peringatan pola extension: {patternName}</span>
+        <span className="ml-2 text-[10px] opacity-60">{open ? "▲ Tutup" : "▼ Buka"}</span>
+      </button>
+      {open && (
+        <div className="px-3 pb-3 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+          <strong>{patternName}</strong> cenderung rawan <em>overshoot</em> di area PRZ. Jika
+          ingin masuk posisi, jangan langsung entry saat harga menyentuh zona — tunggu konfirmasi{" "}
+          <strong>rejection</strong> terbentuk (mis. candle reversal / pin bar / engulfing) sebelum
+          mengambil posisi.
+        </div>
+      )}
+    </div>
+  );
+}
 function PivotCard({
   label,
   date,
