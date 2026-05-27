@@ -310,17 +310,7 @@ function ChartPage() {
                 color="bg-primary"
                 pivotLabel="Harga terbaru"
               />
-              <PivotCard
-                label="T"
-                date={null}
-                price={
-                  pattern.d_price != null
-                    ? pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price)
-                    : null
-                }
-                color="bg-green-600"
-                pivotLabel="Target 0.382 AD"
-              />
+              
             </div>
 
             <div className="rounded-xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 via-primary/10 to-transparent p-5 shadow-sm">
@@ -367,7 +357,17 @@ function ChartPage() {
                 </div>
               )}
             </div>
-
+<PivotCard
+                label="T"
+                date={null}
+                price={
+                  pattern.d_price != null
+                    ? pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price)
+                    : null
+                }
+                color="bg-green-600"
+                pivotLabel="Target 0.382 AD"
+              />
             <div className="grid grid-cols-2 gap-3 border-t pt-4 text-sm sm:grid-cols-4">
               <Detail label="Invalidation" value={pattern.invalidation?.toFixed(2) ?? "—"} />
               {pattern.status === "developing" && (
