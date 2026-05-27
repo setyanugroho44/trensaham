@@ -287,7 +287,7 @@ function ChartPage() {
           </div>
 
           <CardHeader>
-            <CardTitle className="text-base">Pattern points (X · A · B · C · D)</CardTitle>
+            <CardTitle className="text-base">{symbol} Pattern points (X · A · B · C · D)</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
