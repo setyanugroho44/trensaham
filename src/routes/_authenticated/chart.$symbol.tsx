@@ -423,7 +423,42 @@ function PivotCard({
       </div>
     </div>
   );
+
+function PivotRow({
+  label,
+  date,
+  price,
+  color,
+}: {
+  label: string;
+  date: string | null;
+  price: number | null;
+  color: string;
+}) {
+  const isEmpty = !date || price == null;
+  const formatted =
+    price != null
+      ? new Intl.NumberFormat("id-ID", { maximumFractionDigits: 2 }).format(price)
+      : null;
+  return (
+    <div className="flex items-center gap-2">
+      <span
+        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${color} ${isEmpty ? "opacity-40" : ""}`}
+      >
+        {label}
+      </span>
+      <div className="min-w-0 leading-tight">
+        <div className="text-sm font-semibold">
+          {formatted ?? <span className="text-muted-foreground font-normal">pending</span>}
+        </div>
+        <div className="text-[10px] text-muted-foreground">
+          {date ? new Date(date).toLocaleDateString("id-ID") : "—"}
+        </div>
+      </div>
+    </div>
+  );
 }
+
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
