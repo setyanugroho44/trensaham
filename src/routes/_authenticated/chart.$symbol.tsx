@@ -355,6 +355,13 @@ function ChartPage() {
               {pattern.status === "developing" && (
                 <Detail label="Progress" value={`${Math.round(pattern.progress_pct ?? 0)}%`} />
               )}
+              {pattern.d_price != null && (
+                <Detail
+                  label="Target 0.382 AD (konservatif)"
+                  value={(pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price)).toFixed(2)}
+                />
+              )}
+
               {pattern.ratios &&
                 Object.entries(pattern.ratios).map(([k, v]) => (
                   <Detail key={k} label={k} value={Number.isFinite(v) ? v.toFixed(3) : "—"} />
