@@ -423,6 +423,8 @@ function PivotCard({
       </div>
     </div>
   );
+}
+
 
 function PivotRow({
   label,
