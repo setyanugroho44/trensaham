@@ -93,11 +93,17 @@ export const runScan = createServerFn({ method: "POST" })
         // Minimum panjang kaki XA (% terhadap harga X) agar pola tidak sempit di sumbu harga.
         // Dikurangi untuk menangkap pola dengan amplitude lebih kecil.
         // Daily lebih agresif untuk intraday moves.
-        const minLegPct = data.timeframe === "1mo" ? 0.20 : data.timeframe === "1wk" ? 0.15 : 0.08;
+        // Daily diturunkan dari 0.08 → 0.05 agar pola swing menengah ikut terdeteksi
+        // (masih di atas noise harian biasa, sesuai praktik harmonic scanner).
+        const minLegPct = data.timeframe === "1mo" ? 0.20 : data.timeframe === "1wk" ? 0.15 : 0.05;
         const allPatterns = scales.flatMap((th) => {
           const pivots = zigzag(bars, th);
           return detectPatterns(pivots, bars, {
-            tolerance: data.tolerance ?? (data.timeframe === "1d" ? 0.03 : 0.04),
+            // Daily tolerance dilonggarkan 0.03 → 0.05 (masih dalam rentang umum
+            // ±5% yang dipakai banyak harmonic scanner) supaya rasio "titik"
+            // seperti Gartley AB=0.618 / AD=0.786 dan Bat AD=0.886 tidak terlalu
+            // sering gagal validasi.
+            tolerance: data.tolerance ?? (data.timeframe === "1d" ? 0.05 : 0.04),
             minConfidence: data.minConfidence ?? (data.timeframe === "1d" ? 0.25 : 0.3),
             minBarsSpan,
             minLegPct,
