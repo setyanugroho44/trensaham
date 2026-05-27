@@ -290,18 +290,36 @@ function ChartPage() {
             <CardTitle className="text-base">Pattern points (X · A · B · C · D)</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-6">
-              <PivotCard label="X" date={pattern.x_date} price={pattern.x_price} color="bg-fuchsia-500" />
-              <PivotCard label="A" date={pattern.a_date} price={pattern.a_price} color="bg-sky-500" />
-              <PivotCard label="B" date={pattern.b_date} price={pattern.b_price} color="bg-amber-500" />
-              <PivotCard label="C" date={pattern.c_date} price={pattern.c_price} color="bg-emerald-500" />
-              <PivotCard label="D" date={pattern.d_date} price={pattern.d_price} color="bg-rose-500" />
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="rounded-lg border bg-muted/30 p-3 sm:col-span-3">
+                <div className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
+                  Pivot XABCD
+                </div>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-5">
+                  <PivotRow label="X" date={pattern.x_date} price={pattern.x_price} color="bg-fuchsia-500" />
+                  <PivotRow label="A" date={pattern.a_date} price={pattern.a_price} color="bg-sky-500" />
+                  <PivotRow label="B" date={pattern.b_date} price={pattern.b_price} color="bg-amber-500" />
+                  <PivotRow label="C" date={pattern.c_date} price={pattern.c_price} color="bg-emerald-500" />
+                  <PivotRow label="D" date={pattern.d_date} price={pattern.d_price} color="bg-rose-500" />
+                </div>
+              </div>
               <PivotCard
                 label="Now"
                 date={bars.length ? new Date(bars[bars.length - 1].time * 1000).toISOString() : null}
                 price={bars.length ? bars[bars.length - 1].close : null}
                 color="bg-primary"
                 pivotLabel="Harga terbaru"
+              />
+              <PivotCard
+                label="T"
+                date={null}
+                price={
+                  pattern.d_price != null
+                    ? pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price)
+                    : null
+                }
+                color="bg-green-600"
+                pivotLabel="Target 0.382 AD"
               />
             </div>
 
@@ -355,12 +373,6 @@ function ChartPage() {
               {pattern.status === "developing" && (
                 <Detail label="Progress" value={`${Math.round(pattern.progress_pct ?? 0)}%`} />
               )}
-              {pattern.d_price != null && (
-                <Detail
-                  label="Target 0.382 AD (konservatif)"
-                  value={(pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price)).toFixed(2)}
-                />
-              )}
 
               {pattern.ratios &&
                 Object.entries(pattern.ratios).map(([k, v]) => (
@@ -412,6 +424,43 @@ function PivotCard({
     </div>
   );
 }
+
+
+function PivotRow({
+  label,
+  date,
+  price,
+  color,
+}: {
+  label: string;
+  date: string | null;
+  price: number | null;
+  color: string;
+}) {
+  const isEmpty = !date || price == null;
+  const formatted =
+    price != null
+      ? new Intl.NumberFormat("id-ID", { maximumFractionDigits: 2 }).format(price)
+      : null;
+  return (
+    <div className="flex items-center gap-2">
+      <span
+        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${color} ${isEmpty ? "opacity-40" : ""}`}
+      >
+        {label}
+      </span>
+      <div className="min-w-0 leading-tight">
+        <div className="text-sm font-semibold">
+          {formatted ?? <span className="text-muted-foreground font-normal">pending</span>}
+        </div>
+        <div className="text-[10px] text-muted-foreground">
+          {date ? new Date(date).toLocaleDateString("id-ID") : "—"}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
