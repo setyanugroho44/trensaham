@@ -83,19 +83,22 @@ export const runScan = createServerFn({ method: "POST" })
         // Multi-scale zigzag thresholds disesuaikan per timeframe agar
         // pivot mewakili swing yang signifikan & pola merentang banyak candle.
         // Scale lebih banyak untuk menangkap pola di berbagai level.
+        // Daily disesuaikan khusus untuk meningkatkan deteksi pattern intraday.
         const scales =
-          data.timeframe === "1mo" ? [15, 25, 50] : data.timeframe === "1wk" ? [10, 15, 24] : [5, 8, 14];
+          data.timeframe === "1mo" ? [15, 25, 50] : data.timeframe === "1wk" ? [10, 15, 24] : [3, 5, 8, 12];
         // Minimum bar-span X→C agar pola tidak terlalu sempit di sumbu waktu.
         // Dikurangi untuk menangkap pola yang lebih kecil.
-        const minBarsSpan = data.timeframe === "1mo" ? 6 : data.timeframe === "1wk" ? 12 : 20;
+        // Daily lebih agresif untuk meningkatkan deteksi.
+        const minBarsSpan = data.timeframe === "1mo" ? 6 : data.timeframe === "1wk" ? 12 : 12;
         // Minimum panjang kaki XA (% terhadap harga X) agar pola tidak sempit di sumbu harga.
         // Dikurangi untuk menangkap pola dengan amplitude lebih kecil.
-        const minLegPct = data.timeframe === "1mo" ? 0.20 : data.timeframe === "1wk" ? 0.15 : 0.10;
+        // Daily lebih agresif untuk intraday moves.
+        const minLegPct = data.timeframe === "1mo" ? 0.20 : data.timeframe === "1wk" ? 0.15 : 0.08;
         const allPatterns = scales.flatMap((th) => {
           const pivots = zigzag(bars, th);
           return detectPatterns(pivots, bars, {
-            tolerance: data.tolerance ?? 0.04,
-            minConfidence: data.minConfidence ?? 0.3,
+            tolerance: data.tolerance ?? (data.timeframe === "1d" ? 0.03 : 0.04),
+            minConfidence: data.minConfidence ?? (data.timeframe === "1d" ? 0.25 : 0.3),
             minBarsSpan,
             minLegPct,
           });
