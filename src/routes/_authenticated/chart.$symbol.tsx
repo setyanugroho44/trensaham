@@ -347,7 +347,8 @@ function ChartPage() {
   <ExtensionWarning patternName={pattern.pattern_name} />
 )}
             </div>
-<PivotCard
+            {pattern.status === "developing" && (
+              <PivotCard
                 label="T"
                 date={null}
                 price={
@@ -358,6 +359,7 @@ function ChartPage() {
                 color="bg-green-600"
                 pivotLabel="Target Harga Konservatif (0.382 AD)"
               />
+            )}
             <div className="grid grid-cols-2 gap-3 border-t pt-4 text-sm sm:grid-cols-4">
               <Detail label="Invalidation" value={pattern.invalidation?.toFixed(2) ?? "—"} />
               {pattern.status === "developing" && (
