@@ -209,8 +209,8 @@ function ChartPage() {
           }
         }
 
-        // Target konservatif hanya untuk pola developing: retracement 0.382 dari kaki A→D
-        if (pattern.status === "developing" && pattern.d_price != null) {
+        // Target konservatif hanya untuk pola completed: retracement 0.382 dari kaki A→D
+        if (pattern.status === "completed" && pattern.d_price != null) {
           const target = pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price);
           candle.createPriceLine({
             price: target,
