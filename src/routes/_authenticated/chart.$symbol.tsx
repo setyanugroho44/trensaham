@@ -293,7 +293,7 @@ function ChartPage() {
           </div>
 
           <CardHeader>
-            <CardTitle className="text-base">{symbol} Pattern points (X · A · B · C · D)</CardTitle>
+            
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -493,7 +493,7 @@ function PivotXABCD({ pattern }: { pattern: PatternRow }) {
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wide text-blue-900 dark:text-blue-300 hover:bg-blue-500/5 transition-colors"
       >
-        <span>Pivot XABCD</span>
+        <span>{symbol} Pivot XABCD</span>
         <span className="ml-2 text-[10px] opacity-70">{open ? "▲ Tutup" : "▼ Buka"}</span>
       </button>
       {open && (
