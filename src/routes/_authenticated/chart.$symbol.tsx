@@ -298,13 +298,7 @@ function ChartPage() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <PivotXABCD pattern={pattern} />
-              <PivotCard
-                label="Now"
-                date={bars.length ? new Date(bars[bars.length - 1].time * 1000).toISOString() : null}
-                price={bars.length ? bars[bars.length - 1].close : null}
-                color="bg-primary"
-                pivotLabel="Harga terbaru"
-              />
+              
               
             </div>
 
