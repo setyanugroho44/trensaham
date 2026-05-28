@@ -57,7 +57,27 @@ function projectD(X: Pivot, A: Pivot, B: Pivot, C: Pivot, spec: PatternSpec, dir
   const lo = Math.max(adLo, cdLo);
   const hi = Math.min(adHi, cdHi);
   if (lo > hi) return null; // no confluence → invalid pattern
-  return { low: lo, high: hi };
+  // Bulatkan ke fraksi harga IDX: low ke bawah, high ke atas.
+  return { low: floorToIdxTick(lo), high: ceilToIdxTick(hi) };
+}
+
+// Fraksi harga (tick size) IDX:
+// < 200 → 1, 200–<500 → 2, 500–<2000 → 5, 2000–<5000 → 10, ≥5000 → 25
+export function idxTickSize(price: number): number {
+  const p = Math.abs(price);
+  if (p < 200) return 1;
+  if (p < 500) return 2;
+  if (p < 2000) return 5;
+  if (p < 5000) return 10;
+  return 25;
+}
+export function floorToIdxTick(price: number): number {
+  const t = idxTickSize(price);
+  return Math.floor(price / t) * t;
+}
+export function ceilToIdxTick(price: number): number {
+  const t = idxTickSize(price);
+  return Math.ceil(price / t) * t;
 }
 
 function evalSpec(
