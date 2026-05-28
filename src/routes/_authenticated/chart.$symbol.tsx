@@ -347,7 +347,7 @@ function ChartPage() {
   <ExtensionWarning patternName={pattern.pattern_name} />
 )}
             </div>
-            {pattern.status === "developing" && (
+            {pattern.status === "completed" && (
               <PivotCard
                 label="T"
                 date={null}
