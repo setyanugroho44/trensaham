@@ -48,7 +48,7 @@ function Landing() {
   
           <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground">
             Lihat kemana harga akan bergerak hanya dengan satu tombol.
-            Deteksi otomatis pola harmonik pada saham Indonesia.
+            Deteksi otomatis pola harmonik saham.
             Hemat waktu analisa, fokus pada eksekusi.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -99,29 +99,22 @@ function Landing() {
             <div>
               <h3 className="font-semibold">Apa itu pola harmonik?</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                adalah metode analisis teknikal pada grafik saham menggunakan rasio Fibonacci untuk mendeteksi pola geometris yang berulang. Sederhananya, pola ini berdasar pergerakan harga pasar yang memiliki siklus alami seperti gelombang. Dengan menggabungkan geometri dan matematika tersebut, trader bisa memprediksi titik jenuh pasar—yaitu kapan harga yang sedang naik akan berbalik turun, atau kapan harga yang sedang turun akan mulai melonjak naik kembali dengan akurasi yang cukup tinggi
+                adalah metode analisis teknikal pada grafik saham menggunakan rasio Fibonacci untuk mendeteksi pola geometris yang berulang. Sederhananya, pola ini berdasar pergerakan harga pasar yang memiliki siklus alami seperti gelombang. Dengan menggabungkan geometri dan matematika tersebut, trader bisa memprediksi titik jenuh pasar—yaitu kapan harga yang sedang naik akan berbalik turun, atau kapan harga yang sedang turun akan mulai melonjak naik kembali.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold">Apakah informasinya akurat?</h3>
+              <h3 className="font-semibold">Apakah informasinya dapat dipercaya?</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Meskipun tingkat keberhasilan harmonic pattern cukup tinggi, tidak ada analisis teknikal yang sempurna dan menjamin keuntungan. Ada free trial yang dapat anda manfaatkan untuk menilai keakuratan pola scanner ini.
+                Meskipun tingkat keberhasilan pola harmonic cukup tinggi, tidak ada analisis teknikal yang sempurna.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold">Apa Arti Pola selesai/Developed?</h3>
+              <h3 className="font-semibold">Apa saya perlu belajar pola harmonik?</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Pola selesai berarti titik D sudah terbentuk dan harga masuk ke area PRZ (Potential Reversal Zone).
-Ini adalah area yang sering diperhatikan trader untuk mencari peluang entry.
+                Tidak harus, kami bangun scanner ini semudah mungkin sehingga mudah dimengerti tetapi kalau anda mempelajari dan mengerti pola harmonik itu lebih bagus
               </p>
             </div>
-            <div>
-              <h3 className="font-semibold">Apakah web app ini merekomendasikan jual/beli ?</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-               Tidak secara langsung.
-Website ini hanya menyediakan informasi teknikal hasil scan pola. Keputusan trading tetap sepenuhnya tanggung jawab pengguna.
-              </p>
-            </div>
+            
 
           </div>
         </div>
