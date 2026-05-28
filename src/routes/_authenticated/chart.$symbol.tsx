@@ -4,6 +4,12 @@ import { z } from "zod";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchBarsForSymbol } from "@/lib/scan.functions";
+import { floorToIdxTick, ceilToIdxTick, idxTickSize } from "@/lib/harmonic/detect";
+
+function roundToIdxTick(price: number): number {
+  const t = idxTickSize(price);
+  return Math.round(price / t) * t;
+}
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -331,7 +337,7 @@ function ChartPage() {
               </div>
               <div className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                 {pattern.prz_low != null && pattern.prz_high != null
-                  ? `${pattern.prz_low.toFixed(2)} – ${pattern.prz_high.toFixed(2)}`
+                  ? `${floorToIdxTick(pattern.prz_low)} – ${ceilToIdxTick(pattern.prz_high)}`
                   : "—"}
               </div>
               <div className="mt-1 text-xs text-muted-foreground">
@@ -346,7 +352,7 @@ function ChartPage() {
                 date={null}
                 price={
                   pattern.d_price != null
-                    ? pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price)
+                    ? roundToIdxTick(pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price))
                     : null
                 }
                 color="bg-green-600"
