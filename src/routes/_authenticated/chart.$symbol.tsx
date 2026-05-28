@@ -352,7 +352,7 @@ function ChartPage() {
                 date={null}
                 price={
                   pattern.d_price != null
-                    ? pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price)
+                    ? roundToIdxTick(pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price))
                     : null
                 }
                 color="bg-green-600"
