@@ -357,30 +357,6 @@ function ChartPage() {
               {pattern.status === "developing" && (
                 <Detail label="Progress" value={`${Math.round(pattern.progress_pct ?? 0)}%`} />
               )}
-function PivotXABCD({ pattern }: { pattern: PatternRow }) {
-  const [open, setOpen] = useState(true);
-  return (
-    <div className="rounded-lg border bg-muted/30 sm:col-span-3 overflow-hidden">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wide text-blue-900 dark:text-blue-300 hover:bg-blue-500/5 transition-colors"
-      >
-        <span>Pivot XABCD</span>
-        <span className="ml-2 text-[10px] opacity-70">{open ? "▲ Tutup" : "▼ Buka"}</span>
-      </button>
-      {open && (
-        <div className="grid grid-cols-2 gap-x-4 gap-y-2 px-3 pb-3 sm:grid-cols-5">
-          <PivotRow label="X" date={pattern.x_date} price={pattern.x_price} color="bg-fuchsia-500" />
-          <PivotRow label="A" date={pattern.a_date} price={pattern.a_price} color="bg-sky-500" />
-          <PivotRow label="B" date={pattern.b_date} price={pattern.b_price} color="bg-amber-500" />
-          <PivotRow label="C" date={pattern.c_date} price={pattern.c_price} color="bg-emerald-500" />
-          <PivotRow label="D" date={pattern.d_date} price={pattern.d_price} color="bg-rose-500" />
-        </div>
-      )}
-    </div>
-  );
-}
 
 
               {pattern.ratios &&
