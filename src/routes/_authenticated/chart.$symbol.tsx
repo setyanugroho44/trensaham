@@ -337,7 +337,7 @@ function ChartPage() {
               </div>
               <div className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                 {pattern.prz_low != null && pattern.prz_high != null
-                  ? `${pattern.prz_low.toFixed(2)} – ${pattern.prz_high.toFixed(2)}`
+                  ? `${floorToIdxTick(pattern.prz_low)} – ${ceilToIdxTick(pattern.prz_high)}`
                   : "—"}
               </div>
               <div className="mt-1 text-xs text-muted-foreground">
