@@ -487,7 +487,7 @@ function Detail({ label, value }: { label: string; value: string }) {
 }
 
 function PivotXABCD({ pattern }: { pattern: PatternRow }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   return (
     <div className="rounded-lg border bg-muted/30 sm:col-span-3 overflow-hidden">
       <button
