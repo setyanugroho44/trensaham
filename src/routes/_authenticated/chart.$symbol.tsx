@@ -209,8 +209,8 @@ function ChartPage() {
           }
         }
 
-        // Target konservatif untuk pola completed: retracement 0.382 dari kaki A→D
-        if (pattern.d_price != null) {
+        // Target konservatif hanya untuk pola developing: retracement 0.382 dari kaki A→D
+        if (pattern.status === "developing" && pattern.d_price != null) {
           const target = pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price);
           candle.createPriceLine({
             price: target,
@@ -347,7 +347,8 @@ function ChartPage() {
   <ExtensionWarning patternName={pattern.pattern_name} />
 )}
             </div>
-<PivotCard
+            {pattern.status === "developing" && (
+              <PivotCard
                 label="T"
                 date={null}
                 price={
@@ -358,6 +359,7 @@ function ChartPage() {
                 color="bg-green-600"
                 pivotLabel="Target Harga Konservatif (0.382 AD)"
               />
+            )}
             <div className="grid grid-cols-2 gap-3 border-t pt-4 text-sm sm:grid-cols-4">
               <Detail label="Invalidation" value={pattern.invalidation?.toFixed(2) ?? "—"} />
               {pattern.status === "developing" && (
@@ -493,7 +495,7 @@ function PivotXABCD({ pattern }: { pattern: PatternRow }) {
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wide text-blue-900 dark:text-blue-300 hover:bg-blue-500/5 transition-colors"
       >
-        <span>{symbol} Pivot XABCD</span>
+        <span>{pattern.symbol} Pivot XABCD</span>
         <span className="ml-2 text-[10px] opacity-70">{open ? "▲ Tutup" : "▼ Buka"}</span>
       </button>
       {open && (
