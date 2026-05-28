@@ -493,7 +493,7 @@ function PivotXABCD({ pattern }: { pattern: PatternRow }) {
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wide text-blue-900 dark:text-blue-300 hover:bg-blue-500/5 transition-colors"
       >
-        <span>{symbol} Pivot XABCD</span>
+        <span>{pattern.symbol} Pivot XABCD</span>
         <span className="ml-2 text-[10px] opacity-70">{open ? "▲ Tutup" : "▼ Buka"}</span>
       </button>
       {open && (
