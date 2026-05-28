@@ -4,6 +4,12 @@ import { z } from "zod";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchBarsForSymbol } from "@/lib/scan.functions";
+import { floorToIdxTick, ceilToIdxTick, idxTickSize } from "@/lib/harmonic/detect";
+
+function roundToIdxTick(price: number): number {
+  const t = idxTickSize(price);
+  return Math.round(price / t) * t;
+}
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
