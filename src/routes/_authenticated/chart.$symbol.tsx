@@ -309,7 +309,7 @@ function ChartPage() {
             </div>
 
             <div className="rounded-xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 via-primary/10 to-transparent p-5 shadow-sm">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
+              <div className="flex items-center gap-2 text-xs font-semibold  tracking-wider text-primary">
                 <span>PRZ — Potential Reversal Zone</span>
                 <TooltipProvider delayDuration={100}>
                   <Tooltip>
