@@ -23,6 +23,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { floorToIdxTick, ceilToIdxTick } from "@/lib/harmonic/detect";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
@@ -342,12 +343,13 @@ function PatternsTable({
                   </div>
                   <span className="text-xs text-muted-foreground">{Math.round(r.confidence * 100)}%</span>
                 </div>
-              </td>
               <td className="px-3 py-2 text-xs">
                 {r.prz_low != null && r.prz_high != null
-                  ? `${r.prz_low.toFixed(2)} – ${r.prz_high.toFixed(2)}`
+                  ? `${floorToIdxTick(r.prz_low)} – ${ceilToIdxTick(r.prz_high)}`
                   : "—"}
               </td>
+              <td className="px-3 py-2 text-xs">{r.invalidation != null ? floorToIdxTick(r.invalidation) : "—"}</td>
+
               <td className="px-3 py-2 text-xs">{r.invalidation?.toFixed(2) ?? "—"}</td>
               <td className="px-3 py-2 text-right">
                 <button
