@@ -341,21 +341,18 @@ function ChartPage() {
   <ExtensionWarning patternName={pattern.pattern_name} />
 )}
             </div>
-            {pattern.status === "completed" && (
-              <PivotCard
-                label="T"
-                date={null}
-                price={
-                  pattern.d_price != null
-                    ? roundToIdxTick(pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price))
-                    : null
-                }
-                color="bg-green-600"
-                pivotLabel="Target Harga Konservatif (0.382 AD)"
+            {pattern.status === "completed" && pattern.d_price != null && bars.length > 0 && (
+              <TargetCard
+                current={roundToIdxTick(bars[bars.length - 1].close)}
+                target={roundToIdxTick(
+                  pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price),
+                )}
               />
             )}
+
             <div className="grid grid-cols-2 gap-3 border-t pt-4 text-sm sm:grid-cols-4">
-              <Detail label="Invalidation" value={pattern.invalidation?.toFixed(2) ?? "—"} />
+              <Detail label="Invalidation" value={pattern.invalidation != null ? String(floorToIdxTick(pattern.invalidation)) : "—"} />
+
               {pattern.status === "developing" && (
                 <Detail label="Progress" value={`${Math.round(pattern.progress_pct ?? 0)}%`} />
               )}
@@ -395,6 +392,41 @@ function ExtensionWarning({ patternName }: { patternName: string }) {
     </div>
   );
 }
+function TargetCard({ current, target }: { current: number; target: number }) {
+  const pct = current > 0 ? ((target - current) / current) * 100 : 0;
+  const up = target >= current;
+  const fmt = (v: number) =>
+    "Rp" + new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(v);
+  return (
+    <div className="rounded-xl border-2 border-green-600/40 bg-gradient-to-br from-green-600/15 via-green-600/10 to-transparent p-5 shadow-sm">
+      <div className="text-xs font-semibold uppercase tracking-wider text-green-700 dark:text-green-400">
+        Target Harga Konservatif (0.382 AD)
+      </div>
+      <div className="mt-3 flex items-center justify-between gap-4">
+        <div className="flex flex-col">
+          <span className="text-[11px] uppercase tracking-wide text-muted-foreground">Sekarang</span>
+          <span className="text-2xl font-bold tracking-tight">{fmt(current)}</span>
+        </div>
+        <div className="flex flex-1 flex-col items-center">
+          <span
+            className={`text-sm font-bold ${up ? "text-green-600 dark:text-green-400" : "text-rose-600 dark:text-rose-400"}`}
+          >
+            {up ? "+" : ""}
+            {pct.toFixed(1)}%
+          </span>
+          <span className="text-2xl leading-none text-muted-foreground">→</span>
+        </div>
+        <div className="flex flex-col items-end">
+          <span className="text-[11px] uppercase tracking-wide text-muted-foreground">Target harga</span>
+          <span className="text-2xl font-bold tracking-tight text-green-700 dark:text-green-400">
+            {fmt(target)}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PivotCard({
   label,
   date,
