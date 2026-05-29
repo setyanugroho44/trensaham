@@ -193,10 +193,10 @@ export function detectPatterns(
           const totalDist = Math.abs(target - C.price);
           const moved = Math.abs(lastBar.close - C.price);
           const progress = totalDist > 0 ? Math.min(1, moved / totalDist) : 0;
-          // Filter: kaki C->PRZ harus sudah terbentuk minimal 10%
+          // Filter: kaki C->PRZ harus sudah terbentuk minimal 15%
           // untuk meminimalisir pola yang belum jelas dan menghindari
           // dua pola berlawanan muncul bersamaan.
-          if (progress < 0.1) continue;
+          if (progress < 0.15) continue;
           out.push({
             name: spec.name,
             direction: dir,
