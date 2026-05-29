@@ -343,6 +343,7 @@ function PatternsTable({
                   </div>
                   <span className="text-xs text-muted-foreground">{Math.round(r.confidence * 100)}%</span>
                 </div>
+              </td>
               <td className="px-3 py-2 text-xs">
                 {r.prz_low != null && r.prz_high != null
                   ? `${floorToIdxTick(r.prz_low)} – ${ceilToIdxTick(r.prz_high)}`
@@ -350,7 +351,6 @@ function PatternsTable({
               </td>
               <td className="px-3 py-2 text-xs">{r.invalidation != null ? floorToIdxTick(r.invalidation) : "—"}</td>
 
-              <td className="px-3 py-2 text-xs">{r.invalidation?.toFixed(2) ?? "—"}</td>
               <td className="px-3 py-2 text-right">
                 <button
                   onClick={(e) => { e.stopPropagation(); setPendingDelete(r); }}
