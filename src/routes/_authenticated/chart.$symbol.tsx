@@ -341,21 +341,18 @@ function ChartPage() {
   <ExtensionWarning patternName={pattern.pattern_name} />
 )}
             </div>
-            {pattern.status === "completed" && (
-              <PivotCard
-                label="T"
-                date={null}
-                price={
-                  pattern.d_price != null
-                    ? roundToIdxTick(pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price))
-                    : null
-                }
-                color="bg-green-600"
-                pivotLabel="Target Harga Konservatif (0.382 AD)"
+            {pattern.status === "completed" && pattern.d_price != null && bars.length > 0 && (
+              <TargetCard
+                current={roundToIdxTick(bars[bars.length - 1].close)}
+                target={roundToIdxTick(
+                  pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price),
+                )}
               />
             )}
+
             <div className="grid grid-cols-2 gap-3 border-t pt-4 text-sm sm:grid-cols-4">
-              <Detail label="Invalidation" value={pattern.invalidation?.toFixed(2) ?? "—"} />
+              <Detail label="Invalidation" value={pattern.invalidation != null ? String(floorToIdxTick(pattern.invalidation)) : "—"} />
+
               {pattern.status === "developing" && (
                 <Detail label="Progress" value={`${Math.round(pattern.progress_pct ?? 0)}%`} />
               )}
