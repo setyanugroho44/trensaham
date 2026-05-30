@@ -369,6 +369,15 @@ function ChartPage() {
               />
             )}
 
+            {showBearishDevTarget && lastClose != null && (
+              <TargetCard
+                current={roundToIdxTick(lastClose)}
+                target={floorToIdxTick(pattern.prz_low!)}
+                targetHigh={ceilToIdxTick(pattern.prz_high!)}
+                title="Target Harga (PRZ)"
+              />
+            )}
+
             <div className="grid grid-cols-2 gap-3 border-t pt-4 text-sm sm:grid-cols-4">
               <Detail label="Invalidation" value={pattern.invalidation != null ? String(floorToIdxTick(pattern.invalidation)) : "—"} />
 
