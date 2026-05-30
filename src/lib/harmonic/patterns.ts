@@ -74,11 +74,26 @@ export const PATTERNS: PatternSpec[] = [
   },
 ];
 
-/** Score a measured ratio against a target range. 1.0 = perfect, 0 = out of tolerance. */
+/**
+ * Score a measured ratio against a target range. 1.0 = perfect, 0 = out of tolerance.
+ *
+ * Setiap rasio yang jatuh DI DALAM rentang valid [min, max] dianggap sempurna
+ * (skor 1.0), karena syarat pola harmonik adalah rasio berada di dalam rentang —
+ * bukan tepat di titik tengah. Untuk rasio "titik" (min == max), skor 1.0 dicapai
+ * tepat pada target. Di luar rentang namun masih dalam toleransi, skor meluruh
+ * linear menuju 0 di tepi pita toleransi. Dengan begitu pola yang seluruh rasionya
+ * pas di dalam rentang dapat mencapai confidence 100%.
+ */
 export function scoreRatio(measured: number, range: RatioRange, tolerance = 0.05): number {
-  if (measured >= range.min * (1 - tolerance) && measured <= range.max * (1 + tolerance)) {
-    const dev = Math.abs(measured - range.ideal) / range.ideal;
-    return Math.max(0, 1 - dev * 2);
-  }
-  return 0;
+  const lo = range.min * (1 - tolerance);
+  const hi = range.max * (1 + tolerance);
+  if (measured < lo || measured > hi) return 0;
+  // Di dalam rentang inti → sempurna.
+  if (measured >= range.min && measured <= range.max) return 1;
+  // Di pita toleransi → meluruh linear menuju 0 di tepi pita.
+  const margin =
+    measured < range.min
+      ? (range.min - measured) / Math.max(1e-9, range.min - lo)
+      : (measured - range.max) / Math.max(1e-9, hi - range.max);
+  return Math.max(0, 1 - margin);
 }
