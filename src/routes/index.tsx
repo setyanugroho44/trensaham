@@ -7,11 +7,11 @@ export const Route = createFileRoute("/")({
   component: Landing,
   head: () => ({
     meta: [
-      { title: "IDX Harmonic Scanner — Deteksi pola harmonik saham Indonesia" },
+      { title: "Analisa Saham Indonesia — Deteksi pola harmonik saham Indonesia" },
       {
         name: "description",
         content:
-          "Scanner otomatis pola harmonik (Gartley, Bat, Crab, Butterfly) untuk saham IDX. Coba gratis 14 hari.",
+          "Scanner saham otomatis pola harmonik (Gartley, Bat, Crab, Butterfly, AB=CD) untuk saham Indo. Mudah dan Cepat Cocok untuk yang sibuk dan tidak ingin ribet.",
       },
     ],
   }),
@@ -25,7 +25,7 @@ function Landing() {
       {/* Header */}
       <header className="border-b">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Link to="/" className="font-semibold tracking-tight">IDX Harmonic</Link>
+          <Link to="/" className="font-semibold tracking-tight">Analisa Saham Indo</Link>
           <nav className="flex items-center gap-2">
             {user ? (
               <Button asChild size="sm"><Link to="/dashboard">Buka Dashboard</Link></Button>
