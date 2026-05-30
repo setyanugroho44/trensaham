@@ -312,7 +312,6 @@ function ChartPage() {
 </div>
 
           <CardHeader>
-            
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -441,7 +440,7 @@ function TargetCard({
   const sign = (v: number) => (v >= 0 ? "+" : "");
   return (
     <div className="rounded-xl border-2 border-green-600/40 bg-gradient-to-br from-green-600/15 via-green-600/10 to-transparent p-5 shadow-sm">
-      <div className="text-xs font-semibold uppercase tracking-wider text-green-700 dark:text-green-400">
+      <div className="text-xs font-semibold  tracking-wider text-green-700 dark:text-green-400">
         {title}
       </div>
       <div className="mt-3 flex items-center justify-between gap-4">
