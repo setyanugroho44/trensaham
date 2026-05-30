@@ -423,7 +423,7 @@ function TargetCard({
   current,
   target,
   targetHigh,
-  title = "Target Harga Konservatif (0.382 AD)",
+  title = "Target Harga Konservatif",
 }: {
   current: number;
   target: number;
