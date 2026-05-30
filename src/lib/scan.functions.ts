@@ -89,13 +89,13 @@ export const runScan = createServerFn({ method: "POST" })
         // Minimum bar-span X→C agar pola tidak terlalu sempit di sumbu waktu.
         // Dikurangi untuk menangkap pola yang lebih kecil.
         // Daily lebih agresif untuk meningkatkan deteksi.
-        const minBarsSpan = data.timeframe === "1mo" ? 6 : data.timeframe === "1wk" ? 12 : 12;
+        const minBarsSpan = data.timeframe === "1mo" ? 6 : data.timeframe === "1wk" ? 12 : 15;
         // Minimum panjang kaki XA (% terhadap harga X) agar pola tidak sempit di sumbu harga.
         // Dikurangi untuk menangkap pola dengan amplitude lebih kecil.
         // Daily lebih agresif untuk intraday moves.
-        // Daily diturunkan dari 0.08 → 0.05 agar pola swing menengah ikut terdeteksi
+        
         // (masih di atas noise harian biasa, sesuai praktik harmonic scanner).
-        const minLegPct = data.timeframe === "1mo" ? 0.20 : data.timeframe === "1wk" ? 0.15 : 0.05;
+        const minLegPct = data.timeframe === "1mo" ? 0.20 : data.timeframe === "1wk" ? 0.15 : 0.08;
         const allPatterns = scales.flatMap((th) => {
           const pivots = zigzag(bars, th);
           return detectPatterns(pivots, bars, {
