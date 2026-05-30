@@ -462,6 +462,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_duplicate_patterns: { Args: never; Returns: number }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
