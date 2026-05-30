@@ -249,7 +249,7 @@ function ChartPage() {
     pattern.prz_low != null &&
     pattern.prz_high != null &&
     lastClose != null &&
-    lastClose >= pattern.b_price * 0.98; // harga sudah mendekati tinggi titik B (toleransi 2%)
+    lastClose >= pattern.b_price * 0.70; // harga sudah mendekati tinggi titik B (toleransi 30%)
 
   return (
     <div className="space-y-4">
