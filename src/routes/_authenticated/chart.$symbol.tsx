@@ -236,6 +236,21 @@ function ChartPage() {
     return () => cleanup();
   }, [bars, pattern, tf]);
 
+  // Untuk pola bearish tertentu (Bat, Butterfly, Gartley, Crab): jika harga
+  // saat ini sudah naik mendekati/menembus tinggi titik B, tampilkan kartu
+  // target price meskipun pola masih developing. Target = PRZ (di atas B).
+  const BEARISH_DEV_TARGET_PATTERNS = new Set(["Bat", "Butterfly", "Gartley", "Crab"]);
+  const lastClose = bars.length > 0 ? bars[bars.length - 1].close : null;
+  const showBearishDevTarget =
+    !!pattern &&
+    pattern.status === "developing" &&
+    pattern.direction === "bearish" &&
+    BEARISH_DEV_TARGET_PATTERNS.has(pattern.pattern_name) &&
+    pattern.prz_low != null &&
+    pattern.prz_high != null &&
+    lastClose != null &&
+    lastClose >= pattern.b_price * 0.98; // harga sudah mendekati tinggi titik B (toleransi 2%)
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
