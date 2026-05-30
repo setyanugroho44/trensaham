@@ -420,15 +420,29 @@ function ExtensionWarning({ patternName }: { patternName: string }) {
     </div>
   );
 }
-function TargetCard({ current, target }: { current: number; target: number }) {
-  const pct = current > 0 ? ((target - current) / current) * 100 : 0;
-  const up = target >= current;
+function TargetCard({
+  current,
+  target,
+  targetHigh,
+  title = "Target Harga Konservatif (0.382 AD)",
+}: {
+  current: number;
+  target: number;
+  targetHigh?: number;
+  title?: string;
+}) {
+  const tHigh = targetHigh ?? target;
+  const isRange = targetHigh != null && targetHigh !== target;
+  const pctLow = current > 0 ? ((target - current) / current) * 100 : 0;
+  const pctHigh = current > 0 ? ((tHigh - current) / current) * 100 : 0;
+  const up = tHigh >= current;
   const fmt = (v: number) =>
     "Rp" + new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(v);
+  const sign = (v: number) => (v >= 0 ? "+" : "");
   return (
     <div className="rounded-xl border-2 border-green-600/40 bg-gradient-to-br from-green-600/15 via-green-600/10 to-transparent p-5 shadow-sm">
       <div className="text-xs font-semibold uppercase tracking-wider text-green-700 dark:text-green-400">
-        Target Harga Konservatif (0.382 AD)
+        {title}
       </div>
       <div className="mt-3 flex items-center justify-between gap-4">
         <div className="flex flex-col">
@@ -439,15 +453,16 @@ function TargetCard({ current, target }: { current: number; target: number }) {
           <span
             className={`text-sm font-bold ${up ? "text-green-600 dark:text-green-400" : "text-rose-600 dark:text-rose-400"}`}
           >
-            {up ? "+" : ""}
-            {pct.toFixed(1)}%
+            {isRange
+              ? `${sign(pctLow)}${pctLow.toFixed(1)}% – ${sign(pctHigh)}${pctHigh.toFixed(1)}%`
+              : `${sign(pctLow)}${pctLow.toFixed(1)}%`}
           </span>
           <span className="text-2xl leading-none text-muted-foreground">→</span>
         </div>
         <div className="flex flex-col items-end">
           <span className="text-[11px] uppercase tracking-wide text-muted-foreground">Target harga</span>
           <span className="text-2xl font-bold tracking-tight text-green-700 dark:text-green-400">
-            {fmt(target)}
+            {isRange ? `${fmt(target)} – ${fmt(tHigh)}` : fmt(target)}
           </span>
         </div>
       </div>
