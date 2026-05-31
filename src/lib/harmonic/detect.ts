@@ -151,14 +151,34 @@ export function detectPatterns(
     return true;
   }
 
+  // Gate khusus per pola. Untuk AB=CD, kaki XA tidak relevan — yang penting
+  // adalah BESARNYA pola inti AB=CD (kaki A→B dan C→D). Banyak kasus XA panjang
+  // tapi pola AB=CD-nya kecil/sempit; gate ini menyaringnya dengan mengukur
+  // amplitudo kaki AB (% terhadap harga) dan rentang waktu pola inti (A→C/A→D).
+  function patternLargeEnough(
+    name: string,
+    X: Pivot,
+    A: Pivot,
+    B: Pivot,
+    C: Pivot,
+    D: Pivot | null,
+  ): boolean {
+    if (name === "AB=CD") {
+      const abPct = Math.abs(A.price - B.price) / Math.max(1e-9, Math.abs(A.price));
+      if (abPct < minLegPct) return false;
+      const end = D ?? C;
+      if (end.index - A.index < minSpan) return false;
+      return true;
+    }
+    return isLargeEnough(X, C);
+  }
+
   // Try last 5 pivots for completed
   if (pivots.length >= 5) {
     const [X, A, B, C, D] = pivots.slice(-5);
-    if (!isLargeEnough(X, C)) {
-      // skip completed eval — pattern terlalu kecil
-    } else
     for (const dir of ["bullish", "bearish"] as Direction[]) {
       for (const spec of PATTERNS) {
+        if (!patternLargeEnough(spec.name, X, A, B, C, D)) continue;
         const r = evalSpec(X, A, B, C, D, spec, dir, tol);
         if (r && r.score >= minConf) {
           const prz = projectD(X, A, B, C, spec, dir, tol);
@@ -181,9 +201,9 @@ export function detectPatterns(
   // Try last 4 pivots for developing (X-A-B-C, D not yet formed)
   if (pivots.length >= 4) {
     const [X, A, B, C] = pivots.slice(-4);
-    if (isLargeEnough(X, C))
     for (const dir of ["bullish", "bearish"] as Direction[]) {
       for (const spec of PATTERNS) {
+        if (!patternLargeEnough(spec.name, X, A, B, C, null)) continue;
         const r = evalSpec(X, A, B, C, null, spec, dir, tol);
         if (r && r.score >= minConf) {
           const prz = projectD(X, A, B, C, spec, dir, tol);
