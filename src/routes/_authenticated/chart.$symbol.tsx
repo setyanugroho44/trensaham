@@ -51,7 +51,7 @@ type PatternRow = {
   symbol: string;
   pattern_name: string;
   direction: "bullish" | "bearish";
-  status: "completed" | "developing";
+  status: "completed" | "developing" | "invalid";
   confidence: number;
   x_date: string | null; x_price: number | null;
   a_date: string; a_price: number;
@@ -266,6 +266,13 @@ function ChartPage() {
           </Badge>
         )}
       </div>
+
+      {pattern?.status === "invalid" && (
+        <div className="rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          Pola ini sudah <span className="font-semibold">tidak valid</span> — harga telah menembus
+          titik A (higher high/lower low) atau level invalidation setelah titik C terbentuk.
+        </div>
+      )}
 
       <Card>
         <CardContent className="p-2">

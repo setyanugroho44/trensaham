@@ -36,7 +36,7 @@ type PatternRow = {
   timeframe: string;
   pattern_name: string;
   direction: "bullish" | "bearish";
-  status: "completed" | "developing";
+  status: "completed" | "developing" | "invalid";
   confidence: number;
   prz_low: number | null;
   prz_high: number | null;
@@ -122,7 +122,11 @@ function DashboardPage() {
       if ("message" in res && res.message) {
         toast.warning(res.message);
       } else {
-        toast.success(`Scan complete — ${res.patternsFound} pattern(s) found`);
+        const invalidated = "patternsInvalidated" in res ? (res.patternsInvalidated ?? 0) : 0;
+        toast.success(
+          `Scan selesai — ${res.patternsFound} pola ditemukan` +
+            (invalidated > 0 ? `, ${invalidated} pola lama jadi tidak valid` : ""),
+        );
         if (res.patternsFound > 0) playBeep();
       }
       load();
@@ -137,6 +141,7 @@ function DashboardPage() {
     const base = rows.filter(
       (r) =>
         r.timeframe === timeframe &&
+        r.status !== "invalid" &&
         r.confidence * 100 >= minConf &&
         (r.status !== "developing" || (r.progress_pct ?? 0) >= minProgress) &&
         // Abaikan pola dengan PRZ di bawah 60

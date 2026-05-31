@@ -8,6 +8,35 @@ import { detectPatterns } from "./harmonic/detect";
 
 const TF = z.enum(["1d", "1wk", "1mo"]);
 
+/**
+ * Evaluasi ulang pola yang sudah terdeteksi sebelumnya.
+ * Pola dianggap TIDAK VALID jika, setelah titik C terbentuk, harga:
+ *  - bullish: membentuk higher high yang melewati titik A, atau menembus
+ *    level invalidation (turun di bawahnya);
+ *  - bearish: membentuk lower low yang melewati titik A, atau menembus
+ *    level invalidation (naik di atasnya).
+ */
+function isPatternInvalidated(
+  bars: { time: number; high: number; low: number }[],
+  p: { direction: string; a_price: number | null; c_date: string | null; invalidation: number | null },
+): boolean {
+  if (!p.c_date) return false;
+  const cTime = Math.floor(Date.parse(p.c_date) / 1000);
+  if (Number.isNaN(cTime)) return false;
+  const after = bars.filter((b) => b.time > cTime);
+  if (after.length === 0) return false;
+  const maxHigh = Math.max(...after.map((b) => b.high));
+  const minLow = Math.min(...after.map((b) => b.low));
+  if (p.direction === "bullish") {
+    if (p.a_price != null && maxHigh > p.a_price) return true; // higher high melewati A
+    if (p.invalidation != null && minLow < p.invalidation) return true; // tembus invalidation
+  } else {
+    if (p.a_price != null && minLow < p.a_price) return true; // lower low melewati A
+    if (p.invalidation != null && maxHigh > p.invalidation) return true; // tembus invalidation
+  }
+  return false;
+}
+
 async function assertScanAccess(
   supabase: {
     rpc: (
@@ -70,6 +99,7 @@ export const runScan = createServerFn({ method: "POST" })
     if (runErr || !run) throw new Error(runErr?.message ?? "Failed to create scan run");
 
     let totalFound = 0;
+    let totalInvalidated = 0;
     let done = 0;
     const errors: string[] = [];
 
@@ -80,6 +110,27 @@ export const runScan = createServerFn({ method: "POST" })
           done++;
           continue;
         }
+
+        // Evaluasi ulang pola lama untuk simbol+timeframe ini. Tandai pola
+        // yang sudah tidak valid (mis. higher high melewati titik A) agar tidak
+        // lagi muncul sebagai developing/completed.
+        const { data: existing } = await supabase
+          .from("patterns")
+          .select("id, direction, a_price, c_date, invalidation")
+          .eq("symbol", symbol)
+          .eq("timeframe", data.timeframe)
+          .in("status", ["developing", "completed"]);
+        const invalidIds = (existing ?? [])
+          .filter((p) => isPatternInvalidated(bars, p))
+          .map((p) => p.id);
+        if (invalidIds.length > 0) {
+          const { error: upErr } = await supabaseAdmin
+            .from("patterns")
+            .update({ status: "invalid" })
+            .in("id", invalidIds);
+          if (!upErr) totalInvalidated += invalidIds.length;
+        }
+
         // Multi-scale zigzag thresholds disesuaikan per timeframe agar
         // pivot mewakili swing yang signifikan & pola merentang banyak candle.
         // Scale lebih banyak untuk menangkap pola di berbagai level.
@@ -165,5 +216,5 @@ export const runScan = createServerFn({ method: "POST" })
       })
       .eq("id", run.id);
 
-    return { runId: run.id, patternsFound: totalFound, errors };
+    return { runId: run.id, patternsFound: totalFound, patternsInvalidated: totalInvalidated, errors };
   });
