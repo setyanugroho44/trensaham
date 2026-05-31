@@ -122,7 +122,11 @@ function DashboardPage() {
       if ("message" in res && res.message) {
         toast.warning(res.message);
       } else {
-        toast.success(`Scan complete — ${res.patternsFound} pattern(s) found`);
+        const invalidated = "patternsInvalidated" in res ? (res.patternsInvalidated ?? 0) : 0;
+        toast.success(
+          `Scan selesai — ${res.patternsFound} pola ditemukan` +
+            (invalidated > 0 ? `, ${invalidated} pola lama jadi tidak valid` : ""),
+        );
         if (res.patternsFound > 0) playBeep();
       }
       load();
