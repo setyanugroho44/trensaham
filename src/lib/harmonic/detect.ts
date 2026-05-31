@@ -151,6 +151,28 @@ export function detectPatterns(
     return true;
   }
 
+  // Gate khusus per pola. Untuk AB=CD, kaki XA tidak relevan — yang penting
+  // adalah BESARNYA pola inti AB=CD (kaki A→B dan C→D). Banyak kasus XA panjang
+  // tapi pola AB=CD-nya kecil/sempit; gate ini menyaringnya dengan mengukur
+  // amplitudo kaki AB (% terhadap harga) dan rentang waktu pola inti (A→C/A→D).
+  function patternLargeEnough(
+    name: string,
+    X: Pivot,
+    A: Pivot,
+    B: Pivot,
+    C: Pivot,
+    D: Pivot | null,
+  ): boolean {
+    if (name === "AB=CD") {
+      const abPct = Math.abs(A.price - B.price) / Math.max(1e-9, Math.abs(A.price));
+      if (abPct < minLegPct) return false;
+      const end = D ?? C;
+      if (end.index - A.index < minSpan) return false;
+      return true;
+    }
+    return isLargeEnough(X, C);
+  }
+
   // Try last 5 pivots for completed
   if (pivots.length >= 5) {
     const [X, A, B, C, D] = pivots.slice(-5);
