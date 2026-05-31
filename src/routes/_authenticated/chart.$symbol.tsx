@@ -51,7 +51,7 @@ type PatternRow = {
   symbol: string;
   pattern_name: string;
   direction: "bullish" | "bearish";
-  status: "completed" | "developing";
+  status: "completed" | "developing" | "invalid";
   confidence: number;
   x_date: string | null; x_price: number | null;
   a_date: string; a_price: number;
