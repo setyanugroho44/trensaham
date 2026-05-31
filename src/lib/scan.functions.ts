@@ -99,6 +99,7 @@ export const runScan = createServerFn({ method: "POST" })
     if (runErr || !run) throw new Error(runErr?.message ?? "Failed to create scan run");
 
     let totalFound = 0;
+    let totalInvalidated = 0;
     let done = 0;
     const errors: string[] = [];
 
