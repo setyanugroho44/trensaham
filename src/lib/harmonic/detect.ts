@@ -176,11 +176,9 @@ export function detectPatterns(
   // Try last 5 pivots for completed
   if (pivots.length >= 5) {
     const [X, A, B, C, D] = pivots.slice(-5);
-    if (!isLargeEnough(X, C)) {
-      // skip completed eval — pattern terlalu kecil
-    } else
     for (const dir of ["bullish", "bearish"] as Direction[]) {
       for (const spec of PATTERNS) {
+        if (!patternLargeEnough(spec.name, X, A, B, C, D)) continue;
         const r = evalSpec(X, A, B, C, D, spec, dir, tol);
         if (r && r.score >= minConf) {
           const prz = projectD(X, A, B, C, spec, dir, tol);
@@ -203,9 +201,9 @@ export function detectPatterns(
   // Try last 4 pivots for developing (X-A-B-C, D not yet formed)
   if (pivots.length >= 4) {
     const [X, A, B, C] = pivots.slice(-4);
-    if (isLargeEnough(X, C))
     for (const dir of ["bullish", "bearish"] as Direction[]) {
       for (const spec of PATTERNS) {
+        if (!patternLargeEnough(spec.name, X, A, B, C, null)) continue;
         const r = evalSpec(X, A, B, C, null, spec, dir, tol);
         if (r && r.score >= minConf) {
           const prz = projectD(X, A, B, C, spec, dir, tol);
