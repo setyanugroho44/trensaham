@@ -141,6 +141,7 @@ function DashboardPage() {
     const base = rows.filter(
       (r) =>
         r.timeframe === timeframe &&
+        r.status !== "invalid" &&
         r.confidence * 100 >= minConf &&
         (r.status !== "developing" || (r.progress_pct ?? 0) >= minProgress) &&
         // Abaikan pola dengan PRZ di bawah 60
