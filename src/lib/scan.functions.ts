@@ -110,6 +110,27 @@ export const runScan = createServerFn({ method: "POST" })
           done++;
           continue;
         }
+
+        // Evaluasi ulang pola lama untuk simbol+timeframe ini. Tandai pola
+        // yang sudah tidak valid (mis. higher high melewati titik A) agar tidak
+        // lagi muncul sebagai developing/completed.
+        const { data: existing } = await supabase
+          .from("patterns")
+          .select("id, direction, a_price, c_date, invalidation")
+          .eq("symbol", symbol)
+          .eq("timeframe", data.timeframe)
+          .in("status", ["developing", "completed"]);
+        const invalidIds = (existing ?? [])
+          .filter((p) => isPatternInvalidated(bars, p))
+          .map((p) => p.id);
+        if (invalidIds.length > 0) {
+          const { error: upErr } = await supabaseAdmin
+            .from("patterns")
+            .update({ status: "invalid" })
+            .in("id", invalidIds);
+          if (!upErr) totalInvalidated += invalidIds.length;
+        }
+
         // Multi-scale zigzag thresholds disesuaikan per timeframe agar
         // pivot mewakili swing yang signifikan & pola merentang banyak candle.
         // Scale lebih banyak untuk menangkap pola di berbagai level.
