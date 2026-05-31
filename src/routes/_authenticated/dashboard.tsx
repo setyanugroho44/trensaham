@@ -36,7 +36,7 @@ type PatternRow = {
   timeframe: string;
   pattern_name: string;
   direction: "bullish" | "bearish";
-  status: "completed" | "developing";
+  status: "completed" | "developing" | "invalid";
   confidence: number;
   prz_low: number | null;
   prz_high: number | null;
