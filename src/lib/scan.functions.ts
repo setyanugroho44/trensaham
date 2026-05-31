@@ -216,5 +216,5 @@ export const runScan = createServerFn({ method: "POST" })
       })
       .eq("id", run.id);
 
-    return { runId: run.id, patternsFound: totalFound, errors };
+    return { runId: run.id, patternsFound: totalFound, patternsInvalidated: totalInvalidated, errors };
   });
