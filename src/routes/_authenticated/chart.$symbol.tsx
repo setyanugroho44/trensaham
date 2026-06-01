@@ -35,6 +35,7 @@ import butterflyImg from "@/assets/butterfly.png";
 import crabImg from "@/assets/crab.png";
 import sharkImg from "@/assets/shark.png";
 import cypherImg from "@/assets/cypher.png";
+import abcdImg from "@/assets/abcd.png";
 
 const PATTERN_IMAGES: Record<string, string> = {
   Gartley: gartleyImg,
@@ -43,6 +44,7 @@ const PATTERN_IMAGES: Record<string, string> = {
   Crab: crabImg,
   Shark: sharkImg,
   Cypher: cypherImg,
+  "AB=CD": abcdImg,
 };
 
 const searchSchema = z.object({
