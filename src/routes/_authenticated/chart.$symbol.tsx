@@ -83,7 +83,22 @@ function ChartPage() {
   const [bars, setBars] = useState<Bar[]>([]);
   const [pattern, setPattern] = useState<PatternRow | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
   const fetchBars = useServerFn(fetchBarsForSymbol);
+  const navigate = useNavigate();
+
+  async function handleDelete() {
+    if (!pattern) return;
+    setDeleting(true);
+    const { error } = await supabase.from("patterns").delete().eq("id", pattern.id);
+    setDeleting(false);
+    if (error) {
+      toast.error("Gagal menghapus pola: " + error.message);
+      return;
+    }
+    toast.success("Pola berhasil dihapus");
+    navigate({ to: "/dashboard" });
+  }
 
   useEffect(() => {
     let alive = true;
