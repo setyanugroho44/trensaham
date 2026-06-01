@@ -288,9 +288,37 @@ function ChartPage() {
           <h1 className="text-2xl font-semibold tracking-tight">{symbol} <span className="text-muted-foreground text-base">· {tf}</span></h1>
         </div>
         {pattern && (
-          <Badge variant={pattern.direction === "bullish" ? "default" : "destructive"}>
-            {pattern.pattern_name} · {pattern.direction} · {pattern.status} · {Math.round(pattern.confidence * 100)}%
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant={pattern.direction === "bullish" ? "default" : "destructive"}>
+              {pattern.pattern_name} · {pattern.direction} · {pattern.status} · {Math.round(pattern.confidence * 100)}%
+            </Badge>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" size="icon" className="text-destructive hover:text-destructive" aria-label="Hapus pola">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Hapus pola ini?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Pola {pattern.pattern_name} · {pattern.direction} pada {pattern.symbol} akan
+                    dihapus permanen. Tindakan ini tidak dapat dibatalkan.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={deleting}>Batal</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {deleting ? "Menghapus…" : "Hapus"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         )}
       </div>
 
