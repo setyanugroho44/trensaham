@@ -321,11 +321,7 @@ function ChartPage() {
           <CardHeader>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <PivotXABCD pattern={pattern} />
-              
-              
-            </div>
+           
 
             <div className="rounded-xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 via-primary/10 to-transparent p-5 shadow-sm">
               <div className="flex items-center gap-2 text-xs font-semibold  tracking-wider text-primary">
@@ -383,7 +379,11 @@ function ChartPage() {
                 title="Target Harga (PRZ)"
               />
             )}
-
+ <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <PivotXABCD pattern={pattern} />
+              
+              
+            </div>
             <div className="grid grid-cols-2 gap-3 border-t pt-4 text-sm sm:grid-cols-4">
               <Detail label="Invalidation" value={pattern.invalidation != null ? String(floorToIdxTick(pattern.invalidation)) : "—"} />
 
