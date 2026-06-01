@@ -1,10 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchBarsForSymbol } from "@/lib/scan.functions";
 import { floorToIdxTick, ceilToIdxTick, idxTickSize } from "@/lib/harmonic/detect";
+import { toast } from "sonner";
 
 function roundToIdxTick(price: number): number {
   const t = idxTickSize(price);
@@ -13,7 +14,18 @@ function roundToIdxTick(price: number): number {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Info } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ArrowLeft, Info, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Bar } from "@/lib/harmonic/types";
 import harmonicPatternImg from "@/assets/harmonic-pattern.jpg";
