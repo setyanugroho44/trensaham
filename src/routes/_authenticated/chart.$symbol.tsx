@@ -1,10 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchBarsForSymbol } from "@/lib/scan.functions";
 import { floorToIdxTick, ceilToIdxTick, idxTickSize } from "@/lib/harmonic/detect";
+import { toast } from "sonner";
 
 function roundToIdxTick(price: number): number {
   const t = idxTickSize(price);
@@ -13,7 +14,18 @@ function roundToIdxTick(price: number): number {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Info } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ArrowLeft, Info, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Bar } from "@/lib/harmonic/types";
 import harmonicPatternImg from "@/assets/harmonic-pattern.jpg";
@@ -71,7 +83,22 @@ function ChartPage() {
   const [bars, setBars] = useState<Bar[]>([]);
   const [pattern, setPattern] = useState<PatternRow | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
   const fetchBars = useServerFn(fetchBarsForSymbol);
+  const navigate = useNavigate();
+
+  async function handleDelete() {
+    if (!pattern) return;
+    setDeleting(true);
+    const { error } = await supabase.from("patterns").delete().eq("id", pattern.id);
+    setDeleting(false);
+    if (error) {
+      toast.error("Gagal menghapus pola: " + error.message);
+      return;
+    }
+    toast.success("Pola berhasil dihapus");
+    navigate({ to: "/dashboard" });
+  }
 
   useEffect(() => {
     let alive = true;
@@ -261,9 +288,37 @@ function ChartPage() {
           <h1 className="text-2xl font-semibold tracking-tight">{symbol} <span className="text-muted-foreground text-base">· {tf}</span></h1>
         </div>
         {pattern && (
-          <Badge variant={pattern.direction === "bullish" ? "default" : "destructive"}>
-            {pattern.pattern_name} · {pattern.direction} · {pattern.status} · {Math.round(pattern.confidence * 100)}%
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant={pattern.direction === "bullish" ? "default" : "destructive"}>
+              {pattern.pattern_name} · {pattern.direction} · {pattern.status} · {Math.round(pattern.confidence * 100)}%
+            </Badge>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" size="icon" className="text-destructive hover:text-destructive" aria-label="Hapus pola">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Hapus pola ini?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Pola {pattern.pattern_name} · {pattern.direction} pada {pattern.symbol} akan
+                    dihapus permanen. Tindakan ini tidak dapat dibatalkan.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={deleting}>Batal</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {deleting ? "Menghapus…" : "Hapus"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         )}
       </div>
 
@@ -379,23 +434,21 @@ function ChartPage() {
                 title="Target Harga (PRZ)"
               />
             )}
- <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="rounded-xl border bg-muted/20 p-4 space-y-4">
               <PivotXABCD pattern={pattern} />
-              
-              
-            </div>
-            <div className="grid grid-cols-2 gap-3 border-t pt-4 text-sm sm:grid-cols-4">
-              <Detail label="Invalidation" value={pattern.invalidation != null ? String(floorToIdxTick(pattern.invalidation)) : "—"} />
 
-              {pattern.status === "developing" && (
-                <Detail label="Progress" value={`${Math.round(pattern.progress_pct ?? 0)}%`} />
-              )}
+              <div className="grid grid-cols-2 gap-3 border-t pt-4 text-sm sm:grid-cols-4">
+                <Detail label="Invalidation" value={pattern.invalidation != null ? String(floorToIdxTick(pattern.invalidation)) : "—"} />
 
+                {pattern.status === "developing" && (
+                  <Detail label="Progress" value={`${Math.round(pattern.progress_pct ?? 0)}%`} />
+                )}
 
-              {pattern.ratios &&
-                Object.entries(pattern.ratios).map(([k, v]) => (
-                  <Detail key={k} label={k} value={Number.isFinite(v) ? v.toFixed(3) : "—"} />
-                ))}
+                {pattern.ratios &&
+                  Object.entries(pattern.ratios).map(([k, v]) => (
+                    <Detail key={k} label={k} value={Number.isFinite(v) ? v.toFixed(3) : "—"} />
+                  ))}
+              </div>
             </div>
           </CardContent>
         </Card>
