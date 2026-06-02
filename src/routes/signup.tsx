@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { captureRefFromUrl } from "@/lib/referral-code";
+import { notifyNewSignup } from "@/lib/notify.functions";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
@@ -42,6 +43,8 @@ function SignupPage() {
       toast.error(error.message);
       return;
     }
+    // Fire-and-forget Telegram notification for the admin
+    notifyNewSignup({ data: { email } }).catch(() => {});
     if (data.user && !data.session) {
       toast.success("Cek email Anda untuk verifikasi sebelum login.", { duration: 8000 });
     } else {
