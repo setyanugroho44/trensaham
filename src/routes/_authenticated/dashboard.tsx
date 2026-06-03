@@ -69,9 +69,39 @@ function playBeep() {
 
 function DashboardPage() {
   const navigate = useNavigate();
-  const [timeframe, setTimeframe] = useState<"1d" | "1wk" | "1mo">("1d");
-  const [minConf, setMinConf] = useState<number>(50);
-  const [minProgress, setMinProgress] = useState<number>(15);
+
+  const [timeframe, setTimeframe] = useState<"1d" | "1wk" | "1mo">(() => {
+    try {
+      const v = localStorage.getItem("dashboard_tf");
+      if (v === "1d" || v === "1wk" || v === "1mo") return v;
+    } catch { /* ignore */ }
+    return "1d";
+  });
+  const [minConf, setMinConf] = useState<number>(() => {
+    try {
+      const v = localStorage.getItem("dashboard_minConf");
+      if (v) return Math.max(0, Math.min(100, Number(v) || 50));
+    } catch { /* ignore */ }
+    return 50;
+  });
+  const [minProgress, setMinProgress] = useState<number>(() => {
+    try {
+      const v = localStorage.getItem("dashboard_minProgress");
+      if (v) return Math.max(0, Math.min(100, Number(v) || 15));
+    } catch { /* ignore */ }
+    return 15;
+  });
+
+  useEffect(() => {
+    try { localStorage.setItem("dashboard_tf", timeframe); } catch { /* ignore */ }
+  }, [timeframe]);
+  useEffect(() => {
+    try { localStorage.setItem("dashboard_minConf", String(minConf)); } catch { /* ignore */ }
+  }, [minConf]);
+  useEffect(() => {
+    try { localStorage.setItem("dashboard_minProgress", String(minProgress)); } catch { /* ignore */ }
+  }, [minProgress]);
+
   const [scanning, setScanning] = useState(false);
   const [rows, setRows] = useState<PatternRow[]>([]);
   const [watchlistCount, setWatchlistCount] = useState<number | null>(null);
