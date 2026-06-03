@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { captureRefFromUrl } from "@/lib/referral-code";
-import { notifyNewSignup } from "@/lib/notify.functions";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
