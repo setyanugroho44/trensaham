@@ -87,9 +87,9 @@ function DashboardPage() {
   const [minProgress, setMinProgress] = useState<number>(() => {
     try {
       const v = localStorage.getItem("dashboard_minProgress");
-      if (v) return Math.max(0, Math.min(100, Number(v) || 15));
+      if (v) return Math.max(0, Math.min(100, Number(v) || 20));
     } catch { /* ignore */ }
-    return 15;
+    return 20;
   });
 
   useEffect(() => {
