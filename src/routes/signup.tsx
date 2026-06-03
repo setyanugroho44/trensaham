@@ -42,8 +42,7 @@ function SignupPage() {
       toast.error(error.message);
       return;
     }
-    // Fire-and-forget Telegram notification for the admin
-    notifyNewSignup({ data: { email } }).catch(() => {});
+    // Telegram notification is now sent server-side by the new-user database trigger.
     if (data.user && !data.session) {
       toast.success("Cek email Anda untuk verifikasi sebelum login.", { duration: 8000 });
     } else {
