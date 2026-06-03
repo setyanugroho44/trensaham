@@ -22,6 +22,7 @@ import { Route as AuthenticatedReferralRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as ApiPublicNotifySignupRouteImport } from './routes/api/public/notify-signup'
 import { Route as AuthenticatedChartSymbolRouteImport } from './routes/_authenticated/chart.$symbol'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin.payments'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -91,6 +92,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const ApiPublicNotifySignupRoute = ApiPublicNotifySignupRouteImport.update({
+  id: '/api/public/notify-signup',
+  path: '/api/public/notify-signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedChartSymbolRoute =
   AuthenticatedChartSymbolRouteImport.update({
     id: '/chart/$symbol',
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
+  '/api/public/notify-signup': typeof ApiPublicNotifySignupRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
+  '/api/public/notify-signup': typeof ApiPublicNotifySignupRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/_authenticated/chart/$symbol': typeof AuthenticatedChartSymbolRoute
+  '/api/public/notify-signup': typeof ApiPublicNotifySignupRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/watchlist'
     | '/admin/payments'
     | '/chart/$symbol'
+    | '/api/public/notify-signup'
     | '/admin/'
     | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
@@ -196,6 +206,7 @@ export interface FileRouteTypes {
     | '/watchlist'
     | '/admin/payments'
     | '/chart/$symbol'
+    | '/api/public/notify-signup'
     | '/admin'
     | '/lovable/email/queue/process'
   id:
@@ -214,6 +225,7 @@ export interface FileRouteTypes {
     | '/_authenticated/watchlist'
     | '/_authenticated/admin/payments'
     | '/_authenticated/chart/$symbol'
+    | '/api/public/notify-signup'
     | '/_authenticated/admin/'
     | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
@@ -225,6 +237,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   VerifiedRoute: typeof VerifiedRoute
+  ApiPublicNotifySignupRoute: typeof ApiPublicNotifySignupRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
@@ -321,6 +334,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/public/notify-signup': {
+      id: '/api/public/notify-signup'
+      path: '/api/public/notify-signup'
+      fullPath: '/api/public/notify-signup'
+      preLoaderRoute: typeof ApiPublicNotifySignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/chart/$symbol': {
       id: '/_authenticated/chart/$symbol'
       path: '/chart/$symbol'
@@ -380,6 +400,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   VerifiedRoute: VerifiedRoute,
+  ApiPublicNotifySignupRoute: ApiPublicNotifySignupRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
