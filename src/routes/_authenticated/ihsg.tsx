@@ -18,10 +18,10 @@ export const Route = createFileRoute("/_authenticated/ihsg")({
   head: () => ({ meta: [{ title: "Deteksi Pola Harmonik IHSG — Pro" }] }),
 });
 
-type Tf = "1d" | "1wk" | "1mo";
+type Tf = "1d" | "4h";
 
 const DEFAULTS = {
-  timeframe: "1wk" as Tf,
+  timeframe: "1d" as Tf,
   tolerance: 5, // %
   minConfidence: 50, // %
   minBarsSpan: 12,

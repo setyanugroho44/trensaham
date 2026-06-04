@@ -11,7 +11,7 @@ import type { Bar } from "./harmonic/types";
 const IHSG_TICKER = "^JKSE";
 
 const inputSchema = z.object({
-  timeframe: z.enum(["1d", "1wk", "1mo"]),
+  timeframe: z.enum(["1d", "4h"]),
   tolerance: z.number().min(0.01).max(0.2),
   minConfidence: z.number().min(0).max(1),
   minBarsSpan: z.number().int().min(3).max(80),
