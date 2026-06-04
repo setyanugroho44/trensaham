@@ -20,6 +20,7 @@ import { Route as AuthenticatedUpgradeRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedTrailingStopRouteImport } from './routes/_authenticated/trailing-stop'
 import { Route as AuthenticatedReferralRouteImport } from './routes/_authenticated/referral'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedIhsgRouteImport } from './routes/_authenticated/ihsg'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ApiPublicNotifySignupRouteImport } from './routes/api/public/notify-signup'
@@ -82,6 +83,11 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedIhsgRoute = AuthenticatedIhsgRouteImport.update({
+  id: '/ihsg',
+  path: '/ihsg',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/verified': typeof VerifiedRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/ihsg': typeof AuthenticatedIhsgRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/referral': typeof AuthenticatedReferralRoute
   '/trailing-stop': typeof AuthenticatedTrailingStopRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/verified': typeof VerifiedRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/ihsg': typeof AuthenticatedIhsgRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/referral': typeof AuthenticatedReferralRoute
   '/trailing-stop': typeof AuthenticatedTrailingStopRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/verified': typeof VerifiedRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/ihsg': typeof AuthenticatedIhsgRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/referral': typeof AuthenticatedReferralRoute
   '/_authenticated/trailing-stop': typeof AuthenticatedTrailingStopRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verified'
     | '/dashboard'
+    | '/ihsg'
     | '/profile'
     | '/referral'
     | '/trailing-stop'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verified'
     | '/dashboard'
+    | '/ihsg'
     | '/profile'
     | '/referral'
     | '/trailing-stop'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verified'
     | '/_authenticated/dashboard'
+    | '/_authenticated/ihsg'
     | '/_authenticated/profile'
     | '/_authenticated/referral'
     | '/_authenticated/trailing-stop'
@@ -320,6 +332,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/ihsg': {
+      id: '/_authenticated/ihsg'
+      path: '/ihsg'
+      fullPath: '/ihsg'
+      preLoaderRoute: typeof AuthenticatedIhsgRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -367,6 +386,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedIhsgRoute: typeof AuthenticatedIhsgRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedReferralRoute: typeof AuthenticatedReferralRoute
   AuthenticatedTrailingStopRoute: typeof AuthenticatedTrailingStopRoute
@@ -379,6 +399,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedIhsgRoute: AuthenticatedIhsgRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedReferralRoute: AuthenticatedReferralRoute,
   AuthenticatedTrailingStopRoute: AuthenticatedTrailingStopRoute,
@@ -406,3 +427,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
