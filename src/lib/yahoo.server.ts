@@ -99,6 +99,7 @@ export async function fetchYahooBars(symbol: string, tf: Timeframe): Promise<Bar
 
 /** Stooq fallback: free CSV endpoint. e.g. https://stooq.com/q/d/l/?s=eraa.jk&i=d */
 export async function fetchStooqBars(symbol: string, tf: Timeframe): Promise<Bar[]> {
+  if (symbol.startsWith("^")) return []; // index tickers are not available on Stooq fallback
   const sym = (symbol.includes(".") ? symbol : `${symbol}.jk`).toLowerCase();
   const interval = tf === "1mo" ? "m" : tf === "1wk" ? "w" : "d";
   const url = `https://stooq.com/q/d/l/?s=${encodeURIComponent(sym)}&i=${interval}`;
