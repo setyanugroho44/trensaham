@@ -45,7 +45,7 @@ function IhsgPage() {
   const [timeframe, setTimeframe] = useState<Tf>(() => {
     try {
       const v = localStorage.getItem("ihsg_tf");
-      if (v === "1d" || v === "1wk" || v === "1mo") return v;
+      if (v === "1d" || v === "4h") return v;
     } catch { /* ignore */ }
     return DEFAULTS.timeframe;
   });
