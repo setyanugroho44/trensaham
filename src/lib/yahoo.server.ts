@@ -34,7 +34,8 @@ function ytfParams(tf: Timeframe): { interval: string; range: string } {
 
 /** Fetch OHLC bars for an IDX symbol (e.g. "ASII"). */
 export async function fetchYahooBars(symbol: string, tf: Timeframe): Promise<Bar[]> {
-  const ticker = symbol.includes(".") ? symbol : `${symbol.toUpperCase()}.JK`;
+  const isIndex = symbol.startsWith("^");
+  const ticker = isIndex || symbol.includes(".") ? symbol : `${symbol.toUpperCase()}.JK`;
   const { interval, range } = ytfParams(tf);
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
     ticker,
@@ -98,6 +99,7 @@ export async function fetchYahooBars(symbol: string, tf: Timeframe): Promise<Bar
 
 /** Stooq fallback: free CSV endpoint. e.g. https://stooq.com/q/d/l/?s=eraa.jk&i=d */
 export async function fetchStooqBars(symbol: string, tf: Timeframe): Promise<Bar[]> {
+  if (symbol.startsWith("^")) return []; // index tickers are not available on Stooq fallback
   const sym = (symbol.includes(".") ? symbol : `${symbol}.jk`).toLowerCase();
   const interval = tf === "1mo" ? "m" : tf === "1wk" ? "w" : "d";
   const url = `https://stooq.com/q/d/l/?s=${encodeURIComponent(sym)}&i=${interval}`;
