@@ -230,8 +230,7 @@ function IhsgPage() {
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1d">Daily</SelectItem>
-                  <SelectItem value="1wk">Weekly</SelectItem>
-                  <SelectItem value="1mo">Monthly</SelectItem>
+                  <SelectItem value="4h">4 Jam</SelectItem>
                 </SelectContent>
               </Select>
             </div>
