@@ -34,7 +34,8 @@ function ytfParams(tf: Timeframe): { interval: string; range: string } {
 
 /** Fetch OHLC bars for an IDX symbol (e.g. "ASII"). */
 export async function fetchYahooBars(symbol: string, tf: Timeframe): Promise<Bar[]> {
-  const ticker = symbol.includes(".") ? symbol : `${symbol.toUpperCase()}.JK`;
+  const isIndex = symbol.startsWith("^");
+  const ticker = isIndex || symbol.includes(".") ? symbol : `${symbol.toUpperCase()}.JK`;
   const { interval, range } = ytfParams(tf);
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
     ticker,
