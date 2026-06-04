@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Crown, Wallet } from "lucide-react";
+import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Crown, Wallet, LineChart } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Sidebar,
@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { isCurrentUserAdmin } from "@/lib/admin.functions";
+import { getMyAccess } from "@/lib/subscription.functions";
 
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: Activity },
