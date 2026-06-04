@@ -18,10 +18,10 @@ export const Route = createFileRoute("/_authenticated/ihsg")({
   head: () => ({ meta: [{ title: "Deteksi Pola Harmonik IHSG — Pro" }] }),
 });
 
-type Tf = "1d" | "1wk" | "1mo";
+type Tf = "1d" | "4h";
 
 const DEFAULTS = {
-  timeframe: "1wk" as Tf,
+  timeframe: "1d" as Tf,
   tolerance: 5, // %
   minConfidence: 50, // %
   minBarsSpan: 12,
@@ -45,7 +45,7 @@ function IhsgPage() {
   const [timeframe, setTimeframe] = useState<Tf>(() => {
     try {
       const v = localStorage.getItem("ihsg_tf");
-      if (v === "1d" || v === "1wk" || v === "1mo") return v;
+      if (v === "1d" || v === "4h") return v;
     } catch { /* ignore */ }
     return DEFAULTS.timeframe;
   });
@@ -230,8 +230,7 @@ function IhsgPage() {
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1d">Daily</SelectItem>
-                  <SelectItem value="1wk">Weekly</SelectItem>
-                  <SelectItem value="1mo">Monthly</SelectItem>
+                  <SelectItem value="4h">4 Jam</SelectItem>
                 </SelectContent>
               </Select>
             </div>

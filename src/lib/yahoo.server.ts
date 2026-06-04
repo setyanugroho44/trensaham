@@ -17,11 +17,13 @@ type YahooChart = {
   };
 };
 
-export type Timeframe = "1d" | "1wk" | "1mo";
+export type Timeframe = "1d" | "4h" | "1wk" | "1mo";
 
 /** Map our timeframe to yahoo (interval, range). */
 function ytfParams(tf: Timeframe): { interval: string; range: string } {
   switch (tf) {
+    case "4h":
+      return { interval: "4h", range: "1y" };
     case "1wk":
       return { interval: "1wk", range: "10y" };
     case "1mo":
