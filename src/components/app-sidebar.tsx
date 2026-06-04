@@ -33,10 +33,12 @@ export function AppSidebar() {
   const path = useLocation({ select: (l) => l.pathname });
   const isActive = (url: string) => path === url || path.startsWith(url + "/");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     isCurrentUserAdmin().then(({ isAdmin }) => setIsAdmin(isAdmin)).catch(() => {});
+    getMyAccess().then((a) => setHasAccess(a.hasAccess)).catch(() => {});
   }, [user]);
 
   const handleNavClick = () => {
