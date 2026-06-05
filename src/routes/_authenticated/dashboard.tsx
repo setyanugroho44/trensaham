@@ -5,12 +5,20 @@ import { useServerFn } from "@tanstack/react-start";
 import { runScan } from "@/lib/scan.functions";
 import { getMyAccess, type AccessInfo } from "@/lib/subscription.functions";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Loader2, Play, TrendingDown, TrendingUp, X, Info, Lock } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Loader2, Play, TrendingDown, TrendingUp, X, Info, Lock, Settings2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -203,10 +211,20 @@ function DashboardPage() {
           <p className="text-sm text-muted-foreground">Deteksi Pola Harmonik di Watchlistmu Dengan Mudah.</p>
         </div>
         <div className="flex flex-col items-end gap-1">
-          <Button onClick={onScan} disabled={scanning || (access ? !access.hasAccess : false)}>
-            {scanning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : access && !access.hasAccess ? <Lock className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
-            {scanning ? "Scanning…" : "Scan Now"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <SettingsDialog
+              timeframe={timeframe}
+              setTimeframe={setTimeframe}
+              minConf={minConf}
+              setMinConf={setMinConf}
+              minProgress={minProgress}
+              setMinProgress={setMinProgress}
+            />
+            <Button onClick={onScan} disabled={scanning || (access ? !access.hasAccess : false)}>
+              {scanning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : access && !access.hasAccess ? <Lock className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
+              {scanning ? "Scanning…" : "Scan Now"}
+            </Button>
+          </div>
           {access && !access.hasAccess && (
             <p className="text-xs text-destructive">
               Masa aktif Anda berakhir.{" "}
@@ -241,34 +259,7 @@ function DashboardPage() {
         </Alert>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Filters</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Timeframe</label>
-              <Select value={timeframe} onValueChange={(v) => setTimeframe(v as typeof timeframe)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1d">Daily</SelectItem>
-                  <SelectItem value="1wk">Weekly</SelectItem>
-                  <SelectItem value="1mo">Monthly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Min confidence: {minConf}%</label>
-              <Slider value={[minConf]} min={0} max={100} step={5} onValueChange={(v) => setMinConf(v[0])} />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Min progress: {minProgress}%</label>
-              <Slider value={[minProgress]} min={0} max={100} step={5} onValueChange={(v) => setMinProgress(v[0])} />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+
 
       <Tabs defaultValue="developing" className="space-y-4">
         <TabsList>
@@ -285,6 +276,74 @@ function DashboardPage() {
     </div>
   );
 }
+
+function SettingsDialog({
+  timeframe,
+  setTimeframe,
+  minConf,
+  setMinConf,
+  minProgress,
+  setMinProgress,
+}: {
+  timeframe: "1d" | "1wk" | "1mo";
+  setTimeframe: (v: "1d" | "1wk" | "1mo") => void;
+  minConf: number;
+  setMinConf: (v: number) => void;
+  minProgress: number;
+  setMinProgress: (v: number) => void;
+}) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="icon" aria-label="Pengaturan">
+          <Settings2 className="h-4 w-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Pengaturan & Fine Tuning</DialogTitle>
+          <DialogDescription>
+            Atur parameter scanner agar hasil deteksi pola sesuai dengan gaya trading Anda.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-6 py-2">
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Timeframe</label>
+            <Select value={timeframe} onValueChange={(v) => setTimeframe(v as typeof timeframe)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1d">Daily</SelectItem>
+                <SelectItem value="1wk">Weekly</SelectItem>
+                <SelectItem value="1mo">Monthly</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Rentang waktu tiap candle. Daily untuk swing/harian, Weekly &amp; Monthly untuk tren jangka panjang.
+            </p>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Min confidence: {minConf}%</label>
+            <Slider value={[minConf]} min={0} max={100} step={5} onValueChange={(v) => setMinConf(v[0])} />
+            <p className="text-xs text-muted-foreground">
+              Ambang minimum tingkat keyakinan pola. Semakin tinggi, semakin sedikit hasil tapi kualitas pola lebih akurat.
+            </p>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Min progress: {minProgress}%</label>
+            <Slider value={[minProgress]} min={0} max={100} step={5} onValueChange={(v) => setMinProgress(v[0])} />
+            <p className="text-xs text-muted-foreground">
+              Khusus pola yang masih berkembang (developing). Menyaring pola yang baru terbentuk; nilai lebih tinggi hanya menampilkan pola yang hampir lengkap.
+            </p>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+
 
 function PatternsTable({
   rows,
