@@ -4,7 +4,9 @@
   "compatibility_date": "2025-09-24",
   "alias": {
     "tanstack-start-manifest:v": "empty-module",
-    "tanstack-start-injected-head-scripts:v": "empty-module"
+    "tanstack-start-injected-head-scripts:v": "empty-module",
+    "#tanstack-router-entry": "empty-module",
+    "#tanstack-start-entry": "empty-module"
   },
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
