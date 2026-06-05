@@ -277,6 +277,74 @@ function DashboardPage() {
   );
 }
 
+function SettingsDialog({
+  timeframe,
+  setTimeframe,
+  minConf,
+  setMinConf,
+  minProgress,
+  setMinProgress,
+}: {
+  timeframe: "1d" | "1wk" | "1mo";
+  setTimeframe: (v: "1d" | "1wk" | "1mo") => void;
+  minConf: number;
+  setMinConf: (v: number) => void;
+  minProgress: number;
+  setMinProgress: (v: number) => void;
+}) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="icon" aria-label="Pengaturan">
+          <Settings2 className="h-4 w-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Pengaturan & Fine Tuning</DialogTitle>
+          <DialogDescription>
+            Atur parameter scanner agar hasil deteksi pola sesuai dengan gaya trading Anda.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-6 py-2">
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Timeframe</label>
+            <Select value={timeframe} onValueChange={(v) => setTimeframe(v as typeof timeframe)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1d">Daily</SelectItem>
+                <SelectItem value="1wk">Weekly</SelectItem>
+                <SelectItem value="1mo">Monthly</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Rentang waktu tiap candle. Daily untuk swing/harian, Weekly &amp; Monthly untuk tren jangka panjang.
+            </p>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Min confidence: {minConf}%</label>
+            <Slider value={[minConf]} min={0} max={100} step={5} onValueChange={(v) => setMinConf(v[0])} />
+            <p className="text-xs text-muted-foreground">
+              Ambang minimum tingkat keyakinan pola. Semakin tinggi, semakin sedikit hasil tapi kualitas pola lebih akurat.
+            </p>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Min progress: {minProgress}%</label>
+            <Slider value={[minProgress]} min={0} max={100} step={5} onValueChange={(v) => setMinProgress(v[0])} />
+            <p className="text-xs text-muted-foreground">
+              Khusus pola yang masih berkembang (developing). Menyaring pola yang baru terbentuk; nilai lebih tinggi hanya menampilkan pola yang hampir lengkap.
+            </p>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+
+
 function PatternsTable({
   rows,
   kind,
