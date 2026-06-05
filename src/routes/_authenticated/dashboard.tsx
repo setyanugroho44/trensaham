@@ -259,34 +259,7 @@ function DashboardPage() {
         </Alert>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Filters</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Timeframe</label>
-              <Select value={timeframe} onValueChange={(v) => setTimeframe(v as typeof timeframe)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1d">Daily</SelectItem>
-                  <SelectItem value="1wk">Weekly</SelectItem>
-                  <SelectItem value="1mo">Monthly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Min confidence: {minConf}%</label>
-              <Slider value={[minConf]} min={0} max={100} step={5} onValueChange={(v) => setMinConf(v[0])} />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Min progress: {minProgress}%</label>
-              <Slider value={[minProgress]} min={0} max={100} step={5} onValueChange={(v) => setMinProgress(v[0])} />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+
 
       <Tabs defaultValue="developing" className="space-y-4">
         <TabsList>
