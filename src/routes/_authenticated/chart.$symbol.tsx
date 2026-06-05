@@ -164,7 +164,8 @@ function ChartPage() {
 
       if (pattern) {
         const pts: { time: number; price: number; label: string }[] = [];
-        if (pattern.x_date && pattern.x_price != null)
+        // Pada pola AB=CD kaki X tidak relevan, jadi tidak digambar.
+        if (pattern.x_date && pattern.x_price != null && pattern.pattern_name !== "AB=CD")
           pts.push({ time: Date.parse(pattern.x_date) / 1000, price: pattern.x_price, label: "X" });
         pts.push({ time: Date.parse(pattern.a_date) / 1000, price: pattern.a_price, label: "A" });
         pts.push({ time: Date.parse(pattern.b_date) / 1000, price: pattern.b_price, label: "B" });
