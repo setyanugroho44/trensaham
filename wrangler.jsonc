@@ -3,7 +3,7 @@
   "name": "analisasahamindo",
   "compatibility_date": "2025-09-24",
   "alias": {
-    "tanstack-start-manifest:v": "./.vinxi/build/client/assets.json",
+    "tanstack-start-manifest:v": "empty-module",
     "tanstack-start-injected-head-scripts:v": "empty-module"
   },
   "compatibility_flags": ["nodejs_compat"],
