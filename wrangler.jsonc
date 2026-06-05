@@ -2,12 +2,12 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "analisasahamindo",
   "compatibility_date": "2025-09-24",
-  "compatibility_flags": ["nodejs_compat"],
-  "main": "src/server.ts",
   "alias": {
     "tanstack-start-manifest:v": "./.vinxi/build/client/assets.json",
     "tanstack-start-injected-head-scripts:v": "empty-module"
   },
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "src/server.ts",
   "vars": {
     "SUPABASE_URL": "https://pvnrwjltbfzrzmfrusfg.supabase.co",
     "SUPABASE_PUBLISHABLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2bnJ3amx0YmZ6cnptZnJ1c2ZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNDgyMDEsImV4cCI6MjA5NDYyNDIwMX0.aRLMyjSai6u9MewRwYexp2mwX1kZ-NKYDDXDX4cM8UA"
