@@ -211,10 +211,20 @@ function DashboardPage() {
           <p className="text-sm text-muted-foreground">Deteksi Pola Harmonik di Watchlistmu Dengan Mudah.</p>
         </div>
         <div className="flex flex-col items-end gap-1">
-          <Button onClick={onScan} disabled={scanning || (access ? !access.hasAccess : false)}>
-            {scanning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : access && !access.hasAccess ? <Lock className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
-            {scanning ? "Scanning…" : "Scan Now"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <SettingsDialog
+              timeframe={timeframe}
+              setTimeframe={setTimeframe}
+              minConf={minConf}
+              setMinConf={setMinConf}
+              minProgress={minProgress}
+              setMinProgress={setMinProgress}
+            />
+            <Button onClick={onScan} disabled={scanning || (access ? !access.hasAccess : false)}>
+              {scanning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : access && !access.hasAccess ? <Lock className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
+              {scanning ? "Scanning…" : "Scan Now"}
+            </Button>
+          </div>
           {access && !access.hasAccess && (
             <p className="text-xs text-destructive">
               Masa aktif Anda berakhir.{" "}
