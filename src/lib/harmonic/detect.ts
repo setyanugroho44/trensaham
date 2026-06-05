@@ -130,13 +130,17 @@ export function detectPatterns(
   // Retracement patterns (D between A and X): invalidation = X.
   // Extension patterns (D beyond X): invalidation = far edge of PRZ
   // (a break beyond the deepest projection voids the pattern).
-  const RETRACEMENT_PATTERNS = new Set(["Gartley", "Bat", "AB=CD", "Cypher", "Shark"]);
+  const RETRACEMENT_PATTERNS = new Set(["Gartley", "Bat", "Cypher", "Shark"]);
   function invalidationFor(
     name: string,
     dir: Direction,
     X: Pivot,
     prz: { low: number; high: number },
   ): number {
+    // AB=CD tidak memakai kaki X, jadi invalidasinya adalah tepi terjauh PRZ:
+    // tembus di luar zona reversal (di bawah PRZ untuk bullish, di atas PRZ
+    // untuk bearish) membatalkan pola.
+    if (name === "AB=CD") return dir === "bullish" ? prz.low : prz.high;
     if (RETRACEMENT_PATTERNS.has(name)) return X.price;
     // extension patterns: Butterfly, Crab
     return dir === "bullish" ? prz.low : prz.high;
