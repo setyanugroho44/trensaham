@@ -139,7 +139,8 @@ function IhsgPage() {
       if (selected) {
         const pts: { time: number; price: number; label: string }[] = [];
         const p = selected.points;
-        if (p.X) pts.push({ time: Date.parse(p.X.date) / 1000, price: p.X.price, label: "X" });
+        // Pada pola AB=CD kaki X tidak relevan, jadi tidak digambar.
+        if (p.X && selected.name !== "AB=CD") pts.push({ time: Date.parse(p.X.date) / 1000, price: p.X.price, label: "X" });
         pts.push({ time: Date.parse(p.A.date) / 1000, price: p.A.price, label: "A" });
         pts.push({ time: Date.parse(p.B.date) / 1000, price: p.B.price, label: "B" });
         pts.push({ time: Date.parse(p.C.date) / 1000, price: p.C.price, label: "C" });
