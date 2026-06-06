@@ -80,10 +80,15 @@ export const runScan = createServerFn({ method: "POST" })
     // load watchlist
     const { data: wl, error: wlErr } = await supabase.from("watchlist_symbols").select("symbol");
     if (wlErr) throw new Error(wlErr.message);
-    const symbols = (wl ?? []).map((r) => r.symbol);
-    if (symbols.length === 0) {
+    const watchlist = (wl ?? []).map((r) => r.symbol);
+    if (watchlist.length === 0) {
       return { patternsFound: 0, runId: null, message: "Watchlist is empty" };
     }
+
+    // Bonus: IHSG (^JKSE) selalu ikut dipindai bersama watchlist mengikuti
+    // aturan scanner utama (timeframe, toleransi, dsb yang sama).
+    const IHSG_TICKER = "^JKSE";
+    const symbols = watchlist.includes(IHSG_TICKER) ? watchlist : [...watchlist, IHSG_TICKER];
 
     // create scan_run
     const { data: run, error: runErr } = await supabase
