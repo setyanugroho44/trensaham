@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedWatchlistRouteImport } from './routes/_authenticated/watchlist'
 import { Route as AuthenticatedUpgradeRouteImport } from './routes/_authenticated/upgrade'
 import { Route as AuthenticatedTrailingStopRouteImport } from './routes/_authenticated/trailing-stop'
+import { Route as AuthenticatedSupportRouteImport } from './routes/_authenticated/support'
 import { Route as AuthenticatedReferralRouteImport } from './routes/_authenticated/referral'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -72,6 +73,11 @@ const AuthenticatedTrailingStopRoute =
     path: '/trailing-stop',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedSupportRoute = AuthenticatedSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedReferralRoute = AuthenticatedReferralRouteImport.update({
   id: '/referral',
   path: '/referral',
@@ -125,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/referral': typeof AuthenticatedReferralRoute
+  '/support': typeof AuthenticatedSupportRoute
   '/trailing-stop': typeof AuthenticatedTrailingStopRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/referral': typeof AuthenticatedReferralRoute
+  '/support': typeof AuthenticatedSupportRoute
   '/trailing-stop': typeof AuthenticatedTrailingStopRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
@@ -163,6 +171,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/referral': typeof AuthenticatedReferralRoute
+  '/_authenticated/support': typeof AuthenticatedSupportRoute
   '/_authenticated/trailing-stop': typeof AuthenticatedTrailingStopRoute
   '/_authenticated/upgrade': typeof AuthenticatedUpgradeRoute
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
@@ -183,6 +192,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/profile'
     | '/referral'
+    | '/support'
     | '/trailing-stop'
     | '/upgrade'
     | '/watchlist'
@@ -201,6 +211,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/profile'
     | '/referral'
+    | '/support'
     | '/trailing-stop'
     | '/upgrade'
     | '/watchlist'
@@ -220,6 +231,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/profile'
     | '/_authenticated/referral'
+    | '/_authenticated/support'
     | '/_authenticated/trailing-stop'
     | '/_authenticated/upgrade'
     | '/_authenticated/watchlist'
@@ -306,6 +318,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTrailingStopRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/support': {
+      id: '/_authenticated/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof AuthenticatedSupportRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/referral': {
       id: '/_authenticated/referral'
       path: '/referral'
@@ -369,6 +388,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedReferralRoute: typeof AuthenticatedReferralRoute
+  AuthenticatedSupportRoute: typeof AuthenticatedSupportRoute
   AuthenticatedTrailingStopRoute: typeof AuthenticatedTrailingStopRoute
   AuthenticatedUpgradeRoute: typeof AuthenticatedUpgradeRoute
   AuthenticatedWatchlistRoute: typeof AuthenticatedWatchlistRoute
@@ -381,6 +401,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedReferralRoute: AuthenticatedReferralRoute,
+  AuthenticatedSupportRoute: AuthenticatedSupportRoute,
   AuthenticatedTrailingStopRoute: AuthenticatedTrailingStopRoute,
   AuthenticatedUpgradeRoute: AuthenticatedUpgradeRoute,
   AuthenticatedWatchlistRoute: AuthenticatedWatchlistRoute,
@@ -406,3 +427,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
