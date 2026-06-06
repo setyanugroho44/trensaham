@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Crown, Wallet, LineChart } from "lucide-react";
+import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Crown, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Sidebar,
@@ -17,7 +17,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { isCurrentUserAdmin } from "@/lib/admin.functions";
-import { getMyAccess } from "@/lib/subscription.functions";
 
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: Activity },
@@ -33,12 +32,10 @@ export function AppSidebar() {
   const path = useLocation({ select: (l) => l.pathname });
   const isActive = (url: string) => path === url || path.startsWith(url + "/");
   const [isAdmin, setIsAdmin] = useState(false);
-  const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     isCurrentUserAdmin().then(({ isAdmin }) => setIsAdmin(isAdmin)).catch(() => {});
-    getMyAccess().then((a) => setHasAccess(a.hasAccess)).catch(() => {});
   }, [user]);
 
   const handleNavClick = () => {
@@ -67,16 +64,6 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-              {hasAccess && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={path === "/ihsg"} tooltip="Pola IHSG (Pro)">
-                    <Link to="/ihsg" onClick={handleNavClick}>
-                      <LineChart className="h-5 w-5" />
-                      <span className="text-base">Pola IHSG</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
               {isAdmin && (
                 <>
                   <SidebarMenuItem>
