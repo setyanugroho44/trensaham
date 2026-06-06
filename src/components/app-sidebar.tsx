@@ -67,16 +67,6 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-              {hasAccess && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={path === "/ihsg"} tooltip="Pola IHSG (Pro)">
-                    <Link to="/ihsg" onClick={handleNavClick}>
-                      <LineChart className="h-5 w-5" />
-                      <span className="text-base">Pola IHSG</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
               {isAdmin && (
                 <>
                   <SidebarMenuItem>
