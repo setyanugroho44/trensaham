@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Crown, Wallet } from "lucide-react";
+import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Crown, Wallet, LifeBuoy } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Sidebar,
@@ -23,6 +23,7 @@ const items = [
   { title: "Watchlist", url: "/watchlist", icon: ListChecks },
   { title: "Trailing Stop", url: "/trailing-stop", icon: TrendingDown },
   { title: "Upgrade Pro", url: "/upgrade", icon: Crown },
+  { title: "Support", url: "/support", icon: LifeBuoy },
   { title: "Profil", url: "/profile", icon: User },
 ];
 
