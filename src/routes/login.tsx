@@ -18,7 +18,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
-  head: () => ({ meta: [{ title: "Login — IDX Harmonic Scanner" }] }),
+  head: () => ({ meta: [{ title: "Login — Harmonic Scanner Indonesia" }] }),
 });
 
 function LoginPage() {
@@ -66,7 +66,7 @@ function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Sign in</CardTitle>
-          <CardDescription>IDX Harmonic Pattern Scanner</CardDescription>
+          <CardDescription>Indonesia Harmonic Pattern Scanner</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
