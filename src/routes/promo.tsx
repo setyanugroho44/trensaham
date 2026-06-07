@@ -79,18 +79,17 @@ function PromoPage() {
             Temukan Pola Harmonic Saham IDX Secara Otomatis
           </h1>
           <p className="text-base text-muted-foreground">
-            Scanner kami memindai pola Gartley, Bat, Butterfly, Crab, dan AB=CD pada
-            ratusan saham Indonesia. Daftar cukup dengan nama dan email — password
+            Scan puluhan saham favorit kamu dalam hitungan detik dan lihat kemana harga akan bergerak. Daftar cukup dengan nama dan email — password
             login langsung kami kirim ke inbox Anda.
           </p>
           <ul className="space-y-3 text-sm">
             <li className="flex items-start gap-2">
               <Zap className="mt-0.5 h-4 w-4 text-primary" />
-              Deteksi pola harmonic completed &amp; developing
+              Deteksi pola Harmonic jangka pendek, menengah dan panjang
             </li>
             <li className="flex items-start gap-2">
               <ShieldCheck className="mt-0.5 h-4 w-4 text-primary" />
-              Zona PRZ &amp; level invalidation yang jelas
+              Zona pembalikan arah  &amp; level invalidation yang jelas
             </li>
             <li className="flex items-start gap-2">
               <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
