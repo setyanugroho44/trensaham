@@ -189,6 +189,26 @@ function ChartPage() {
           })),
         );
 
+        // Garis dari titik C ke candle terakhir untuk pola developing,
+        // menunjukkan pergerakan harga aktual sejak titik C terbentuk.
+        if (pattern.status === "developing" && (!pattern.d_date || pattern.d_price == null)) {
+          const cTime = Date.parse(pattern.c_date) / 1000;
+          const lastBar = bars[bars.length - 1];
+          if (cTime < lastBar.time) {
+            const legLine = chart.addSeries(LineSeries, {
+              color: pattern.direction === "bullish" ? "#10b981" : "#ef4444",
+              lineWidth: 2,
+              lineStyle: 0, // solid
+              lastValueVisible: false,
+              priceLineVisible: false,
+            });
+            legLine.setData([
+              { time: cTime as any, value: pattern.c_price },
+              { time: lastBar.time as any, value: lastBar.close },
+            ]);
+          }
+        }
+
         if (pattern.prz_low != null && pattern.prz_high != null) {
           const lastTime = bars[bars.length - 1].time;
           // 2 garis horizontal penuh untuk menandai batas atas & bawah PRZ
