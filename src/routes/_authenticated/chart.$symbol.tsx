@@ -28,24 +28,6 @@ import {
 import { ArrowLeft, Info, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Bar } from "@/lib/harmonic/types";
-import harmonicPatternImg from "@/assets/harmonic-pattern.jpg";
-import gartleyImg from "@/assets/gartley.png";
-import batImg from "@/assets/bat.png";
-import butterflyImg from "@/assets/butterfly.png";
-import crabImg from "@/assets/crab.png";
-import sharkImg from "@/assets/shark.png";
-import cypherImg from "@/assets/cypher.png";
-import abcdImg from "@/assets/abcd.png";
-
-const PATTERN_IMAGES: Record<string, string> = {
-  Gartley: gartleyImg,
-  Bat: batImg,
-  Butterfly: butterflyImg,
-  Crab: crabImg,
-  Shark: sharkImg,
-  Cypher: cypherImg,
-  "AB=CD": abcdImg,
-};
 
 const searchSchema = z.object({
   tf: z.enum(["1d", "1wk", "1mo"]).optional().default("1wk"),
@@ -367,19 +349,6 @@ function ChartPage() {
       {pattern && (
         <Card className="overflow-hidden">
           <div className="flex flex-col w-full overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">
-  {/* Bagian Gambar (Sekarang di paling atas) */}
-  <div className="h-40 w-full overflow-hidden sm:h-52">
-    <img
-      src={PATTERN_IMAGES[pattern.pattern_name] ?? harmonicPatternImg}
-      alt={`${pattern.pattern_name} harmonic pattern illustration`}
-      loading="lazy"
-      width={1024}
-      height={512}
-      className="h-full w-full object-cover"
-    />
-  </div>
-
-  {/* Bagian Konten Teks (Di bawah gambar, tidak bertumpukan) */}
   <div className="p-4 flex items-end justify-between gap-3">
     <div>
       <div className="text-xs uppercase tracking-wider text-muted-foreground">
