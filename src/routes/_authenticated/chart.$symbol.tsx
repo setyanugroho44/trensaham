@@ -349,19 +349,6 @@ function ChartPage() {
       {pattern && (
         <Card className="overflow-hidden">
           <div className="flex flex-col w-full overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">
-  {/* Bagian Gambar (Sekarang di paling atas) */}
-  <div className="h-40 w-full overflow-hidden sm:h-52">
-    <img
-      src={PATTERN_IMAGES[pattern.pattern_name] ?? harmonicPatternImg}
-      alt={`${pattern.pattern_name} harmonic pattern illustration`}
-      loading="lazy"
-      width={1024}
-      height={512}
-      className="h-full w-full object-cover"
-    />
-  </div>
-
-  {/* Bagian Konten Teks (Di bawah gambar, tidak bertumpukan) */}
   <div className="p-4 flex items-end justify-between gap-3">
     <div>
       <div className="text-xs uppercase tracking-wider text-muted-foreground">
