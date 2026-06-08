@@ -488,7 +488,7 @@ function TargetCard({
   const pctHigh = current > 0 ? ((tHigh - current) / current) * 100 : 0;
   const up = tHigh >= current;
   const fmt = (v: number) =>
-    "Rp" + new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(v);
+    new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(v);
   const sign = (v: number) => (v >= 0 ? "+" : "");
   return (
     <div className="rounded-xl border-2 border-green-600/40 bg-gradient-to-br from-green-600/15 via-green-600/10 to-transparent p-5 shadow-sm">
