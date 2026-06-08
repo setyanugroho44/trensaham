@@ -83,7 +83,7 @@ function WatchlistPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Watchlist</h1>
-        <p className="text-sm text-muted-foreground">IDX stock codes to scan (e.g. ASII, TLKM, BBCA — `.JK` is added automatically).</p>
+        <p className="text-sm text-muted-foreground">Kode saham yang akan di scan (cth. ASII, TLKM, ULTJ).</p>
       </div>
 
       <Card>
@@ -104,15 +104,7 @@ function WatchlistPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-primary/30 bg-primary/5">
-        <CardHeader>
-          <CardTitle className="text-base">Bonus: IHSG (^JKSE)</CardTitle>
-          <CardDescription>
-            Indeks Harga Saham Gabungan otomatis ikut dipindai bersama watchlist Anda saat menekan tombol Scan,
-            mengikuti aturan dan parameter scanner utama. Anda tidak perlu menambahkannya secara manual.
-          </CardDescription>
-        </CardHeader>
-      </Card>
+      
 
       <Card>
         <CardHeader>
@@ -138,6 +130,16 @@ function WatchlistPage() {
             </div>
           )}
         </CardContent>
+      </Card>
+
+      <Card className="border-primary/30 bg-primary/5">
+        <CardHeader>
+          <CardTitle className="text-base">Bonus: IHSG (^JKSE)</CardTitle>
+          <CardDescription>
+            Indeks Harga Saham Gabungan otomatis ikut dipindai bersama watchlist 
+            mengikuti aturan dan parameter scanner utama. Ditampilkan jika scanner menemukan pola.
+          </CardDescription>
+        </CardHeader>
       </Card>
     </div>
   );
