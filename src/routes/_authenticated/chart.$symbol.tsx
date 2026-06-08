@@ -426,12 +426,42 @@ function ChartPage() {
                 title="Target Harga (PRZ)"
               />
             )}
+            {pattern.invalidation != null && (
+              <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 shadow-sm">
+                <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-rose-700 dark:text-rose-400">
+                  <span>Invalidation</span>
+                  <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          aria-label="Penjelasan Invalidation"
+                          className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-rose-500/20 text-rose-700 dark:text-rose-400 hover:bg-rose-500/30"
+                        >
+                          <Info className="h-3.5 w-3.5" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="max-w-xs bg-popover text-popover-foreground border">
+                        <p className="text-xs leading-relaxed">
+                          Level harga kritis yang, jika ditembus, membatalkan pola harmonik ini. Pasang stop-loss di luar level ini untuk melindungi posisi Anda.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div className="mt-1 text-xl font-bold tracking-tight text-rose-700 dark:text-rose-400">
+                  {floorToIdxTick(pattern.invalidation)}
+                </div>
+                <div className="mt-0.5 text-[11px] text-muted-foreground">
+                  Batas kritis — stop-loss di luar level ini.
+                </div>
+              </div>
+            )}
+
             <div className="rounded-xl border bg-muted/20 p-4 space-y-4">
               <PivotXABCD pattern={pattern} />
 
               <div className="grid grid-cols-2 gap-3 border-t pt-4 text-sm sm:grid-cols-4">
-                <Detail label="Invalidation" value={pattern.invalidation != null ? String(floorToIdxTick(pattern.invalidation)) : "—"} />
-
                 {pattern.status === "developing" && (
                   <Detail label="Progress" value={`${Math.round(pattern.progress_pct ?? 0)}%`} />
                 )}
