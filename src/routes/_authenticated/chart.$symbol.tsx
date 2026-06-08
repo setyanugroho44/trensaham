@@ -349,23 +349,11 @@ function ChartPage() {
       {pattern && (
         <Card className="overflow-hidden">
           <div className="flex flex-col w-full overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">
-  <div className="p-4 flex items-end justify-between gap-3">
-    <div>
-      <div className="text-xs uppercase tracking-wider text-muted-foreground">
-        {pattern.status} · {tf}
-      </div>
-      <div className="text-xl font-semibold leading-tight mt-1">
-        {pattern.pattern_name}{" "}
-        <span className="text-muted-foreground">· {pattern.direction}</span>
-      </div>
-    </div>
-    <Badge variant={pattern.direction === "bullish" ? "default" : "destructive"}>
-      {Math.round(pattern.confidence * 100)}%
-    </Badge>
-  </div>
+  
 </div>
 
           <CardHeader>
+            {symbol}
           </CardHeader>
           <CardContent className="space-y-4">
            
