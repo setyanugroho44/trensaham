@@ -65,6 +65,7 @@ function ChartPage() {
   const { symbol } = Route.useParams();
   const { tf, pid } = Route.useSearch();
   const containerRef = useRef<HTMLDivElement>(null);
+  const rsiContainerRef = useRef<HTMLDivElement>(null);
   const [bars, setBars] = useState<Bar[]>([]);
   const [pattern, setPattern] = useState<PatternRow | null>(null);
   const [loading, setLoading] = useState(true);
