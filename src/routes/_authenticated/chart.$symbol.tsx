@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchBarsForSymbol } from "@/lib/scan.functions";
 import { floorToIdxTick, ceilToIdxTick, idxTickSize } from "@/lib/harmonic/detect";
-import { computeRSI, evaluateRsiConfirmation } from "@/lib/harmonic/rsi";
+import { computeRSI, evaluateRsiConfirmation, type RsiConfirmation } from "@/lib/harmonic/rsi";
 import { toast } from "sonner";
 
 function roundToIdxTick(price: number): number {
