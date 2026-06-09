@@ -614,22 +614,35 @@ function Detail({ label, value }: { label: string; value: string }) {
 function PivotXABCD({ pattern }: { pattern: PatternRow }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="rounded-lg border bg-muted/30 sm:col-span-3 overflow-hidden">
+    <div className="rounded-xl border bg-muted/20 overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wide text-blue-900 dark:text-blue-300 hover:bg-blue-500/5 transition-colors"
+        className="flex w-full items-center justify-between px-4 py-3 text-sm font-semibold uppercase tracking-wide text-foreground hover:bg-muted/40 transition-colors"
       >
-        <span>{pattern.symbol} Pivot XABCD</span>
+        <span>{pattern.symbol} Pivot XABCD &amp; Rasio</span>
         <span className="ml-2 text-[10px] opacity-70">{open ? "▲ Tutup" : "▼ Buka"}</span>
       </button>
       {open && (
-        <div className="grid grid-cols-2 gap-x-4 gap-y-2 px-3 pb-3 sm:grid-cols-5">
-          <PivotRow label="X" date={pattern.x_date} price={pattern.x_price} color="bg-fuchsia-500" />
-          <PivotRow label="A" date={pattern.a_date} price={pattern.a_price} color="bg-sky-500" />
-          <PivotRow label="B" date={pattern.b_date} price={pattern.b_price} color="bg-amber-500" />
-          <PivotRow label="C" date={pattern.c_date} price={pattern.c_price} color="bg-emerald-500" />
-          <PivotRow label="D" date={pattern.d_date} price={pattern.d_price} color="bg-rose-500" />
+        <div className="border-t bg-muted/10 px-4 pb-4 pt-3 space-y-4">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-5">
+            <PivotRow label="X" date={pattern.x_date} price={pattern.x_price} color="bg-fuchsia-500" />
+            <PivotRow label="A" date={pattern.a_date} price={pattern.a_price} color="bg-sky-500" />
+            <PivotRow label="B" date={pattern.b_date} price={pattern.b_price} color="bg-amber-500" />
+            <PivotRow label="C" date={pattern.c_date} price={pattern.c_price} color="bg-emerald-500" />
+            <PivotRow label="D" date={pattern.d_date} price={pattern.d_price} color="bg-rose-500" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 border-t pt-3 text-sm sm:grid-cols-4">
+            {pattern.status === "developing" && (
+              <Detail label="Progress" value={`${Math.round(pattern.progress_pct ?? 0)}%`} />
+            )}
+
+            {pattern.ratios &&
+              Object.entries(pattern.ratios).map(([k, v]) => (
+                <Detail key={k} label={k} value={Number.isFinite(v) ? v.toFixed(3) : "—"} />
+              ))}
+          </div>
         </div>
       )}
     </div>
