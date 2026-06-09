@@ -446,20 +446,7 @@ function ChartPage() {
               </div>
             )}
 
-            <div className="rounded-xl border bg-muted/20 p-4 space-y-4">
-              <PivotXABCD pattern={pattern} />
-
-              <div className="grid grid-cols-2 gap-3 border-t pt-4 text-sm sm:grid-cols-4">
-                {pattern.status === "developing" && (
-                  <Detail label="Progress" value={`${Math.round(pattern.progress_pct ?? 0)}%`} />
-                )}
-
-                {pattern.ratios &&
-                  Object.entries(pattern.ratios).map(([k, v]) => (
-                    <Detail key={k} label={k} value={Number.isFinite(v) ? v.toFixed(3) : "—"} />
-                  ))}
-              </div>
-            </div>
+            <PivotXABCD pattern={pattern} />
           </CardContent>
         </Card>
       )}
