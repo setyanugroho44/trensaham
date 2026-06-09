@@ -556,7 +556,12 @@ function ChartPage() {
               </div>
             )}
 
+            {rsiConfirmation && (
+              <RsiConfirmationCard rsi={rsiConfirmation} direction={pattern.direction} />
+            )}
+
             <PivotXABCD pattern={pattern} />
+
           </CardContent>
         </Card>
       )}
