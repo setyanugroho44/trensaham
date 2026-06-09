@@ -270,6 +270,74 @@ function ChartPage() {
     return () => cleanup();
   }, [bars, pattern, tf]);
 
+  // RSI pane: indikator konfirmasi pola harmonik (period 14).
+  useEffect(() => {
+    if (!rsiContainerRef.current || bars.length === 0) return;
+    const rsi = computeRSI(bars, 14);
+    if (rsi.length === 0) return;
+    let chart: any;
+    let cleanup = () => {};
+    (async () => {
+      const lib = await import("lightweight-charts");
+      const { createChart, LineSeries } = lib as any;
+      const isDark = document.documentElement.classList.contains("dark");
+      const textColor = isDark ? "#e5e7eb" : "#374151";
+      chart = createChart(rsiContainerRef.current!, {
+        height: 160,
+        layout: { background: { color: "rgba(0,0,0,0)" }, textColor },
+        grid: {
+          vertLines: { color: "rgba(120,120,120,0.1)" },
+          horzLines: { color: "rgba(120,120,120,0.1)" },
+        },
+        timeScale: { timeVisible: tf !== "1d" },
+        rightPriceScale: { borderVisible: false },
+      });
+      const line = chart.addSeries(LineSeries, { color: "#8b5cf6", lineWidth: 2 });
+      line.setData(rsi.map((p) => ({ time: p.time as any, value: p.value })));
+      // Garis overbought/oversold (70 / 30) dan garis tengah 50.
+      line.createPriceLine({
+        price: 70,
+        color: "rgba(239,68,68,0.7)",
+        lineWidth: 1,
+        lineStyle: 2,
+        axisLabelVisible: true,
+        title: "70",
+      });
+      line.createPriceLine({
+        price: 30,
+        color: "rgba(16,185,129,0.7)",
+        lineWidth: 1,
+        lineStyle: 2,
+        axisLabelVisible: true,
+        title: "30",
+      });
+      line.createPriceLine({
+        price: 50,
+        color: "rgba(120,120,120,0.4)",
+        lineWidth: 1,
+        lineStyle: 3,
+        axisLabelVisible: false,
+        title: "",
+      });
+      chart.timeScale().fitContent();
+      const onResize = () => chart.applyOptions({ width: rsiContainerRef.current!.clientWidth });
+      onResize();
+      window.addEventListener("resize", onResize);
+      cleanup = () => {
+        window.removeEventListener("resize", onResize);
+        chart.remove();
+      };
+    })();
+    return () => cleanup();
+  }, [bars, tf]);
+
+  const rsiConfirmation =
+    pattern && bars.length > 0
+      ? evaluateRsiConfirmation(bars, pattern.direction, pattern.c_date, 14)
+      : null;
+
+
+
   // Untuk pola bearish tertentu (Bat, Butterfly, Gartley, Crab): jika harga
   // saat ini sudah naik mendekati/menembus tinggi titik B, tampilkan kartu
   // target price meskipun pola masih developing. Target = PRZ (di atas B).
