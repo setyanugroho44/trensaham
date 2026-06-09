@@ -416,6 +416,46 @@ function ChartPage() {
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader className="pb-0">
+          <CardTitle className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            <span>RSI (14)</span>
+            <TooltipProvider delayDuration={100}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label="Penjelasan RSI"
+                    className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-violet-500/20 text-violet-600 dark:text-violet-400 hover:bg-violet-500/30"
+                  >
+                    <Info className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs bg-popover text-popover-foreground border">
+                  <p className="text-xs leading-relaxed">
+                    <strong>RSI (Relative Strength Index)</strong> mengukur momentum harga (0–100).
+                    Di bawah 30 = oversold (jenuh jual), di atas 70 = overbought (jenuh beli).
+                    Dipakai untuk mengkonfirmasi pola harmonik: pola bullish lebih kuat saat RSI
+                    oversold atau muncul bullish divergence; pola bearish lebih kuat saat RSI
+                    overbought atau muncul bearish divergence.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-2">
+          {loading ? (
+            <div className="flex h-[160px] items-center justify-center text-muted-foreground">Loading RSI…</div>
+          ) : bars.length === 0 ? (
+            <div className="flex h-[160px] items-center justify-center text-muted-foreground">No data available.</div>
+          ) : (
+            <div ref={rsiContainerRef} className="w-full" />
+          )}
+        </CardContent>
+      </Card>
+
+
       {pattern && (
         <Card className="overflow-hidden">
           <div className="flex flex-col w-full overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">
