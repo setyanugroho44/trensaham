@@ -141,7 +141,7 @@ export const runScan = createServerFn({ method: "POST" })
         // Scale lebih banyak untuk menangkap pola di berbagai level.
         // Daily disesuaikan khusus untuk meningkatkan deteksi pattern intraday.
         const scales =
-          data.timeframe === "1mo" ? [25, 40, 70] : data.timeframe === "1wk" ? [13, 17, 27] : [5, 8, 12, 15];
+          data.timeframe === "1mo" ? [45, 65, 85] : data.timeframe === "1wk" ? [20, 27, 37, 43] : [ 8, 12, 15, 18];
         // Minimum bar-span X→C agar pola tidak terlalu sempit di sumbu waktu.
         // Dikurangi untuk menangkap pola yang lebih kecil.
         // Daily lebih agresif untuk meningkatkan deteksi.
