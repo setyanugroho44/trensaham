@@ -522,7 +522,7 @@ function RsiConfirmationCard({
               : "bg-muted text-muted-foreground"
           }`}
         >
-          {ok ? "✓ Terkonfirmasi" : "Belum terkonfirmasi"}
+          {ok ? "✓ Terkonfirmasi" : ""}
         </span>
       </div>
       <div className="mt-2 flex items-baseline gap-2">
