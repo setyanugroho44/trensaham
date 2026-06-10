@@ -117,7 +117,7 @@ export function evaluateRsiConfirmation(
   } else {
     message =
       direction === "bullish"
-        ? ""
+        ? "Mendukung kenaikan: Beberapa hari lalu <30"
         : "";
   }
 
