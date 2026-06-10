@@ -43,6 +43,7 @@ export type RsiConfirmation = {
   zone: "oversold" | "overbought" | "neutral";
   confirmed: boolean;
   divergence: "bullish" | "bearish" | null;
+  touchedExtreme: boolean; // true jika 7 hari terakhir RSI menyentuh ekstrem (<30 untuk bullish, >70 untuk bearish)
   message: string;
 };
 
@@ -100,6 +101,13 @@ export function evaluateRsiConfirmation(
     (direction === "bearish" && divergence === "bearish");
   const confirmed = zoneOk || divOk;
 
+  // Periksa apakah RSI menyentuh ekstrem dalam 7 hari terakhir.
+  const SEVEN_DAYS = 7 * 24 * 60 * 60;
+  const lastTime = series[series.length - 1].time;
+  const touchedExtreme = direction === "bullish"
+    ? series.some((p) => p.time >= lastTime - SEVEN_DAYS && p.value <= 30)
+    : series.some((p) => p.time >= lastTime - SEVEN_DAYS && p.value >= 70);
+
   let message: string;
   if (confirmed) {
     const reasons: string[] = [];
@@ -113,5 +121,5 @@ export function evaluateRsiConfirmation(
         : "Belum terkonfirmasi: RSI belum overbought dan belum ada bearish divergence di sekitar PRZ.";
   }
 
-  return { value, zone, confirmed, divergence, message };
+  return { value, zone, confirmed, divergence, touchedExtreme, message };
 }

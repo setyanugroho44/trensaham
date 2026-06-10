@@ -457,7 +457,7 @@ function ChartPage() {
               </div>
             )}
 
-            {rsiConfirmation && (
+            {rsiConfirmation && rsiConfirmation.touchedExtreme && (
               <RsiConfirmationCard rsi={rsiConfirmation} direction={pattern.direction} />
             )}
 
