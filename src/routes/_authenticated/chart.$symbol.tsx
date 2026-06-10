@@ -452,7 +452,7 @@ function ChartPage() {
                   {floorToIdxTick(pattern.invalidation)}
                 </div>
                 <div className="mt-0.5 text-[11px] text-muted-foreground">
-                  Batas kritis — stop-loss di luar level ini.
+                  Batas kritis — stop-loss jika harga ditutup di luar level ini.
                 </div>
               </div>
             )}
