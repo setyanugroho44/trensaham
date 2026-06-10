@@ -117,8 +117,8 @@ export function evaluateRsiConfirmation(
   } else {
     message =
       direction === "bullish"
-        ? "Belum terkonfirmasi: RSI belum oversold dan belum ada bullish divergence di sekitar PRZ."
-        : "Belum terkonfirmasi: RSI belum overbought dan belum ada bearish divergence di sekitar PRZ.";
+        ? "RSI belum oversold dan belum ada bullish divergence di sekitar PRZ."
+        : "RSI belum overbought dan belum ada bearish divergence di sekitar PRZ.";
   }
 
   return { value, zone, confirmed, divergence, touchedExtreme, message };
