@@ -269,66 +269,6 @@ function ChartPage() {
     return () => cleanup();
   }, [bars, pattern, tf]);
 
-  // RSI pane: indikator konfirmasi pola harmonik (period 14).
-  useEffect(() => {
-    if (!rsiContainerRef.current || bars.length === 0) return;
-    const rsi = computeRSI(bars, 14);
-    if (rsi.length === 0) return;
-    let chart: any;
-    let cleanup = () => {};
-    (async () => {
-      const lib = await import("lightweight-charts");
-      const { createChart, LineSeries } = lib as any;
-      const isDark = document.documentElement.classList.contains("dark");
-      const textColor = isDark ? "#e5e7eb" : "#374151";
-      chart = createChart(rsiContainerRef.current!, {
-        height: 160,
-        layout: { background: { color: "rgba(0,0,0,0)" }, textColor },
-        grid: {
-          vertLines: { color: "rgba(120,120,120,0.1)" },
-          horzLines: { color: "rgba(120,120,120,0.1)" },
-        },
-        timeScale: { timeVisible: tf !== "1d" },
-        rightPriceScale: { borderVisible: false },
-      });
-      const line = chart.addSeries(LineSeries, { color: "#8b5cf6", lineWidth: 2 });
-      line.setData(rsi.map((p) => ({ time: p.time as any, value: p.value })));
-      // Garis overbought/oversold (70 / 30) dan garis tengah 50.
-      line.createPriceLine({
-        price: 70,
-        color: "rgba(239,68,68,0.7)",
-        lineWidth: 1,
-        lineStyle: 2,
-        axisLabelVisible: true,
-        title: "70",
-      });
-      line.createPriceLine({
-        price: 30,
-        color: "rgba(16,185,129,0.7)",
-        lineWidth: 1,
-        lineStyle: 2,
-        axisLabelVisible: true,
-        title: "30",
-      });
-      line.createPriceLine({
-        price: 50,
-        color: "rgba(120,120,120,0.4)",
-        lineWidth: 1,
-        lineStyle: 3,
-        axisLabelVisible: false,
-        title: "",
-      });
-      chart.timeScale().fitContent();
-      const onResize = () => chart.applyOptions({ width: rsiContainerRef.current!.clientWidth });
-      onResize();
-      window.addEventListener("resize", onResize);
-      cleanup = () => {
-        window.removeEventListener("resize", onResize);
-        chart.remove();
-      };
-    })();
-    return () => cleanup();
-  }, [bars, tf]);
 
   const rsiConfirmation =
     pattern && bars.length > 0
@@ -415,44 +355,6 @@ function ChartPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="pb-0">
-          <CardTitle className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            <span>RSI (14)</span>
-            <TooltipProvider delayDuration={100}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    aria-label="Penjelasan RSI"
-                    className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-violet-500/20 text-violet-600 dark:text-violet-400 hover:bg-violet-500/30"
-                  >
-                    <Info className="h-3.5 w-3.5" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-xs bg-popover text-popover-foreground border">
-                  <p className="text-xs leading-relaxed">
-                    <strong>RSI (Relative Strength Index)</strong> mengukur momentum harga (0–100).
-                    Di bawah 30 = oversold (jenuh jual), di atas 70 = overbought (jenuh beli).
-                    Dipakai untuk mengkonfirmasi pola harmonik: pola bullish lebih kuat saat RSI
-                    oversold atau muncul bullish divergence; pola bearish lebih kuat saat RSI
-                    overbought atau muncul bearish divergence.
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-2">
-          {loading ? (
-            <div className="flex h-[160px] items-center justify-center text-muted-foreground">Loading RSI…</div>
-          ) : bars.length === 0 ? (
-            <div className="flex h-[160px] items-center justify-center text-muted-foreground">No data available.</div>
-          ) : (
-            <div ref={rsiContainerRef} className="w-full" />
-          )}
-        </CardContent>
-      </Card>
 
 
       {pattern && (
