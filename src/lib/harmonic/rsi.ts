@@ -43,6 +43,7 @@ export type RsiConfirmation = {
   zone: "oversold" | "overbought" | "neutral";
   confirmed: boolean;
   divergence: "bullish" | "bearish" | null;
+  touchedExtreme: boolean; // true jika 7 hari terakhir RSI menyentuh ekstrem (<30 untuk bullish, >70 untuk bearish)
   message: string;
 };
 
