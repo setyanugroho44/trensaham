@@ -3,6 +3,13 @@ import { PATTERNS, scoreRatio, type PatternSpec } from "./patterns";
 
 const DEFAULT_TOL = 0.05; // 5%
 
+/**
+ * Harga PRZ minimum yang masuk akal. Lantai harga saham IDX adalah Rp50,
+ * jadi PRZ di bawah ini (apalagi negatif) jelas hasil proyeksi yang salah
+ * dan harus dibuang.
+ */
+const MIN_VALID_PRICE = 60;
+
 function legAbs(a: Pivot, b: Pivot) {
   return Math.abs(b.price - a.price);
 }
