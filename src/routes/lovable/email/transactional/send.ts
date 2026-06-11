@@ -32,7 +32,7 @@ function generateToken(): string {
 export const Route = (createFileRoute("/lovable/email/transactional/send") as any)({
   server: {
     handlers: {
-      POST: async ({ request }) => {
+      POST: async ({ request }: { request: Request }) => {
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 

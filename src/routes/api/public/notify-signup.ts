@@ -18,7 +18,7 @@ const payloadSchema = z.object({
 export const Route = (createFileRoute("/api/public/notify-signup") as any)({
   server: {
     handlers: {
-      POST: async ({ request }) => {
+      POST: async ({ request }: { request: Request }) => {
         const provided = request.headers.get("x-notify-secret") ?? "";
 
         const { data: cfg, error: cfgError } = await supabaseAdmin
