@@ -3,6 +3,13 @@ import { PATTERNS, scoreRatio, type PatternSpec } from "./patterns";
 
 const DEFAULT_TOL = 0.05; // 5%
 
+/**
+ * Harga PRZ minimum yang masuk akal. Lantai harga saham IDX adalah Rp50,
+ * jadi PRZ di bawah ini (apalagi negatif) jelas hasil proyeksi yang salah
+ * dan harus dibuang.
+ */
+const MIN_VALID_PRICE = 60;
+
 function legAbs(a: Pivot, b: Pivot) {
   return Math.abs(b.price - a.price);
 }
@@ -78,6 +85,11 @@ function projectD(
   // Guard: PRZ harus berada di sisi yang benar relatif terhadap C.
   if (dir === "bullish" && hi >= C.price) return null;
   if (dir === "bearish" && lo <= C.price) return null;
+
+  // Guard: PRZ harus berada di atas harga minimum yang masuk akal.
+  // Proyeksi pola extension (mis. Crab) kadang menghasilkan PRZ negatif atau
+  // jauh di bawah lantai harga IDX. Buang pola seperti ini.
+  if (lo < MIN_VALID_PRICE) return null;
 
   // Bulatkan ke fraksi harga IDX: low ke bawah, high ke atas.
   return { low: floorToIdxTick(lo), high: ceilToIdxTick(hi) };
