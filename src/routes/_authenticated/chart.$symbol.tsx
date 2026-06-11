@@ -487,51 +487,7 @@ function ExtensionWarning({ patternName }: { patternName: string }) {
   );
 }
 
-function RsiConfirmationCard({
-  rsi,
-  direction,
-}: {
-  rsi: RsiConfirmation;
-  direction: "bullish" | "bearish";
-}) {
-  const ok = rsi.confirmed;
-  const zoneLabel =
-    rsi.zone === "oversold" ? "Oversold" : rsi.zone === "overbought" ? "Overbought" : "Netral";
-  return (
-    <div
-      className={`rounded-xl border p-4 shadow-sm ${
-        ok
-          ? "border-emerald-500/40 bg-gradient-to-br from-emerald-500/15 via-emerald-500/10 to-transparent"
-          : "border-muted-foreground/20 bg-muted/20"
-      }`}
-    >
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-muted-foreground">
-          <span>Konfirmasi RSI</span>
-        </div>
-        <span
-          className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-            ok
-              ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400"
-              : "bg-muted text-muted-foreground"
-          }`}
-        >
-          {ok ? "✓ Terkonfirmasi" : ""}
-        </span>
-      </div>
-      <div className="mt-2 flex items-baseline gap-2">
-        <span className="text-3xl font-bold tracking-tight">{rsi.value.toFixed(1)}</span>
-        <span className="text-xs text-muted-foreground">RSI(14) · {zoneLabel}</span>
-        {rsi.divergence && (
-          <span className="rounded bg-violet-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-violet-700 dark:text-violet-400">
-            {rsi.divergence === "bullish" ? "Bullish divergence" : "Bearish divergence"}
-          </span>
-        )}
-      </div>
-      <div className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{rsi.message}</div>
-    </div>
-  );
-}
+
 function TargetCard({
   current,
   target,
