@@ -8,10 +8,10 @@ function redactEmail(email: string | null | undefined): string {
   return `${localPart[0]}***@${domain}`
 }
 
-export const Route = createFileRoute("/email/unsubscribe")({
+export const Route = (createFileRoute("/email/unsubscribe") as any)({
   server: {
     handlers: {
-      GET: async ({ request }) => {
+      GET: async ({ request }: { request: Request }) => {
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
@@ -47,7 +47,7 @@ export const Route = createFileRoute("/email/unsubscribe")({
         return Response.json({ valid: true })
       },
 
-      POST: async ({ request }) => {
+      POST: async ({ request }: { request: Request }) => {
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
