@@ -110,7 +110,7 @@ function ChartPage() {
     let cleanup = () => {};
     (async () => {
       const lib = await import("lightweight-charts");
-      const { createChart, CandlestickSeries, LineSeries, AreaSeries } = lib as any;
+      const { createChart, CandlestickSeries, LineSeries, AreaSeries, HistogramSeries } = lib as any;
       // lightweight-charts can't parse oklch(); resolve theme color to rgb via canvas.
       const isDark = document.documentElement.classList.contains("dark");
       const textColor = isDark ? "#e5e7eb" : "#374151";
@@ -127,6 +127,28 @@ function ChartPage() {
         timeScale: { timeVisible: tf !== "1d" },
         rightPriceScale: { borderVisible: false },
       });
+
+      // Volume histogram di dalam chart utama (skala terpisah di bagian bawah).
+      const hasVolume = bars.some((b) => b.volume != null && b.volume > 0);
+      if (hasVolume) {
+        const volume = chart.addSeries(HistogramSeries, {
+          priceFormat: { type: "volume" },
+          priceScaleId: "volume",
+          lastValueVisible: false,
+          priceLineVisible: false,
+        });
+        chart.priceScale("volume").applyOptions({
+          scaleMargins: { top: 0.82, bottom: 0 },
+        });
+        volume.setData(
+          bars.map((b) => ({
+            time: b.time as any,
+            value: b.volume ?? 0,
+            color:
+              b.close >= b.open ? "rgba(16,185,129,0.45)" : "rgba(239,68,68,0.45)",
+          })),
+        );
+      }
 
       const candle = chart.addSeries(CandlestickSeries, {
         upColor: "#10b981",
