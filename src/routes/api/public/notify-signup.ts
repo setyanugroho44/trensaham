@@ -15,7 +15,7 @@ const payloadSchema = z.object({
  * the `app_config` table so only the trigger can reach it. Sends a Telegram
  * notification to the admin chat.
  */
-export const Route = createFileRoute("/api/public/notify-signup")({
+export const Route = (createFileRoute("/api/public/notify-signup") as any)({
   server: {
     handlers: {
       POST: async ({ request }) => {

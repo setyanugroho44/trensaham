@@ -51,7 +51,7 @@ function mapReasonToMessage(reason: string): string {
   }
 }
 
-export const Route = createFileRoute("/lovable/email/suppression")({
+export const Route = (createFileRoute("/lovable/email/suppression") as any)({
   server: {
     handlers: {
       POST: async ({ request }) => {

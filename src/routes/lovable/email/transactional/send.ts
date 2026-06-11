@@ -29,7 +29,7 @@ function generateToken(): string {
     .join('')
 }
 
-export const Route = createFileRoute("/lovable/email/transactional/send")({
+export const Route = (createFileRoute("/lovable/email/transactional/send") as any)({
   server: {
     handlers: {
       POST: async ({ request }) => {
