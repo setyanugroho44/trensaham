@@ -89,7 +89,8 @@ export async function fetchYahooBars(symbol: string, tf: Timeframe): Promise<Bar
     const l = q.low[i];
     const c = q.close[i];
     if (o == null || h == null || l == null || c == null) continue;
-    bars.push({ time: ts[i], open: o, high: h, low: l, close: c });
+    const v = q.volume?.[i];
+    bars.push({ time: ts[i], open: o, high: h, low: l, close: c, volume: v ?? undefined });
   }
 
   if (bars.length === 0) {
