@@ -10,6 +10,7 @@ type YahooChart = {
           high: (number | null)[];
           low: (number | null)[];
           close: (number | null)[];
+          volume: (number | null)[];
         }>;
       };
     }> | null;
