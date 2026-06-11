@@ -124,11 +124,12 @@ export async function fetchStooqBars(symbol: string, tf: Timeframe): Promise<Bar
     for (let i = 1; i < lines.length; i++) {
       const parts = lines[i].split(",");
       if (parts.length < 5) continue;
-      const [date, o, h, l, c] = parts;
+      const [date, o, h, l, c, vol] = parts;
       const t = Math.floor(Date.parse(date) / 1000);
       const op = Number(o), hi = Number(h), lo = Number(l), cl = Number(c);
       if (!Number.isFinite(t) || !Number.isFinite(op) || !Number.isFinite(hi) || !Number.isFinite(lo) || !Number.isFinite(cl)) continue;
-      bars.push({ time: t, open: op, high: hi, low: lo, close: cl });
+      const v = Number(vol);
+      bars.push({ time: t, open: op, high: hi, low: lo, close: cl, volume: Number.isFinite(v) ? v : undefined });
     }
     return bars;
   } catch (e) {
