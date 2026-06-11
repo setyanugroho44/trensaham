@@ -453,9 +453,7 @@ function ChartPage() {
               </div>
             )}
 
-            {rsiConfirmation && rsiConfirmation.touchedExtreme && (
-              <RsiConfirmationCard rsi={rsiConfirmation} direction={pattern.direction} />
-            )}
+
 
             <PivotXABCD pattern={pattern} />
 
