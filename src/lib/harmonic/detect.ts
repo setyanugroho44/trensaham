@@ -79,6 +79,11 @@ function projectD(
   if (dir === "bullish" && hi >= C.price) return null;
   if (dir === "bearish" && lo <= C.price) return null;
 
+  // Guard: PRZ harus berada di atas harga minimum yang masuk akal.
+  // Proyeksi pola extension (mis. Crab) kadang menghasilkan PRZ negatif atau
+  // jauh di bawah lantai harga IDX. Buang pola seperti ini.
+  if (lo < MIN_VALID_PRICE) return null;
+
   // Bulatkan ke fraksi harga IDX: low ke bawah, high ke atas.
   return { low: floorToIdxTick(lo), high: ceilToIdxTick(hi) };
 }
