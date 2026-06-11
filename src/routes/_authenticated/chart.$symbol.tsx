@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchBarsForSymbol } from "@/lib/scan.functions";
 import { floorToIdxTick, ceilToIdxTick, idxTickSize } from "@/lib/harmonic/detect";
-import { computeRSI, evaluateRsiConfirmation, type RsiConfirmation } from "@/lib/harmonic/rsi";
+
 import { toast } from "sonner";
 
 function roundToIdxTick(price: number): number {
@@ -110,7 +110,7 @@ function ChartPage() {
     let cleanup = () => {};
     (async () => {
       const lib = await import("lightweight-charts");
-      const { createChart, CandlestickSeries, LineSeries, AreaSeries } = lib as any;
+      const { createChart, CandlestickSeries, LineSeries, AreaSeries, HistogramSeries } = lib as any;
       // lightweight-charts can't parse oklch(); resolve theme color to rgb via canvas.
       const isDark = document.documentElement.classList.contains("dark");
       const textColor = isDark ? "#e5e7eb" : "#374151";
@@ -127,6 +127,28 @@ function ChartPage() {
         timeScale: { timeVisible: tf !== "1d" },
         rightPriceScale: { borderVisible: false },
       });
+
+      // Volume histogram di dalam chart utama (skala terpisah di bagian bawah).
+      const hasVolume = bars.some((b) => b.volume != null && b.volume > 0);
+      if (hasVolume) {
+        const volume = chart.addSeries(HistogramSeries, {
+          priceFormat: { type: "volume" },
+          priceScaleId: "volume",
+          lastValueVisible: false,
+          priceLineVisible: false,
+        });
+        chart.priceScale("volume").applyOptions({
+          scaleMargins: { top: 0.82, bottom: 0 },
+        });
+        volume.setData(
+          bars.map((b) => ({
+            time: b.time as any,
+            value: b.volume ?? 0,
+            color:
+              b.close >= b.open ? "rgba(16,185,129,0.45)" : "rgba(239,68,68,0.45)",
+          })),
+        );
+      }
 
       const candle = chart.addSeries(CandlestickSeries, {
         upColor: "#10b981",
@@ -270,10 +292,6 @@ function ChartPage() {
   }, [bars, pattern, tf]);
 
 
-  const rsiConfirmation =
-    pattern && bars.length > 0
-      ? evaluateRsiConfirmation(bars, pattern.direction, pattern.c_date, 14)
-      : null;
 
 
 
@@ -457,9 +475,7 @@ function ChartPage() {
               </div>
             )}
 
-            {rsiConfirmation && rsiConfirmation.touchedExtreme && (
-              <RsiConfirmationCard rsi={rsiConfirmation} direction={pattern.direction} />
-            )}
+
 
             <PivotXABCD pattern={pattern} />
 
@@ -493,51 +509,7 @@ function ExtensionWarning({ patternName }: { patternName: string }) {
   );
 }
 
-function RsiConfirmationCard({
-  rsi,
-  direction,
-}: {
-  rsi: RsiConfirmation;
-  direction: "bullish" | "bearish";
-}) {
-  const ok = rsi.confirmed;
-  const zoneLabel =
-    rsi.zone === "oversold" ? "Oversold" : rsi.zone === "overbought" ? "Overbought" : "Netral";
-  return (
-    <div
-      className={`rounded-xl border p-4 shadow-sm ${
-        ok
-          ? "border-emerald-500/40 bg-gradient-to-br from-emerald-500/15 via-emerald-500/10 to-transparent"
-          : "border-muted-foreground/20 bg-muted/20"
-      }`}
-    >
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-muted-foreground">
-          <span>Konfirmasi RSI</span>
-        </div>
-        <span
-          className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-            ok
-              ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400"
-              : "bg-muted text-muted-foreground"
-          }`}
-        >
-          {ok ? "✓ Terkonfirmasi" : ""}
-        </span>
-      </div>
-      <div className="mt-2 flex items-baseline gap-2">
-        <span className="text-3xl font-bold tracking-tight">{rsi.value.toFixed(1)}</span>
-        <span className="text-xs text-muted-foreground">RSI(14) · {zoneLabel}</span>
-        {rsi.divergence && (
-          <span className="rounded bg-violet-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-violet-700 dark:text-violet-400">
-            {rsi.divergence === "bullish" ? "Bullish divergence" : "Bearish divergence"}
-          </span>
-        )}
-      </div>
-      <div className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{rsi.message}</div>
-    </div>
-  );
-}
+
 function TargetCard({
   current,
   target,
