@@ -270,10 +270,6 @@ function ChartPage() {
   }, [bars, pattern, tf]);
 
 
-  const rsiConfirmation =
-    pattern && bars.length > 0
-      ? evaluateRsiConfirmation(bars, pattern.direction, pattern.c_date, 14)
-      : null;
 
 
 
