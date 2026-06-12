@@ -452,10 +452,6 @@ function ChartPage() {
 
       {pattern && (
         <Card className="overflow-hidden">
-          <div className="flex flex-col w-full overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">
-  
-</div>
-
           <CardHeader>
             {symbol}
           </CardHeader>
