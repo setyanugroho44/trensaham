@@ -69,6 +69,8 @@ function ChartPage() {
   const [pattern, setPattern] = useState<PatternRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [targetReached, setTargetReached] = useState<number | null>(null);
+  const [targetDismissed, setTargetDismissed] = useState(false);
   const fetchBars = useServerFn(fetchBarsForSymbol);
   const navigate = useNavigate();
 
