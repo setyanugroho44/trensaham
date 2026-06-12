@@ -99,13 +99,35 @@ function ChartPage() {
     ]).then(([bRes, pRes]) => {
       if (!alive) return;
       setBars(bRes.bars);
-      setPattern((pRes as { data: PatternRow | null }).data);
+      const row = (pRes as { data: PatternRow | null }).data;
+      setPattern(row);
       setLoading(false);
+
+      // Hitung ulang status pola berdasarkan harga terbaru (mis. sudah memantul
+      // dari PRZ → completed, atau menembus invalidation → invalid). Jalan di
+      // latar belakang agar tidak menahan render chart.
+      if (row && pid && (row.status === "developing" || row.status === "completed")) {
+        reevaluate({ data: { patternId: pid } })
+          .then((res) => {
+            if (!alive || !res || !res.changed || !res.status) return;
+            setPattern((prev) =>
+              prev && prev.id === pid
+                ? {
+                    ...prev,
+                    status: res.status as PatternRow["status"],
+                    d_date: res.d_date ?? prev.d_date,
+                    d_price: res.d_price ?? prev.d_price,
+                  }
+                : prev,
+            );
+          })
+          .catch(() => {});
+      }
     });
     return () => {
       alive = false;
     };
-  }, [symbol, tf, pid, fetchBars]);
+  }, [symbol, tf, pid, fetchBars, reevaluate]);
 
   useEffect(() => {
     if (!containerRef.current || bars.length === 0) return;
