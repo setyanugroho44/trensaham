@@ -62,6 +62,83 @@ export const fetchBarsForSymbol = createServerFn({ method: "POST" })
     return { bars };
   });
 
+/**
+ * Cari pola "developing" yang sudah pernah menyentuh target PRZ — meski hanya
+ * lewat wick (ekor candle) — pada candle setelah titik C terbentuk.
+ *
+ * - Bullish : PRZ berada di bawah C, harga turun ke zona. Tersentuh bila ada
+ *   candle dengan low <= prz_high (ekor masuk ke zona).
+ * - Bearish : PRZ berada di atas C, harga naik ke zona. Tersentuh bila ada
+ *   candle dengan high >= prz_low.
+ *
+ * Pola seperti ini secara teknis sudah "mencapai target", jadi dikembalikan ke
+ * UI agar user bisa diminta konfirmasi apakah ingin menghapusnya.
+ */
+export const findTargetReachedDeveloping = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { timeframe: Timeframe }) => z.object({ timeframe: TF }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { data: rows, error } = await supabase
+      .from("patterns")
+      .select("id, symbol, pattern_name, direction, prz_low, prz_high, c_date")
+      .eq("timeframe", data.timeframe)
+      .eq("status", "developing");
+    if (error) throw new Error(error.message);
+    const patterns = rows ?? [];
+    if (patterns.length === 0) return { hits: [] };
+
+    // Kelompokkan per simbol agar bars cukup di-fetch sekali per saham.
+    const bySymbol = new Map<string, typeof patterns>();
+    for (const p of patterns) {
+      const arr = bySymbol.get(p.symbol) ?? [];
+      arr.push(p);
+      bySymbol.set(p.symbol, arr);
+    }
+
+    const hits: {
+      id: string;
+      symbol: string;
+      pattern_name: string;
+      direction: string;
+      prz_low: number | null;
+      prz_high: number | null;
+    }[] = [];
+
+    for (const [symbol, ps] of bySymbol) {
+      let bars: { time: number; high: number; low: number }[];
+      try {
+        bars = await fetchYahooBars(symbol, data.timeframe);
+      } catch {
+        continue;
+      }
+      for (const p of ps) {
+        if (p.prz_low == null || p.prz_high == null || !p.c_date) continue;
+        const cTime = Math.floor(Date.parse(p.c_date) / 1000);
+        if (Number.isNaN(cTime)) continue;
+        const after = bars.filter((b) => b.time > cTime);
+        if (after.length === 0) continue;
+        const reached =
+          p.direction === "bullish"
+            ? after.some((b) => b.low <= p.prz_high!)
+            : after.some((b) => b.high >= p.prz_low!);
+        if (reached) {
+          hits.push({
+            id: p.id,
+            symbol,
+            pattern_name: p.pattern_name,
+            direction: p.direction,
+            prz_low: p.prz_low,
+            prz_high: p.prz_high,
+          });
+        }
+      }
+    }
+
+    return { hits };
+  });
+
+
 export const runScan = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { timeframe: Timeframe; tolerance?: number; minConfidence?: number }) =>
