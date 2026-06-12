@@ -325,6 +325,56 @@ function DashboardPage() {
           <PatternsTable rows={completed} kind="completed" timeframe={timeframe} onDeleted={load} />
         </TabsContent>
       </Tabs>
+
+      <AlertDialog open={targetHits.length > 0} onOpenChange={(o) => !o && dismissTargetHits()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {targetHits.length} pola developing sudah hit target
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Pola berikut sudah menyentuh zona target (PRZ) — meski hanya lewat ekor candle —
+              setelah titik C. Apakah Anda ingin menghapusnya?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="max-h-60 overflow-y-auto rounded-md border border-border text-sm">
+            {targetHits.map((h) => (
+              <div
+                key={h.id}
+                className="flex items-center justify-between gap-2 border-b border-border px-3 py-2 last:border-b-0"
+              >
+                <span className="font-medium">{h.symbol}</span>
+                <span className="text-muted-foreground">{h.pattern_name}</span>
+                <span className="text-xs">
+                  {h.direction === "bullish" ? (
+                    <span className="text-emerald-600">Bull</span>
+                  ) : (
+                    <span className="text-rose-600">Bear</span>
+                  )}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {h.prz_low != null && h.prz_high != null
+                    ? `${floorToIdxTick(h.prz_low)} – ${ceilToIdxTick(h.prz_high)}`
+                    : "—"}
+                </span>
+              </div>
+            ))}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deletingHits}>Biarkan</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                deleteTargetHits();
+              }}
+              disabled={deletingHits}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deletingHits ? "Menghapus…" : "Hapus semua"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
