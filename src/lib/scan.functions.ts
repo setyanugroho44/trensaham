@@ -167,7 +167,7 @@ export const reevaluatePattern = createServerFn({ method: "POST" })
       result.status !== p.status ||
       (result.status === "completed" && result.d_price != null && p.d_price == null);
     if (changed) {
-      const update: Record<string, unknown> = { status: result.status };
+      const update: { status: string; d_date?: string; d_price?: number } = { status: result.status };
       if (result.status === "completed" && result.d_time != null && result.d_price != null) {
         update.d_date = new Date(result.d_time * 1000).toISOString();
         update.d_price = result.d_price;
