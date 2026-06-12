@@ -116,7 +116,21 @@ function DashboardPage() {
   const [access, setAccess] = useState<AccessInfo | null>(null);
   const scanFn = useServerFn(runScan);
   const accessFn = useServerFn(getMyAccess);
+  const targetReachedFn = useServerFn(findTargetReachedDeveloping);
   const watchlistToastShown = useRef(false);
+
+  // Pola developing yang sudah menyentuh target PRZ → tawarkan hapus ke user.
+  type TargetHit = {
+    id: string;
+    symbol: string;
+    pattern_name: string;
+    direction: string;
+    prz_low: number | null;
+    prz_high: number | null;
+  };
+  const [targetHits, setTargetHits] = useState<TargetHit[]>([]);
+  const dismissedHits = useRef<Set<string>>(new Set());
+  const [deletingHits, setDeletingHits] = useState(false);
 
   const load = async () => {
     const { data, error } = await supabase
@@ -126,6 +140,16 @@ function DashboardPage() {
       .limit(500);
     if (error) toast.error(error.message);
     else setRows((data as PatternRow[]) ?? []);
+  };
+
+  const checkTargetHits = async () => {
+    try {
+      const res = await targetReachedFn({ data: { timeframe } });
+      const fresh = (res.hits ?? []).filter((h) => !dismissedHits.current.has(h.id));
+      setTargetHits(fresh);
+    } catch {
+      // diam — fitur ini opsional, jangan ganggu user bila gagal.
+    }
   };
 
   const loadWatchlistCount = async () => {
@@ -140,6 +164,33 @@ function DashboardPage() {
     loadWatchlistCount();
     accessFn().then(setAccess).catch(() => {});
   }, []);
+
+  // Cek target tiap kali timeframe berubah / pertama kali masuk.
+  useEffect(() => {
+    checkTargetHits();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeframe]);
+
+  const dismissTargetHits = () => {
+    for (const h of targetHits) dismissedHits.current.add(h.id);
+    setTargetHits([]);
+  };
+
+  const deleteTargetHits = async () => {
+    if (targetHits.length === 0) return;
+    setDeletingHits(true);
+    const ids = targetHits.map((h) => h.id);
+    const { error } = await supabase.from("patterns").delete().in("id", ids);
+    setDeletingHits(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(`${ids.length} pola yang sudah hit target dihapus`);
+    setTargetHits([]);
+    load();
+  };
+
 
   useEffect(() => {
     if (watchlistCount === 0 && !watchlistToastShown.current) {
