@@ -72,6 +72,7 @@ function ChartPage() {
   const [targetReached, setTargetReached] = useState<number | null>(null);
   const [targetDismissed, setTargetDismissed] = useState(false);
   const fetchBars = useServerFn(fetchBarsForSymbol);
+  const reevaluate = useServerFn(reevaluatePattern);
   const navigate = useNavigate();
 
   async function handleDelete() {
