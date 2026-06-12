@@ -331,7 +331,10 @@ function ChartPage() {
     const entry =
       pattern.d_price ?? (pattern.direction === "bullish" ? pattern.prz_low : pattern.prz_high);
     const target = entry + 0.382 * (pattern.a_price - entry);
-    const post = after.slice(przIdx);
+    // Hanya hitung candle SETELAH candle pantulan (bukan candle yang menyentuh
+    // PRZ itu sendiri) — candle besar yang sekaligus mencelup ke PRZ dan punya
+    // ekor ke arah target jangan dianggap sudah memantul & mencapai target.
+    const post = after.slice(przIdx + 1);
     const reached =
       pattern.direction === "bullish"
         ? post.some((b) => b.high >= target)
