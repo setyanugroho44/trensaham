@@ -315,10 +315,9 @@ function ChartPage() {
     return () => cleanup();
   }, [bars, pattern, tf]);
 
-  // Reset status konfirmasi tiap kali pindah pola.
+  // Reset status tiap kali pindah pola.
   useEffect(() => {
     setTargetReached(null);
-    setTargetDismissed(false);
   }, [pattern?.id]);
 
   // Deteksi: apakah harga sudah mencapai TARGET KONSERVATIF setelah memantul
