@@ -331,7 +331,9 @@ function ChartPage() {
   // lewat ekor (wick) candle.
   useEffect(() => {
     if (!pattern || bars.length === 0) return;
-    if (pattern.status === "invalid") return;
+    // Peringatan target konservatif hanya berlaku untuk pola yang sudah selesai
+    // (developed/completed), bukan pola developing atau invalid.
+    if (pattern.status !== "completed") return;
     if (pattern.prz_low == null || pattern.prz_high == null || !pattern.c_date) return;
     const cTime = Date.parse(pattern.c_date) / 1000;
     if (Number.isNaN(cTime)) return;
