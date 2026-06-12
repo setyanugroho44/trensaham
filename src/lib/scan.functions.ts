@@ -8,34 +8,6 @@ import { detectPatterns } from "./harmonic/detect";
 
 const TF = z.enum(["1d", "1wk", "1mo"]);
 
-/**
- * Evaluasi ulang pola yang sudah terdeteksi sebelumnya.
- * Pola dianggap TIDAK VALID jika, setelah titik C terbentuk, harga:
- *  - bullish: membentuk higher high yang melewati titik A, atau menembus
- *    level invalidation (turun di bawahnya);
- *  - bearish: membentuk lower low yang melewati titik A, atau menembus
- *    level invalidation (naik di atasnya).
- */
-function isPatternInvalidated(
-  bars: { time: number; high: number; low: number }[],
-  p: { direction: string; a_price: number | null; c_date: string | null; invalidation: number | null },
-): boolean {
-  if (!p.c_date) return false;
-  const cTime = Math.floor(Date.parse(p.c_date) / 1000);
-  if (Number.isNaN(cTime)) return false;
-  const after = bars.filter((b) => b.time > cTime);
-  if (after.length === 0) return false;
-  const maxHigh = Math.max(...after.map((b) => b.high));
-  const minLow = Math.min(...after.map((b) => b.low));
-  if (p.direction === "bullish") {
-    if (p.a_price != null && maxHigh > p.a_price) return true; // higher high melewati A
-    if (p.invalidation != null && minLow < p.invalidation) return true; // tembus invalidation
-  } else {
-    if (p.a_price != null && minLow < p.a_price) return true; // lower low melewati A
-    if (p.invalidation != null && maxHigh > p.invalidation) return true; // tembus invalidation
-  }
-  return false;
-}
 
 async function assertScanAccess(
   supabase: {
@@ -313,24 +285,34 @@ export const runScan = createServerFn({ method: "POST" })
           continue;
         }
 
-        // Evaluasi ulang pola lama untuk simbol+timeframe ini. Tandai pola
-        // yang sudah tidak valid (mis. higher high melewati titik A) agar tidak
-        // lagi muncul sebagai developing/completed.
+        // Evaluasi ulang pola lama untuk simbol+timeframe ini: cek invalid
+        // (higher high/lower low melewati A, atau tembus invalidation) dan
+        // sekaligus cek apakah pola "developing" sudah "completed" (sudah
+        // masuk PRZ lalu memantul keluar zona).
         const { data: existing } = await supabase
           .from("patterns")
-          .select("id, direction, a_price, c_date, invalidation")
+          .select("id, direction, a_price, c_date, invalidation, prz_low, prz_high, status, d_price")
           .eq("symbol", symbol)
           .eq("timeframe", data.timeframe)
           .in("status", ["developing", "completed"]);
-        const invalidIds = (existing ?? [])
-          .filter((p) => isPatternInvalidated(bars, p))
-          .map((p) => p.id);
-        if (invalidIds.length > 0) {
+
+        for (const p of existing ?? []) {
+          const result = reevaluateStatus(bars, p);
+          const changed =
+            result.status !== p.status ||
+            (result.status === "completed" && result.d_price != null && p.d_price == null);
+          if (!changed) continue;
+
+          const update: { status: string; d_date?: string; d_price?: number } = { status: result.status };
+          if (result.status === "completed" && result.d_time != null && result.d_price != null) {
+            update.d_date = new Date(result.d_time * 1000).toISOString();
+            update.d_price = result.d_price;
+          }
           const { error: upErr } = await supabaseAdmin
             .from("patterns")
-            .update({ status: "invalid" })
-            .in("id", invalidIds);
-          if (!upErr) totalInvalidated += invalidIds.length;
+            .update(update)
+            .eq("id", p.id);
+          if (!upErr && result.status === "invalid") totalInvalidated += 1;
         }
 
         // Multi-scale zigzag thresholds disesuaikan per timeframe agar
