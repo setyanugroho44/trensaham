@@ -70,7 +70,6 @@ function ChartPage() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
   const [targetReached, setTargetReached] = useState<number | null>(null);
-  const [targetDismissed, setTargetDismissed] = useState(false);
   const fetchBars = useServerFn(fetchBarsForSymbol);
   const reevaluate = useServerFn(reevaluatePattern);
   const navigate = useNavigate();
@@ -316,10 +315,9 @@ function ChartPage() {
     return () => cleanup();
   }, [bars, pattern, tf]);
 
-  // Reset status konfirmasi tiap kali pindah pola.
+  // Reset status tiap kali pindah pola.
   useEffect(() => {
     setTargetReached(null);
-    setTargetDismissed(false);
   }, [pattern?.id]);
 
   // Deteksi: apakah harga sudah mencapai TARGET KONSERVATIF setelah memantul
@@ -331,7 +329,9 @@ function ChartPage() {
   // lewat ekor (wick) candle.
   useEffect(() => {
     if (!pattern || bars.length === 0) return;
-    if (pattern.status === "invalid") return;
+    // Peringatan target konservatif hanya berlaku untuk pola yang sudah selesai
+    // (developed/completed), bukan pola developing atau invalid.
+    if (pattern.status !== "completed") return;
     if (pattern.prz_low == null || pattern.prz_high == null || !pattern.c_date) return;
     const cTime = Date.parse(pattern.c_date) / 1000;
     if (Number.isNaN(cTime)) return;
@@ -452,10 +452,6 @@ function ChartPage() {
 
       {pattern && (
         <Card className="overflow-hidden">
-          <div className="flex flex-col w-full overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">
-  
-</div>
-
           <CardHeader>
             {symbol}
           </CardHeader>
@@ -502,12 +498,39 @@ function ChartPage() {
 )}
             </div>
             {pattern.status === "completed" && pattern.d_price != null && bars.length > 0 && (
-              <TargetCard
-                current={roundToIdxTick(bars[bars.length - 1].close)}
-                target={roundToIdxTick(
-                  pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price),
+              <>
+                <TargetCard
+                  current={roundToIdxTick(bars[bars.length - 1].close)}
+                  target={roundToIdxTick(
+                    pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price),
+                  )}
+                />
+                {targetReached != null && (
+                  <div className="flex items-start justify-between gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2.5">
+                    <div className="flex items-start gap-2 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+                      <span className="mt-0.5">⚠</span>
+                      <span>
+                        Harga sudah mencapai target konservatif (
+                        {new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(
+                          targetReached,
+                        )}
+                        ) setelah memantul dari PRZ — meski hanya lewat ekor candle. Pertimbangkan
+                        untuk menghapus pola ini.
+                      </span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleDelete}
+                      disabled={deleting}
+                      aria-label="Hapus pola"
+                      className="shrink-0 text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 )}
-              />
+              </>
             )}
 
             {showBearishDevTarget && lastClose != null && (
@@ -557,35 +580,6 @@ function ChartPage() {
           </CardContent>
         </Card>
       )}
-
-      <AlertDialog
-        open={targetReached != null && !targetDismissed}
-        onOpenChange={(o) => !o && setTargetDismissed(true)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Pola sudah mencapai target konservatif</AlertDialogTitle>
-            <AlertDialogDescription>
-              {pattern &&
-                `Setelah memantul dari PRZ, harga ${pattern.symbol} sudah menyentuh target konservatif` +
-                  (targetReached != null
-                    ? ` (${new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(targetReached)})`
-                    : "") +
-                  " — meski hanya lewat ekor candle. Apakah Anda ingin menghapus pola ini?"}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Biarkan</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={deleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleting ? "Menghapus…" : "Hapus pola"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
