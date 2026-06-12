@@ -190,6 +190,10 @@ export function detectPatterns(
   const RETRACEMENT_PATTERNS = new Set(["Gartley", "Bat", "Cypher"]);
   // Shark & Butterfly & Crab → extension (D bisa melampaui X)
 
+  // Pola yang invalidasinya dihitung 2 tick di luar tepi PRZ
+  // (bullish: 2 tick di bawah PRZ.low; bearish: 2 tick di atas PRZ.high).
+  const TWO_TICK_PATTERNS = new Set(["AB=CD", "Crab", "Butterfly"]);
+
   function invalidationFor(
     name: string,
     dir: Direction,
@@ -204,21 +208,25 @@ export function detectPatterns(
       // Invalidasi: 1 tick di luar X.
       // Harga harus menembus X — sekadar menyentuh belum membatalkan pola.
       return dir === "bullish"
-        ? floorToIdxTick(X.price - minBuf)
+        ? clampMinPrice(floorToIdxTick(X.price - minBuf))
         : ceilToIdxTick(X.price + minBuf);
     }
 
-    // AB=CD dan extension patterns: invalidasi di luar PRZ + overshoot buffer.
+    // AB=CD, Crab, Butterfly: invalidasi tepat 2 tick di luar tepi PRZ.
+    if (TWO_TICK_PATTERNS.has(name)) {
+      if (dir === "bullish") {
+        const tick = idxTickSize(prz.low);
+        return clampMinPrice(floorToIdxTick(prz.low - 2 * tick));
+      }
+      const tick = idxTickSize(prz.high);
+      return ceilToIdxTick(prz.high + 2 * tick);
+    }
+
+    // Sisanya (Shark) → extension dengan overshoot buffer.
     // Buffer = max(lebar PRZ × overshootFactor, 1 tick).
     const buffer = Math.max(przWidth * overshootFactor, minBuf);
-    if (name === "AB=CD") {
-      return dir === "bullish"
-        ? floorToIdxTick(prz.low - buffer)
-        : ceilToIdxTick(prz.high + buffer);
-    }
-    // Butterfly, Crab, Shark → extension
     return dir === "bullish"
-      ? floorToIdxTick(prz.low - buffer)
+      ? clampMinPrice(floorToIdxTick(prz.low - buffer))
       : ceilToIdxTick(prz.high + buffer);
   }
 
