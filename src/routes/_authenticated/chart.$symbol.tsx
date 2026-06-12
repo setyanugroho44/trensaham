@@ -580,35 +580,6 @@ function ChartPage() {
           </CardContent>
         </Card>
       )}
-
-      <AlertDialog
-        open={targetReached != null && !targetDismissed}
-        onOpenChange={(o) => !o && setTargetDismissed(true)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Pola sudah mencapai target konservatif</AlertDialogTitle>
-            <AlertDialogDescription>
-              {pattern &&
-                `Setelah memantul dari PRZ, harga ${pattern.symbol} sudah menyentuh target konservatif` +
-                  (targetReached != null
-                    ? ` (${new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(targetReached)})`
-                    : "") +
-                  " — meski hanya lewat ekor candle. Apakah Anda ingin menghapus pola ini?"}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Biarkan</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={deleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleting ? "Menghapus…" : "Hapus pola"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
