@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchBarsForSymbol } from "@/lib/scan.functions";
+import { fetchBarsForSymbol, reevaluatePattern } from "@/lib/scan.functions";
 import { floorToIdxTick, ceilToIdxTick, idxTickSize } from "@/lib/harmonic/detect";
 
 import { toast } from "sonner";
