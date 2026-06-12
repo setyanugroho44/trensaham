@@ -63,6 +63,126 @@ export const fetchBarsForSymbol = createServerFn({ method: "POST" })
   });
 
 /**
+ * Evaluasi ulang status sebuah pola tersimpan berdasarkan data harga terbaru.
+ *
+ * Tujuan: status pola tidak lagi "macet" di developing setelah harga benar-benar
+ * memantul dari PRZ. Saat halaman chart dibuka, status dihitung ulang:
+ *
+ *  - "invalid"   : harga close menembus level invalidation, ATAU membentuk
+ *                  higher high (bullish) / lower low (bearish) yang melewati A.
+ *  - "completed" : harga sudah masuk zona PRZ (low<=prz_high untuk bullish,
+ *                  high>=prz_low untuk bearish) lalu MEMANTUL keluar zona
+ *                  (ada candle close di sisi berlawanan PRZ). Titik D diisi
+ *                  dari ekstrem swing di dalam zona.
+ *  - "developing": selain kondisi di atas (harga belum mencapai/memantul).
+ */
+function reevaluateStatus(
+  bars: { time: number; high: number; low: number; close: number }[],
+  p: {
+    direction: string;
+    a_price: number | null;
+    c_date: string | null;
+    prz_low: number | null;
+    prz_high: number | null;
+    invalidation: number | null;
+    status: string;
+  },
+): { status: "developing" | "completed" | "invalid"; d_time?: number; d_price?: number } {
+  if (!p.c_date) return { status: p.status as "developing" | "completed" | "invalid" };
+  const cTime = Math.floor(Date.parse(p.c_date) / 1000);
+  if (Number.isNaN(cTime)) return { status: p.status as "developing" | "completed" | "invalid" };
+  const after = bars.filter((b) => b.time > cTime);
+  if (after.length === 0) return { status: "developing" };
+
+  const maxHigh = Math.max(...after.map((b) => b.high));
+  const minLow = Math.min(...after.map((b) => b.low));
+
+  // --- Invalidation (paling diutamakan) ---
+  if (p.direction === "bullish") {
+    if (p.invalidation != null && after.some((b) => b.close < p.invalidation!)) return { status: "invalid" };
+    if (p.a_price != null && maxHigh > p.a_price) return { status: "invalid" };
+  } else {
+    if (p.invalidation != null && after.some((b) => b.close > p.invalidation!)) return { status: "invalid" };
+    if (p.a_price != null && minLow < p.a_price) return { status: "invalid" };
+  }
+
+  // --- Completed: masuk PRZ lalu memantul keluar ---
+  if (p.prz_low != null && p.prz_high != null) {
+    if (p.direction === "bullish") {
+      const enteredIdx = after.findIndex((b) => b.low <= p.prz_high!);
+      if (enteredIdx >= 0) {
+        const post = after.slice(enteredIdx);
+        let dBar = post[0];
+        for (const b of post) if (b.low < dBar.low) dBar = b;
+        const dPos = enteredIdx + post.indexOf(dBar);
+        const bounced = after.slice(dPos + 1).some((b) => b.close > p.prz_high!);
+        if (bounced) return { status: "completed", d_time: dBar.time, d_price: dBar.low };
+      }
+    } else {
+      const enteredIdx = after.findIndex((b) => b.high >= p.prz_low!);
+      if (enteredIdx >= 0) {
+        const post = after.slice(enteredIdx);
+        let dBar = post[0];
+        for (const b of post) if (b.high > dBar.high) dBar = b;
+        const dPos = enteredIdx + post.indexOf(dBar);
+        const bounced = after.slice(dPos + 1).some((b) => b.close < p.prz_low!);
+        if (bounced) return { status: "completed", d_time: dBar.time, d_price: dBar.high };
+      }
+    }
+  }
+
+  return { status: "developing" };
+}
+
+/**
+ * Hitung ulang status satu pola (dipakai halaman chart saat dibuka) dan simpan
+ * perubahannya. Mengembalikan status terbaru beserta titik D bila pola sudah
+ * "completed".
+ */
+export const reevaluatePattern = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { patternId: string }) =>
+    z.object({ patternId: z.string().uuid() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { data: p, error } = await supabase
+      .from("patterns")
+      .select("id, symbol, timeframe, direction, a_price, c_date, prz_low, prz_high, invalidation, status, d_date, d_price")
+      .eq("id", data.patternId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!p) return { status: null as null | string, changed: false };
+
+    let bars: { time: number; high: number; low: number; close: number }[];
+    try {
+      bars = await fetchYahooBars(p.symbol, p.timeframe as Timeframe);
+    } catch {
+      return { status: p.status, changed: false };
+    }
+    if (bars.length === 0) return { status: p.status, changed: false };
+
+    const result = reevaluateStatus(bars, p);
+    const changed =
+      result.status !== p.status ||
+      (result.status === "completed" && result.d_price != null && p.d_price == null);
+    if (changed) {
+      const update: Record<string, unknown> = { status: result.status };
+      if (result.status === "completed" && result.d_time != null && result.d_price != null) {
+        update.d_date = new Date(result.d_time * 1000).toISOString();
+        update.d_price = result.d_price;
+      }
+      await supabaseAdmin.from("patterns").update(update).eq("id", p.id);
+    }
+    return {
+      status: result.status,
+      changed,
+      d_date: result.d_time != null ? new Date(result.d_time * 1000).toISOString() : p.d_date,
+      d_price: result.d_price ?? p.d_price,
+    };
+  });
+
+/**
  * Cari pola "developing" yang sudah pernah menyentuh target PRZ — meski hanya
  * lewat wick (ekor candle) — pada candle setelah titik C terbentuk.
  *
