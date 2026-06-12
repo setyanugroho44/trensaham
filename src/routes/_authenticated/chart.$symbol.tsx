@@ -69,6 +69,8 @@ function ChartPage() {
   const [pattern, setPattern] = useState<PatternRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [targetReached, setTargetReached] = useState<number | null>(null);
+  const [targetDismissed, setTargetDismissed] = useState(false);
   const fetchBars = useServerFn(fetchBarsForSymbol);
   const navigate = useNavigate();
 
@@ -291,6 +293,53 @@ function ChartPage() {
     return () => cleanup();
   }, [bars, pattern, tf]);
 
+  // Reset status konfirmasi tiap kali pindah pola.
+  useEffect(() => {
+    setTargetReached(null);
+    setTargetDismissed(false);
+  }, [pattern?.id]);
+
+  // Deteksi: apakah harga sudah mencapai TARGET KONSERVATIF setelah memantul
+  // dari PRZ? Target konservatif = retracement 0.382 dari kaki A→D (titik
+  // pantulan). Untuk pola tanpa titik D, titik pantulan diambil dari batas PRZ
+  // (prz_low untuk bullish, prz_high untuk bearish). Pola dianggap "sudah
+  // mencapai target" bila: (1) harga pernah menyentuh zona PRZ setelah titik C,
+  // lalu (2) bergerak menjauh hingga menyentuh target konservatif — meski hanya
+  // lewat ekor (wick) candle.
+  useEffect(() => {
+    if (!pattern || bars.length === 0) return;
+    if (pattern.status === "invalid") return;
+    if (pattern.prz_low == null || pattern.prz_high == null || !pattern.c_date) return;
+    const cTime = Date.parse(pattern.c_date) / 1000;
+    if (Number.isNaN(cTime)) return;
+    const after = bars.filter((b) => b.time > cTime);
+    if (after.length === 0) return;
+
+    // Cari candle pertama yang menyentuh PRZ (pantulan).
+    let przIdx = -1;
+    for (let i = 0; i < after.length; i++) {
+      const b = after[i];
+      const touched =
+        pattern.direction === "bullish" ? b.low <= pattern.prz_high! : b.high >= pattern.prz_low!;
+      if (touched) {
+        przIdx = i;
+        break;
+      }
+    }
+    if (przIdx < 0) return;
+
+    const entry =
+      pattern.d_price ?? (pattern.direction === "bullish" ? pattern.prz_low : pattern.prz_high);
+    const target = entry + 0.382 * (pattern.a_price - entry);
+    const post = after.slice(przIdx);
+    const reached =
+      pattern.direction === "bullish"
+        ? post.some((b) => b.high >= target)
+        : post.some((b) => b.low <= target);
+    setTargetReached(reached ? roundToIdxTick(target) : null);
+  }, [bars, pattern]);
+
+
 
 
 
@@ -482,6 +531,35 @@ function ChartPage() {
           </CardContent>
         </Card>
       )}
+
+      <AlertDialog
+        open={targetReached != null && !targetDismissed}
+        onOpenChange={(o) => !o && setTargetDismissed(true)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Pola sudah mencapai target konservatif</AlertDialogTitle>
+            <AlertDialogDescription>
+              {pattern &&
+                `Setelah memantul dari PRZ, harga ${pattern.symbol} sudah menyentuh target konservatif` +
+                  (targetReached != null
+                    ? ` (${new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(targetReached)})`
+                    : "") +
+                  " — meski hanya lewat ekor candle. Apakah Anda ingin menghapus pola ini?"}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Biarkan</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Menghapus…" : "Hapus pola"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
