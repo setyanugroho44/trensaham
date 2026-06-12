@@ -116,6 +116,11 @@ export function ceilToIdxTick(price: number): number {
   return Math.ceil(price / t) * t;
 }
 
+/** Pastikan level harga tidak pernah jatuh di bawah lantai harga IDX (Rp60). */
+export function clampMinPrice(price: number): number {
+  return Math.max(price, MIN_VALID_PRICE);
+}
+
 function evalSpec(
   X: Pivot,
   A: Pivot,
