@@ -219,6 +219,7 @@ function DashboardPage() {
         if (res.patternsFound > 0) playBeep();
       }
       load();
+      checkTargetHits();
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
