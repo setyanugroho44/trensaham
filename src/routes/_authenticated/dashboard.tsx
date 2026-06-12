@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
-import { runScan } from "@/lib/scan.functions";
+import { runScan, findTargetReachedDeveloping } from "@/lib/scan.functions";
 import { getMyAccess, type AccessInfo } from "@/lib/subscription.functions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -116,7 +116,21 @@ function DashboardPage() {
   const [access, setAccess] = useState<AccessInfo | null>(null);
   const scanFn = useServerFn(runScan);
   const accessFn = useServerFn(getMyAccess);
+  const targetReachedFn = useServerFn(findTargetReachedDeveloping);
   const watchlistToastShown = useRef(false);
+
+  // Pola developing yang sudah menyentuh target PRZ → tawarkan hapus ke user.
+  type TargetHit = {
+    id: string;
+    symbol: string;
+    pattern_name: string;
+    direction: string;
+    prz_low: number | null;
+    prz_high: number | null;
+  };
+  const [targetHits, setTargetHits] = useState<TargetHit[]>([]);
+  const dismissedHits = useRef<Set<string>>(new Set());
+  const [deletingHits, setDeletingHits] = useState(false);
 
   const load = async () => {
     const { data, error } = await supabase
@@ -126,6 +140,16 @@ function DashboardPage() {
       .limit(500);
     if (error) toast.error(error.message);
     else setRows((data as PatternRow[]) ?? []);
+  };
+
+  const checkTargetHits = async () => {
+    try {
+      const res = await targetReachedFn({ data: { timeframe } });
+      const fresh = (res.hits ?? []).filter((h) => !dismissedHits.current.has(h.id));
+      setTargetHits(fresh);
+    } catch {
+      // diam — fitur ini opsional, jangan ganggu user bila gagal.
+    }
   };
 
   const loadWatchlistCount = async () => {
@@ -140,6 +164,33 @@ function DashboardPage() {
     loadWatchlistCount();
     accessFn().then(setAccess).catch(() => {});
   }, []);
+
+  // Cek target tiap kali timeframe berubah / pertama kali masuk.
+  useEffect(() => {
+    checkTargetHits();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeframe]);
+
+  const dismissTargetHits = () => {
+    for (const h of targetHits) dismissedHits.current.add(h.id);
+    setTargetHits([]);
+  };
+
+  const deleteTargetHits = async () => {
+    if (targetHits.length === 0) return;
+    setDeletingHits(true);
+    const ids = targetHits.map((h) => h.id);
+    const { error } = await supabase.from("patterns").delete().in("id", ids);
+    setDeletingHits(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(`${ids.length} pola yang sudah hit target dihapus`);
+    setTargetHits([]);
+    load();
+  };
+
 
   useEffect(() => {
     if (watchlistCount === 0 && !watchlistToastShown.current) {
@@ -168,6 +219,7 @@ function DashboardPage() {
         if (res.patternsFound > 0) playBeep();
       }
       load();
+      checkTargetHits();
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -273,6 +325,56 @@ function DashboardPage() {
           <PatternsTable rows={completed} kind="completed" timeframe={timeframe} onDeleted={load} />
         </TabsContent>
       </Tabs>
+
+      <AlertDialog open={targetHits.length > 0} onOpenChange={(o) => !o && dismissTargetHits()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {targetHits.length} pola developing sudah hit target
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Pola berikut sudah menyentuh zona target (PRZ) — meski hanya lewat ekor candle —
+              setelah titik C. Apakah Anda ingin menghapusnya?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="max-h-60 overflow-y-auto rounded-md border border-border text-sm">
+            {targetHits.map((h) => (
+              <div
+                key={h.id}
+                className="flex items-center justify-between gap-2 border-b border-border px-3 py-2 last:border-b-0"
+              >
+                <span className="font-medium">{h.symbol}</span>
+                <span className="text-muted-foreground">{h.pattern_name}</span>
+                <span className="text-xs">
+                  {h.direction === "bullish" ? (
+                    <span className="text-emerald-600">Bull</span>
+                  ) : (
+                    <span className="text-rose-600">Bear</span>
+                  )}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {h.prz_low != null && h.prz_high != null
+                    ? `${floorToIdxTick(h.prz_low)} – ${ceilToIdxTick(h.prz_high)}`
+                    : "—"}
+                </span>
+              </div>
+            ))}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deletingHits}>Biarkan</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                deleteTargetHits();
+              }}
+              disabled={deletingHits}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deletingHits ? "Menghapus…" : "Hapus semua"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
