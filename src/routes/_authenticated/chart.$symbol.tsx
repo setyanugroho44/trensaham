@@ -131,14 +131,18 @@ function ChartPage() {
   useEffect(() => {
     if (!containerRef.current || bars.length === 0) return;
     let chart: any;
-    let cleanup = () => {};
+    let onResize: (() => void) | undefined;
+    let cancelled = false;
+
     (async () => {
       const lib = await import("lightweight-charts");
+      if (cancelled || !containerRef.current) return;
+
       const { createChart, CandlestickSeries, LineSeries, AreaSeries, HistogramSeries } = lib as any;
       // lightweight-charts can't parse oklch(); resolve theme color to rgb via canvas.
       const isDark = document.documentElement.classList.contains("dark");
       const textColor = isDark ? "#e5e7eb" : "#374151";
-      chart = createChart(containerRef.current!, {
+      chart = createChart(containerRef.current, {
         height: 500,
         layout: {
           background: { color: "rgba(0,0,0,0)" },
@@ -302,17 +306,27 @@ function ChartPage() {
         }
       }
 
+      if (cancelled) {
+        // Effect sudah di-cleanup sebelum sampai sini — buang chart yang baru dibuat.
+        chart.remove();
+        chart = undefined;
+        return;
+      }
 
       chart.timeScale().fitContent();
-      const onResize = () => chart.applyOptions({ width: containerRef.current!.clientWidth });
+      onResize = () => chart.applyOptions({ width: containerRef.current!.clientWidth });
       onResize();
       window.addEventListener("resize", onResize);
-      cleanup = () => {
-        window.removeEventListener("resize", onResize);
-        chart.remove();
-      };
     })();
-    return () => cleanup();
+
+    return () => {
+      cancelled = true;
+      if (chart) {
+        if (onResize) window.removeEventListener("resize", onResize);
+        chart.remove();
+        chart = undefined;
+      }
+    };
   }, [bars, pattern, tf]);
 
   // Reset status tiap kali pindah pola.
