@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
-import { runScan } from "@/lib/scan.functions";
+import { runScan, reevaluatePatternsBatch } from "@/lib/scan.functions";
 import { getMyAccess, type AccessInfo } from "@/lib/subscription.functions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
