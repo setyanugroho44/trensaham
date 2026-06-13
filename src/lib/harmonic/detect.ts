@@ -35,11 +35,13 @@ function ratiosOf(X: Pivot, A: Pivot, B: Pivot, C: Pivot, D?: Pivot) {
   const XA = legAbs(X, A);
   const AB = legAbs(A, B);
   const BC = legAbs(B, C);
+  const XC = legAbs(X, C);
   return {
     AB: AB / XA,
     BC: BC / AB,
     CD: D ? legAbs(C, D) / BC : NaN,
     AD: D ? legAbs(A, D) / XA : NaN,
+    XC_D: D ? legAbs(C, D) / XC : NaN,
   };
 }
 
@@ -66,32 +68,30 @@ function projectD(
   const XA = legAbs(X, A);
   const BC = legAbs(B, C);
 
-  // Gunakan batas spec langsung — tanpa toleransi tambahan.
   const adA = A.price + (dir === "bullish" ? -1 : 1) * XA * spec.AD.max;
   const adB = A.price + (dir === "bullish" ? -1 : 1) * XA * spec.AD.min;
   const cdA = C.price + (dir === "bullish" ? -1 : 1) * BC * spec.CD.max;
   const cdB = C.price + (dir === "bullish" ? -1 : 1) * BC * spec.CD.min;
 
-  const adLo = Math.min(adA, adB);
-  const adHi = Math.max(adA, adB);
-  const cdLo = Math.min(cdA, cdB);
-  const cdHi = Math.max(cdA, cdB);
+  let lo = Math.max(Math.min(adA, adB), Math.min(cdA, cdB));
+  let hi = Math.min(Math.max(adA, adB), Math.max(cdA, cdB));
 
-  const lo = Math.max(adLo, cdLo);
-  const hi = Math.min(adHi, cdHi);
+  // Cypher: D = retracement XC_D (0.786) dari leg XC → persempit PRZ.
+  if (spec.XC_D) {
+    const XC = legAbs(X, C);
+    const xcA = C.price + (dir === "bullish" ? -1 : 1) * XC * spec.XC_D.max;
+    const xcB = C.price + (dir === "bullish" ? -1 : 1) * XC * spec.XC_D.min;
+    lo = Math.max(lo, Math.min(xcA, xcB));
+    hi = Math.min(hi, Math.max(xcA, xcB));
+  }
 
   if (lo > hi) return null; // no confluence → invalid pattern
 
-  // Guard: PRZ harus berada di sisi yang benar relatif terhadap C.
   if (dir === "bullish" && hi >= C.price) return null;
   if (dir === "bearish" && lo <= C.price) return null;
 
-  // Guard: PRZ harus berada di atas harga minimum yang masuk akal.
-  // Proyeksi pola extension (mis. Crab) kadang menghasilkan PRZ negatif atau
-  // jauh di bawah lantai harga IDX. Buang pola seperti ini.
   if (lo < MIN_VALID_PRICE) return null;
 
-  // Bulatkan ke fraksi harga IDX: low ke bawah, high ke atas.
   return { low: floorToIdxTick(lo), high: ceilToIdxTick(hi) };
 }
 
@@ -136,11 +136,22 @@ function evalSpec(
   const sAB = scoreRatio(rs.AB, spec.AB, tol);
   const sBC = scoreRatio(rs.BC, spec.BC, tol);
   if (sAB === 0 || sBC === 0) return null;
+
   if (D) {
     const sCD = scoreRatio(rs.CD, spec.CD, tol);
     const sAD = scoreRatio(rs.AD, spec.AD, tol);
     if (sCD === 0 || sAD === 0) return null;
-    const score = (sAB + sBC + sCD + sAD) / 4;
+
+    const scores = [sAB, sBC, sCD, sAD];
+
+    // Rasio tambahan khusus Cypher: D harus = 0.786 retracement dari XC.
+    if (spec.XC_D) {
+      const sXC_D = scoreRatio(rs.XC_D, spec.XC_D, tol);
+      if (sXC_D === 0) return null;
+      scores.push(sXC_D);
+    }
+
+    const score = scores.reduce((a, b) => a + b, 0) / scores.length;
     return { score, ratios: rs };
   }
   return { score: (sAB + sBC) / 2, ratios: rs };
