@@ -146,7 +146,6 @@ function DashboardPage() {
   };
 
   useEffect(() => {
-    load();
     loadWatchlistCount();
     accessFn().then(setAccess).catch(() => {});
   }, []);
