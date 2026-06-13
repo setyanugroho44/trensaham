@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
-import { runScan } from "@/lib/scan.functions";
+import { runScan, reevaluatePatternsBatch } from "@/lib/scan.functions";
 import { getMyAccess, type AccessInfo } from "@/lib/subscription.functions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -115,6 +115,7 @@ function DashboardPage() {
   const [watchlistCount, setWatchlistCount] = useState<number | null>(null);
   const [access, setAccess] = useState<AccessInfo | null>(null);
   const scanFn = useServerFn(runScan);
+  const reevaluateBatchFn = useServerFn(reevaluatePatternsBatch);
   const accessFn = useServerFn(getMyAccess);
   const watchlistToastShown = useRef(false);
 
@@ -128,6 +129,15 @@ function DashboardPage() {
     else setRows((data as PatternRow[]) ?? []);
   };
 
+  // Evaluasi ulang status pola untuk timeframe aktif lalu muat ulang, agar tab
+  // Developing/Completed mencerminkan status terkini (bukan status scan lama).
+  const reevaluateAndLoad = async () => {
+    try {
+      await reevaluateBatchFn({ data: { timeframe } });
+    } catch { /* ignore — tetap tampilkan data tersimpan */ }
+    await load();
+  };
+
   const loadWatchlistCount = async () => {
     const { count, error } = await supabase
       .from("watchlist_symbols")
@@ -136,10 +146,15 @@ function DashboardPage() {
   };
 
   useEffect(() => {
-    load();
     loadWatchlistCount();
     accessFn().then(setAccess).catch(() => {});
   }, []);
+
+  // Re-evaluasi setiap kali timeframe berubah (termasuk saat pertama dibuka).
+  useEffect(() => {
+    reevaluateAndLoad();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeframe]);
 
   useEffect(() => {
     if (watchlistCount === 0 && !watchlistToastShown.current) {
