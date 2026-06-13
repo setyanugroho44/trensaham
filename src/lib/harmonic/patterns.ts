@@ -5,15 +5,16 @@ import type { PatternName } from "./types";
 // BC := |C-B| / |B-A|
 // CD := |D-C| / |C-B|
 // AD := |D-A| / |A-X|
-
+// XC_D := |D-C| / |C-X|   (rasio khusus, dipakai untuk validasi titik D pada Cypher)
 export type RatioRange = { min: number; max: number; ideal: number };
-
 export type PatternSpec = {
   name: PatternName;
   AB: RatioRange;
   BC: RatioRange;
   CD: RatioRange;
   AD: RatioRange;
+  // Optional: rasio tambahan berbasis leg XC, hanya relevan untuk Cypher
+  XC_D?: RatioRange;
 };
 
 const r = (min: number, max: number, ideal?: number): RatioRange => ({
@@ -52,18 +53,30 @@ export const PATTERNS: PatternSpec[] = [
     AD: r(1.618, 1.618, 1.618),
   },
   {
+    // SHARK — diperbaiki:
+    // B adalah EKSTENSI dari XA (bisa melewati X), bukan retracement biasa.
+    // AB (=|B-A|/|A-X|) -> 1.13 - 1.618
+    // BC (=|C-B|/|B-A|) -> ekstensi C dari AB, 1.618 - 2.24
+    // CD (=|D-C|/|C-B|) -> 1.13 - 1.618
+    // AD (=|D-A|/|A-X|) -> 0.886 - 1.13 (sudah benar sebelumnya, dipertahankan)
     name: "Shark",
-    AB: r(0.382, 0.618),
-    BC: r(1.13, 1.618),
-    CD: r(1.618, 2.24),
+    AB: r(1.13, 1.618),
+    BC: r(1.618, 2.24),
+    CD: r(1.13, 1.618),
     AD: r(0.886, 1.13),
   },
   {
+    // CYPHER — diperbaiki:
+    // AB & BC dipertahankan (sudah cukup mendekati standar: 0.382-0.618 dan ~1.13-1.414).
+    // AD (XAD) DIHAPUS sebagai syarat ketat karena Cypher tidak punya rasio
+    // tetap XD/XA — diganti jadi rentang lebar (tidak signifikan terhadap skor).
+    // Syarat sebenarnya untuk titik D ada di XC_D: |D-C|/|C-X| = 0.786.
     name: "Cypher",
     AB: r(0.382, 0.618),
-    BC: r(1.27, 1.414),
-    CD: r(1.27, 2.0),
-    AD: r(0.786, 0.786, 0.786),
+    BC: r(1.13, 1.414),
+    CD: r(1.272, 2.0),
+    AD: r(0.0, 10), // tidak digunakan sebagai kriteria ketat
+    XC_D: r(0.786, 0.786, 0.786),
   },
   {
     name: "AB=CD",
