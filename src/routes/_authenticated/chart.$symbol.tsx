@@ -469,7 +469,8 @@ function ChartPage() {
           <CardHeader>
             {symbol}
           </CardHeader>
-        <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <div className="rounded-xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 via-primary/10 to-transparent p-5 shadow-sm">
               <div className="flex items-center gap-2 text-xs font-semibold  tracking-wider text-primary">
                 <span>PRZ — Potential Reversal Zone</span>
@@ -510,41 +511,13 @@ function ChartPage() {
 )}
             </div>
             {pattern.status === "completed" && pattern.d_price != null && bars.length > 0 && (
-              <>
-                <TargetCard
-                  current={roundToIdxTick(bars[bars.length - 1].close)}
-                  target={roundToIdxTick(
-                    pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price),
-                  )}
-                />
-                {targetReached != null && (
-                  <div className="col-span-full flex items-start justify-between gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2.5">
-                    <div className="flex items-start gap-2 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
-                      <span className="mt-0.5">⚠</span>
-                      <span>
-                        Harga sudah mencapai target konservatif (
-                        {new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(
-                          targetReached,
-                        )}
-                        ) setelah memantul dari PRZ — meski hanya lewat ekor candle. Pertimbangkan
-                        untuk menghapus pola ini.
-                      </span>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={handleDelete}
-                      disabled={deleting}
-                      aria-label="Hapus pola"
-                      className="shrink-0 text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+              <TargetCard
+                current={roundToIdxTick(bars[bars.length - 1].close)}
+                target={roundToIdxTick(
+                  pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price),
                 )}
-              </>
+              />
             )}
-
             {showBearishDevTarget && lastClose != null && (
               <TargetCard
                 current={roundToIdxTick(lastClose)}
@@ -584,12 +557,37 @@ function ChartPage() {
                 </div>
               </div>
             )}
+          </div>
 
-            <div className="col-span-full">
-              <PivotXABCD pattern={pattern} />
+          {pattern.status === "completed" && pattern.d_price != null && bars.length > 0 && targetReached != null && (
+            <div className="flex items-start justify-between gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2.5">
+              <div className="flex items-start gap-2 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+                <span className="mt-0.5">⚠</span>
+                <span>
+                  Harga sudah mencapai target konservatif (
+                  {new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(
+                    targetReached,
+                  )}
+                  ) setelah memantul dari PRZ — meski hanya lewat ekor candle. Pertimbangkan
+                  untuk menghapus pola ini.
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleDelete}
+                disabled={deleting}
+                aria-label="Hapus pola"
+                className="shrink-0 text-destructive hover:text-destructive"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
+          )}
 
-          </CardContent>
+          <PivotXABCD pattern={pattern} />
+
+        </CardContent>
         </Card>
       )}
     </div>
