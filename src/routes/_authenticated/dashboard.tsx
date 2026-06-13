@@ -115,6 +115,7 @@ function DashboardPage() {
   const [watchlistCount, setWatchlistCount] = useState<number | null>(null);
   const [access, setAccess] = useState<AccessInfo | null>(null);
   const scanFn = useServerFn(runScan);
+  const reevaluateBatchFn = useServerFn(reevaluatePatternsBatch);
   const accessFn = useServerFn(getMyAccess);
   const watchlistToastShown = useRef(false);
 
