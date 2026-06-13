@@ -206,9 +206,7 @@ export function detectPatterns(
   const RETRACEMENT_PATTERNS = new Set(["Gartley", "Bat", "Cypher"]);
   // Shark & Butterfly & Crab → extension (D bisa melampaui X)
 
-  // Pola yang invalidasinya dihitung 2 tick di luar tepi PRZ
-  // (bullish: 2 tick di bawah PRZ.low; bearish: 2 tick di atas PRZ.high).
-  const TWO_TICK_PATTERNS = new Set(["AB=CD", "Crab", "Butterfly"]);
+ 
 
   function invalidationFor(
     name: string,
@@ -228,18 +226,13 @@ export function detectPatterns(
         : ceilToIdxTick(X.price + minBuf);
     }
 
-    // AB=CD, Crab, Butterfly: invalidasi tepat 2 tick di luar tepi PRZ.
-    if (TWO_TICK_PATTERNS.has(name)) {
-      if (dir === "bullish") {
-        const tick = idxTickSize(prz.low);
-        return clampMinPrice(floorToIdxTick(prz.low - 2 * tick));
-      }
-      const tick = idxTickSize(prz.high);
-      return ceilToIdxTick(prz.high + 2 * tick);
-    }
-
-    // Sisanya (Shark) → extension dengan overshoot buffer.
+    // Shark, AB=CD, Crab, Butterfly → extension/overshoot pattern.
     // Buffer = max(lebar PRZ × overshootFactor, 1 tick).
+    //
+    // Buffer tick tetap (2 tick) terlalu kecil dibanding lebar PRZ pola-pola
+    // ini (mis. Rp4 vs PRZ 20 poin), sehingga praktis "menempel" pada PRZ dan
+    // memicu invalidasi prematur saat overshoot wajar. Buffer proporsional
+    // terhadap lebar PRZ lebih realistis.
     const buffer = Math.max(przWidth * overshootFactor, minBuf);
     return dir === "bullish"
       ? clampMinPrice(floorToIdxTick(prz.low - buffer))
