@@ -469,9 +469,7 @@ function ChartPage() {
           <CardHeader>
             {symbol}
           </CardHeader>
-          <CardContent className="space-y-4">
-           
-
+        <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <div className="rounded-xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 via-primary/10 to-transparent p-5 shadow-sm">
               <div className="flex items-center gap-2 text-xs font-semibold  tracking-wider text-primary">
                 <span>PRZ — Potential Reversal Zone</span>
@@ -520,7 +518,7 @@ function ChartPage() {
                   )}
                 />
                 {targetReached != null && (
-                  <div className="flex items-start justify-between gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2.5">
+                  <div className="col-span-full flex items-start justify-between gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2.5">
                     <div className="flex items-start gap-2 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
                       <span className="mt-0.5">⚠</span>
                       <span>
@@ -587,9 +585,9 @@ function ChartPage() {
               </div>
             )}
 
-
-
-            <PivotXABCD pattern={pattern} />
+            <div className="col-span-full">
+              <PivotXABCD pattern={pattern} />
+            </div>
 
           </CardContent>
         </Card>
