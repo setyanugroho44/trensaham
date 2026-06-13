@@ -129,6 +129,15 @@ function DashboardPage() {
     else setRows((data as PatternRow[]) ?? []);
   };
 
+  // Evaluasi ulang status pola untuk timeframe aktif lalu muat ulang, agar tab
+  // Developing/Completed mencerminkan status terkini (bukan status scan lama).
+  const reevaluateAndLoad = async () => {
+    try {
+      await reevaluateBatchFn({ data: { timeframe } });
+    } catch { /* ignore — tetap tampilkan data tersimpan */ }
+    await load();
+  };
+
   const loadWatchlistCount = async () => {
     const { count, error } = await supabase
       .from("watchlist_symbols")
@@ -141,6 +150,12 @@ function DashboardPage() {
     loadWatchlistCount();
     accessFn().then(setAccess).catch(() => {});
   }, []);
+
+  // Re-evaluasi setiap kali timeframe berubah (termasuk saat pertama dibuka).
+  useEffect(() => {
+    reevaluateAndLoad();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeframe]);
 
   useEffect(() => {
     if (watchlistCount === 0 && !watchlistToastShown.current) {
