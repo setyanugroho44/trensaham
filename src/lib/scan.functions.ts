@@ -155,6 +155,63 @@ export const reevaluatePattern = createServerFn({ method: "POST" })
   });
 
 /**
+ * Evaluasi ulang status SEMUA pola (developing & completed) untuk satu timeframe.
+ *
+ * Dipakai halaman dashboard saat dibuka agar tab Developing/Completed selalu
+ * mencerminkan status terbaru — bukan status lama dari hasil scan terakhir.
+ * Bars di-fetch sekali per simbol agar efisien.
+ */
+export const reevaluatePatternsBatch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { timeframe: Timeframe }) => z.object({ timeframe: TF }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { data: rows, error } = await supabase
+      .from("patterns")
+      .select("id, symbol, timeframe, direction, a_price, c_date, prz_low, prz_high, invalidation, status, d_price")
+      .eq("timeframe", data.timeframe)
+      .in("status", ["developing", "completed"]);
+    if (error) throw new Error(error.message);
+    const patterns = rows ?? [];
+    if (patterns.length === 0) return { changed: 0 };
+
+    // Kelompokkan per simbol agar bars cukup di-fetch sekali per saham.
+    const bySymbol = new Map<string, typeof patterns>();
+    for (const p of patterns) {
+      const arr = bySymbol.get(p.symbol) ?? [];
+      arr.push(p);
+      bySymbol.set(p.symbol, arr);
+    }
+
+    let changedCount = 0;
+    for (const [symbol, ps] of bySymbol) {
+      let bars: { time: number; high: number; low: number; close: number }[];
+      try {
+        bars = await fetchYahooBars(symbol, data.timeframe);
+      } catch {
+        continue;
+      }
+      if (bars.length === 0) continue;
+      for (const p of ps) {
+        const result = reevaluateStatus(bars, p);
+        const changed =
+          result.status !== p.status ||
+          (result.status === "completed" && result.d_price != null && p.d_price == null);
+        if (!changed) continue;
+        const update: { status: string; d_date?: string; d_price?: number } = { status: result.status };
+        if (result.status === "completed" && result.d_time != null && result.d_price != null) {
+          update.d_date = new Date(result.d_time * 1000).toISOString();
+          update.d_price = result.d_price;
+        }
+        const { error: upErr } = await supabaseAdmin.from("patterns").update(update).eq("id", p.id);
+        if (!upErr) changedCount += 1;
+      }
+    }
+
+    return { changed: changedCount };
+  });
+
+/**
  * Cari pola "developing" yang sudah pernah menyentuh target PRZ — meski hanya
  * lewat wick (ekor candle) — pada candle setelah titik C terbentuk.
  *
