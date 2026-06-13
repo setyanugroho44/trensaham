@@ -40,7 +40,7 @@ function AuthLayout() {
             </div>
           </main>
           <footer className="border-t border-border px-4 py-4 text-center text-xs text-muted-foreground">
-            Educational use only — not investment advice. Data: Yahoo Finance (.JK).
+            Educational use only — not investment advice
           </footer>
         </SidebarInset>
       </div>
