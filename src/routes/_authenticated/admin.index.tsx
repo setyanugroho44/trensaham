@@ -40,7 +40,7 @@ import {
   isCurrentUserSuperAdmin,
   promoteAdminByEmail,
 } from "@/lib/admin.functions";
-import { adminExtendSubscription } from "@/lib/subscription.functions";
+import { adminExtendSubscription, getMyAccess  } from "@/lib/subscription.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: AdminPage,
@@ -65,6 +65,7 @@ function AdminPage() {
   const [checking, setChecking] = useState(true);
   const [allowed, setAllowed] = useState(false);
   const [isSuper, setIsSuper] = useState(false);
+  const [isSupportAgent, setIsSupportAgent] = useState(false);
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<Row[]>([]);
   const [q, setQ] = useState("");
@@ -77,28 +78,30 @@ function AdminPage() {
   const [promoting, setPromoting] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const { isAdmin } = await isCurrentUserAdmin();
-        if (!isAdmin) {
-          toast.error("Akses ditolak");
-          navigate({ to: "/dashboard" });
-          return;
-        }
-        setAllowed(true);
-        try {
-          const { isSuperAdmin } = await isCurrentUserSuperAdmin();
-          setIsSuper(isSuperAdmin);
-        } catch { /* ignore */ }
-      } catch (e) {
-        toast.error(e instanceof Error ? e.message : "Gagal memeriksa akses");
-        navigate({ to: "/dashboard" });
-      } finally {
-        setChecking(false);
-      }
-    })();
-  }, [navigate]);
+  (async () => {
+    try {
+      // Cek via getMyAccess agar support agent juga lolos
+      const access = await getMyAccess();
+      const isAdmin = access.isAdmin || access.isSuperAdmin;
+      const isSupport = access.isSupportAgent ?? false;
 
+      if (!isAdmin && !isSupport) {
+        toast.error("Akses ditolak");
+        navigate({ to: "/dashboard" });
+        return;
+      }
+
+      setAllowed(true);
+      setIsSuper(access.isSuperAdmin);
+      setIsSupportAgent(isSupport);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Gagal memeriksa akses");
+      navigate({ to: "/dashboard" });
+    } finally {
+      setChecking(false);
+    }
+  })();
+}, [navigate]);
   const load = async () => {
     setLoading(true);
     try {
@@ -193,8 +196,14 @@ function AdminPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Administrator</h1>
-        <p className="text-sm text-muted-foreground">Kelola user terdaftar.</p>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          {isSupportAgent && !isSuper ? "Support Agent" : "Administrator"}
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          {isSupportAgent && !isSuper
+            ? "Lihat dan kelola langganan user."
+            : "Kelola user terdaftar."}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
