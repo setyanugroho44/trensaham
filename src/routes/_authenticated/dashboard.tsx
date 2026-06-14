@@ -17,6 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Loader2, Play, TrendingDown, TrendingUp, X, Info, Lock, Settings2, ArrowUp, ArrowDown } from "lucide-react";
 import { toast } from "sonner";
@@ -353,6 +355,11 @@ function SettingsDialog({
             </p>
           </div>
         </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button>OK</Button>
+          </DialogClose>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
