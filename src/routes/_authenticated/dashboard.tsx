@@ -353,6 +353,11 @@ function SettingsDialog({
             </p>
           </div>
         </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button>OK</Button>
+          </DialogClose>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
