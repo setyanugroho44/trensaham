@@ -9,6 +9,7 @@ export type AccessInfo = {
   isSuperAdmin: boolean;
   reason: "admin" | "pro" | "trial" | "expired";
 };
+const SUPPORT_AGENT_EMAILS = ["setyanugroho44@gmail.com"];
 
 export async function loadAccess(userId: string): Promise<AccessInfo> {
   const { data: roles } = await supabaseAdmin
@@ -73,6 +74,11 @@ export async function assertAccessWithClient(
 }
 
 export async function assertAdminOrSuper(userId: string) {
+  // Cek support agent via email
+  const { data: userData } = await supabaseAdmin.auth.admin.getUserById(userId);
+  if (SUPPORT_AGENT_EMAILS.includes(userData?.user?.email ?? "")) return;
+
+  // Cek admin/super_admin via user_roles
   const { data, error } = await supabaseAdmin
     .from("user_roles")
     .select("role")
