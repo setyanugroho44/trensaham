@@ -1,29 +1,43 @@
+// access.server.ts — FULL FILE WITH CHANGES
+
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { assertAdminOrSuper, type AccessInfo } from "./subscription.server";
-
 export type { AccessInfo };
+
+// ─── HARDCODED SUPPORT AGENTS ────────────────────────────────────────────────
+const SUPPORT_AGENT_EMAILS = ["setyanugroho44@gmail.com"];
+
+async function isSupportAgentEmail(userId: string): Promise<boolean> {
+  const { data } = await supabaseAdmin.auth.admin.getUserById(userId);
+  return SUPPORT_AGENT_EMAILS.includes(data?.user?.email ?? "");
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 export const getMyAccess = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const [{ data: roles }, { data: sub }] = await Promise.all([
+    const [{ data: roles }, { data: sub }, supportAgent] = await Promise.all([
       context.supabase.from("user_roles").select("role").eq("user_id", context.userId),
       context.supabase
         .from("subscriptions")
         .select("tier, trial_ends_at, pro_ends_at")
         .eq("user_id", context.userId)
         .maybeSingle(),
+      isSupportAgentEmail(context.userId), // ← tambahan
     ]);
 
     const isAdmin = !!roles?.some((r) => r.role === "admin");
     const isSuperAdmin = !!roles?.some((r) => r.role === "super_admin");
+    const isSupportAgent = supportAgent; // ← tambahan
+
     const now = Date.now();
     const proActive =
       sub?.tier === "pro" && sub.pro_ends_at && new Date(sub.pro_ends_at).getTime() > now;
     const trialActive = sub?.trial_ends_at && new Date(sub.trial_ends_at).getTime() > now;
+
     const reason: AccessInfo["reason"] =
       isAdmin || isSuperAdmin ? "admin" : proActive ? "pro" : trialActive ? "trial" : "expired";
 
@@ -34,6 +48,7 @@ export const getMyAccess = createServerFn({ method: "GET" })
       proEndsAt: sub?.pro_ends_at ?? null,
       isAdmin,
       isSuperAdmin,
+      isSupportAgent, // ← tambahan
       reason,
     };
   });
@@ -50,7 +65,11 @@ export const adminExtendSubscription = createServerFn({ method: "POST" })
         .parse(d),
   )
   .handler(async ({ data, context }) => {
-    await assertAdminOrSuper(context.userId);
+    // ← ganti assertAdminOrSuper → izinkan support agent juga
+    const isSupport = await isSupportAgentEmail(context.userId);
+    if (!isSupport) {
+      await assertAdminOrSuper(context.userId); // tetap cek admin/super jika bukan support
+    }
 
     const { data: existing } = await supabaseAdmin
       .from("subscriptions")
@@ -99,6 +118,7 @@ export const adminExtendSubscription = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin
       .from("subscriptions")
       .upsert(row, { onConflict: "user_id" });
+
     if (error) throw new Error(error.message);
     return { ok: true, subscription: row };
   });
