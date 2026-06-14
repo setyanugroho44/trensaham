@@ -373,6 +373,9 @@ function PatternsTable({
 }) {
   const navigate = useNavigate();
   const [pendingDelete, setPendingDelete] = useState<PatternRow | null>(null);
+  const [sort, setSort] = useState<
+    { field: "symbol" | "progress" | "confidence"; dir: "asc" | "desc" } | null
+  >(null);
 
   const confirmDelete = async () => {
     if (!pendingDelete) return;
@@ -383,6 +386,44 @@ function PatternsTable({
       onDeleted();
     }
     setPendingDelete(null);
+  };
+
+  const toggleSort = (field: "symbol" | "progress" | "confidence") => {
+    setSort((prev) => {
+      if (!prev || prev.field !== field) return { field, dir: "asc" };
+      if (prev.dir === "asc") return { field, dir: "desc" };
+      return null;
+    });
+  };
+
+  const sorted = useMemo(() => {
+    if (!sort) return rows;
+    return [...rows].sort((a, b) => {
+      let cmp = 0;
+      if (sort.field === "symbol") {
+        cmp = a.symbol.localeCompare(b.symbol);
+      } else if (sort.field === "confidence") {
+        cmp = a.confidence - b.confidence;
+      } else if (sort.field === "progress") {
+        if (kind === "developing") {
+          cmp = (a.progress_pct ?? 0) - (b.progress_pct ?? 0);
+        } else {
+          cmp =
+            new Date(a.d_date ?? 0).getTime() -
+            new Date(b.d_date ?? 0).getTime();
+        }
+      }
+      return sort.dir === "asc" ? cmp : -cmp;
+    });
+  }, [rows, sort, kind]);
+
+  const SortIcon = ({ field }: { field: "symbol" | "progress" | "confidence" }) => {
+    if (!sort || sort.field !== field) return <span className="inline-block w-3" />;
+    return sort.dir === "asc" ? (
+      <ArrowUp className="ml-1 inline h-3 w-3" />
+    ) : (
+      <ArrowDown className="ml-1 inline h-3 w-3" />
+    );
   };
 
   if (rows.length === 0) {
@@ -399,18 +440,24 @@ function PatternsTable({
       <table className="w-full text-sm">
         <thead className="bg-muted/50 text-left text-xs uppercase text-muted-foreground">
           <tr>
-            <th className="px-3 py-2">Symbol</th>
+            <th className="px-3 py-2 cursor-pointer select-none hover:text-foreground" onClick={() => toggleSort("symbol")}>
+              Saham <SortIcon field="symbol" />
+            </th>
             <th className="px-3 py-2">Pattern</th>
             <th className="px-3 py-2">Dir</th>
-            <th className="px-3 py-2">{kind === "developing" ? "Progress" : "D Date"}</th>
-            <th className="px-3 py-2">Conf.</th>
+            <th className="px-3 py-2 cursor-pointer select-none hover:text-foreground" onClick={() => toggleSort("progress")}>
+              {kind === "developing" ? <>Progress <SortIcon field="progress" /></> : <>D Date <SortIcon field="progress" /></>}
+            </th>
+            <th className="px-3 py-2 cursor-pointer select-none hover:text-foreground" onClick={() => toggleSort("confidence")}>
+              Conf. <SortIcon field="confidence" />
+            </th>
             <th className="px-3 py-2">PRZ</th>
             <th className="px-3 py-2">Invalidate</th>
             <th className="px-3 py-2 w-8"></th>
           </tr>
         </thead>
         <tbody>
-          {rows.map((r) => (
+          {sorted.map((r) => (
             <tr
               key={r.id}
               className="border-t border-border hover:bg-muted/30 cursor-pointer"
