@@ -8,7 +8,7 @@ import {
   adminRejectPayment,
   adminGetProofUrl,
 } from "@/lib/payment.functions";
-import { isCurrentUserAdmin } from "@/lib/admin.functions";
+import { getMyAccess } from "@/lib/subscription.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,14 +43,15 @@ function AdminPaymentsPage() {
   const rejectFn = useServerFn(adminRejectPayment);
   const proofFn = useServerFn(adminGetProofUrl);
 
-  useEffect(() => {
-    isCurrentUserAdmin()
-      .then(({ isAdmin }) => {
-        setAllowed(isAdmin);
-        if (!isAdmin) navigate({ to: "/dashboard" });
-      })
-      .catch(() => setAllowed(false));
-  }, [navigate]);
+ useEffect(() => {
+  getMyAccess()
+    .then((access) => {
+      const ok = access.isAdmin || access.isSuperAdmin || (access.isSupportAgent ?? false);
+      setAllowed(ok);
+      if (!ok) navigate({ to: "/dashboard" });
+    })
+    .catch(() => setAllowed(false));
+}, [navigate]);
 
   const reload = async () => {
     setLoading(true);
