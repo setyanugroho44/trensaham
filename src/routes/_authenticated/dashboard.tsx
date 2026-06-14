@@ -18,7 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2, Play, TrendingDown, TrendingUp, X, Info, Lock, Settings2 } from "lucide-react";
+import { Loader2, Play, TrendingDown, TrendingUp, X, Info, Lock, Settings2, ArrowUp, ArrowDown } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
