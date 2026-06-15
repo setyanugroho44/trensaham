@@ -3,9 +3,10 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-async function assertAdmin(userId: string) {
-  const isSupport = await isSupportAgentEmail(userId);
-  if (isSupport) return; // ← support agent langsung lolos
+async function assertAdmin(userId: string, email?: string | null) {
+  // Support agent lolos via email JWT claims (tidak butuh service role key)
+  if (email && SUPPORT_AGENT_EMAILS.includes(email.trim().toLowerCase())) return;
+  if (!email && (await isSupportAgentEmail(userId))) return;
 
   const { data, error } = await supabaseAdmin
     .from("user_roles")
