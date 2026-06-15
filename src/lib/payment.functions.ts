@@ -94,7 +94,7 @@ export const listMyPaymentRequests = createServerFn({ method: "GET" })
 export const adminListPaymentRequests = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdminOrSuper(context.userId);
+    await assertAdminOrSuper(context.userId, context.claims?.email as string | undefined);
     const { data, error } = await supabaseAdmin
       .from("payment_requests")
       .select("*")
@@ -124,7 +124,7 @@ export const adminGetProofUrl = createServerFn({ method: "POST" })
     z.object({ path: z.string().min(1).max(1000) }).parse(d),
   )
   .handler(async ({ data, context }) => {
-    await assertAdminOrSuper(context.userId);
+    await assertAdminOrSuper(context.userId, context.claims?.email as string | undefined);
     const { data: signed, error } = await supabaseAdmin.storage
       .from("payment-proofs")
       .createSignedUrl(data.path, 60 * 10);
@@ -136,7 +136,7 @@ export const adminApprovePayment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    await assertAdminOrSuper(context.userId);
+    await assertAdminOrSuper(context.userId, context.claims?.email as string | undefined);
     const { data: req, error: e1 } = await supabaseAdmin
       .from("payment_requests")
       .select("*")
@@ -185,7 +185,7 @@ export const adminRejectPayment = createServerFn({ method: "POST" })
     z.object({ id: z.string().uuid(), note: z.string().max(500).optional() }).parse(d),
   )
   .handler(async ({ data, context }) => {
-    await assertAdminOrSuper(context.userId);
+    await assertAdminOrSuper(context.userId, context.claims?.email as string | undefined);
     const { error } = await supabaseAdmin
       .from("payment_requests")
       .update({
