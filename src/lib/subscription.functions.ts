@@ -67,8 +67,8 @@ export const adminExtendSubscription = createServerFn({ method: "POST" })
         .parse(d),
   )
   .handler(async ({ data, context }) => {
-    // ← ganti assertAdminOrSuper → izinkan support agent juga
-    const isSupport = await isSupportAgentEmail(context.userId);
+    // ← ganti assertAdminOrSuper → izinkan support agent juga (deteksi via JWT claims email)
+    const isSupport = isSupportAgentClaimEmail(context.claims?.email as string | undefined);
     if (!isSupport) {
       await assertAdminOrSuper(context.userId); // tetap cek admin/super jika bukan support
     }
