@@ -3,9 +3,10 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-async function assertAdmin(userId: string) {
-  const isSupport = await isSupportAgentEmail(userId);
-  if (isSupport) return; // ← support agent langsung lolos
+async function assertAdmin(userId: string, email?: string | null) {
+  // Support agent lolos via email JWT claims (tidak butuh service role key)
+  if (email && SUPPORT_AGENT_EMAILS.includes(email.trim().toLowerCase())) return;
+  if (!email && (await isSupportAgentEmail(userId))) return;
 
   const { data, error } = await supabaseAdmin
     .from("user_roles")
@@ -87,7 +88,7 @@ export const isCurrentUserAdmin = createServerFn({ method: "GET" })
 export const adminListUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.userId);
+    await assertAdmin(context.userId, context.claims?.email as string | undefined);
 
     const all: Array<{ id: string; email: string | undefined; created_at: string; last_sign_in_at: string | null }> = [];
     let page = 1;
@@ -160,7 +161,7 @@ export const adminUpdateProfile = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.userId);
+    await assertAdmin(context.userId, context.claims?.email as string | undefined);
     const { error } = await supabaseAdmin.from("profiles").upsert(
       {
         user_id: data.user_id,
@@ -178,7 +179,7 @@ export const adminDeleteUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { user_id: string }) => z.object({ user_id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.userId);
+    await assertAdmin(context.userId, context.claims?.email as string | undefined);
     if (data.user_id === context.userId) throw new Error("Tidak bisa menghapus akun sendiri");
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.user_id);
     if (error) throw new Error(error.message);

@@ -73,10 +73,15 @@ export async function assertAccessWithClient(
   }
 }
 
-export async function assertAdminOrSuper(userId: string) {
-  // Cek support agent via email
-  const { data: userData } = await supabaseAdmin.auth.admin.getUserById(userId);
-  if (SUPPORT_AGENT_EMAILS.includes(userData?.user?.email ?? "")) return;
+export async function assertAdminOrSuper(userId: string, email?: string | null) {
+  // Cek support agent via email dari JWT claims (tidak butuh service role key)
+  if (email && SUPPORT_AGENT_EMAILS.includes(email.trim().toLowerCase())) return;
+
+  // Fallback: cek support agent via admin lookup (jika email tidak tersedia)
+  if (!email) {
+    const { data: userData } = await supabaseAdmin.auth.admin.getUserById(userId);
+    if (SUPPORT_AGENT_EMAILS.includes(userData?.user?.email ?? "")) return;
+  }
 
   // Cek admin/super_admin via user_roles
   const { data, error } = await supabaseAdmin
