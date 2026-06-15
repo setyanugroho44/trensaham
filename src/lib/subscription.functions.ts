@@ -8,7 +8,7 @@ import { assertAdminOrSuper, type AccessInfo } from "./subscription.server";
 export type { AccessInfo };
 
 // ─── HARDCODED SUPPORT AGENTS ────────────────────────────────────────────────
-const SUPPORT_AGENT_EMAILS = ["setyanugroho44@gmail.com"];
+const SUPPORT_AGENT_EMAILS = ["setyanugroho44@gmail.com", "myadhi70@yahoo.com"];
 
 async function isSupportAgentEmail(userId: string): Promise<boolean> {
   const { data } = await supabaseAdmin.auth.admin.getUserById(userId);

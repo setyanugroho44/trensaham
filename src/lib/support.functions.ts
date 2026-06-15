@@ -2,11 +2,11 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const SUPPORT_AGENT_EMAIL = "setyanugroho44@gmail.com";
+const SUPPORT_AGENT_EMAILS = ["setyanugroho44@gmail.com", "myadhi70@yahoo.com"];
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/telegram";
 
 function isAgentEmail(email: string | null | undefined): boolean {
-  return (email ?? "").trim().toLowerCase() === SUPPORT_AGENT_EMAIL;
+  return SUPPORT_AGENT_EMAILS.includes((email ?? "").trim().toLowerCase());
 }
 
 async function notifyTelegram(text: string) {
