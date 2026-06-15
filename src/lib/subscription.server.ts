@@ -9,7 +9,7 @@ export type AccessInfo = {
   isSuperAdmin: boolean;
   reason: "admin" | "pro" | "trial" | "expired";
 };
-const SUPPORT_AGENT_EMAILS = ["setyanugroho44@gmail.com"];
+const SUPPORT_AGENT_EMAILS = ["setyanugroho44@gmail.com", "myadhi70@yahoo.com"];
 
 export async function loadAccess(userId: string): Promise<AccessInfo> {
   const { data: roles } = await supabaseAdmin

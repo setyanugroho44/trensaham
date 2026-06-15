@@ -26,7 +26,7 @@ async function assertSuperAdmin(userId: string) {
   if (!data || data.length === 0) throw new Error("Forbidden: super admin only");
 }
 
-const SUPPORT_AGENT_EMAILS = ["setyanugroho44@gmail.com"];
+const SUPPORT_AGENT_EMAILS = ["setyanugroho44@gmail.com", "myadhi70@yahoo.com"];
 async function isSupportAgentEmail(userId: string): Promise<boolean> {
   const { data } = await supabaseAdmin.auth.admin.getUserById(userId);
   return SUPPORT_AGENT_EMAILS.includes(data?.user?.email ?? "");
