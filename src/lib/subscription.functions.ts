@@ -10,28 +10,30 @@ export type { AccessInfo };
 // ─── HARDCODED SUPPORT AGENTS ────────────────────────────────────────────────
 const SUPPORT_AGENT_EMAILS = ["setyanugroho44@gmail.com", "myadhi70@yahoo.com"];
 
-async function isSupportAgentEmail(userId: string): Promise<boolean> {
-  const { data } = await supabaseAdmin.auth.admin.getUserById(userId);
-  return SUPPORT_AGENT_EMAILS.includes(data?.user?.email ?? "");
+// Deteksi support agent dari email pada JWT claims (tidak butuh service role key),
+// agar tetap bekerja di deployment custom domain (Cloudflare) maupun preview.
+function isSupportAgentClaimEmail(email: string | null | undefined): boolean {
+  return SUPPORT_AGENT_EMAILS.includes((email ?? "").trim().toLowerCase());
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const getMyAccess = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const [{ data: roles }, { data: sub }, supportAgent] = await Promise.all([
+    const [{ data: roles }, { data: sub }] = await Promise.all([
       context.supabase.from("user_roles").select("role").eq("user_id", context.userId),
       context.supabase
         .from("subscriptions")
         .select("tier, trial_ends_at, pro_ends_at")
         .eq("user_id", context.userId)
         .maybeSingle(),
-      isSupportAgentEmail(context.userId), // ← tambahan
     ]);
 
     const isAdmin = !!roles?.some((r) => r.role === "admin");
     const isSuperAdmin = !!roles?.some((r) => r.role === "super_admin");
-    const isSupportAgent = supportAgent; // ← tambahan
+    const isSupportAgent = isSupportAgentClaimEmail(
+      context.claims?.email as string | undefined,
+    );
 
     const now = Date.now();
     const proActive =
