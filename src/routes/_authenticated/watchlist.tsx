@@ -12,7 +12,7 @@ import { getMyAccess } from "@/lib/subscription.functions";
 
 export const Route = createFileRoute("/_authenticated/watchlist")({
   component: WatchlistPage,
-  head: () => ({ meta: [{ title: "Watchlist — IDX Harmonic Scanner" }] }),
+  head: () => ({ meta: [{ title: "Watchlist — Analisa Saham Indo" }] }),
 });
 
 function WatchlistPage() {

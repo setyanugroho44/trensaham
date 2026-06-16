@@ -11,7 +11,7 @@ import { encodeRef } from "@/lib/referral-code";
 
 export const Route = createFileRoute("/_authenticated/referral")({
   component: ReferralPage,
-  head: () => ({ meta: [{ title: "Referral — IDX Harmonic Scanner" }] }),
+  head: () => ({ meta: [{ title: "Referral — Analisa Saham Indo" }] }),
 });
 
 function ReferralPage() {

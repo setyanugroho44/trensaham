@@ -37,7 +37,7 @@ import { floorToIdxTick, ceilToIdxTick } from "@/lib/harmonic/detect";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
-  head: () => ({ meta: [{ title: "Dashboard — IDX Harmonic Scanner" }] }),
+  head: () => ({ meta: [{ title: "Dashboard — Analisa Saham Indo" }] }),
 });
 
 type PatternRow = {

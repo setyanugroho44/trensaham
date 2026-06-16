@@ -39,7 +39,7 @@ export const Route = createFileRoute("/_authenticated/chart/$symbol")({
   validateSearch: searchSchema,
   component: ChartPage,
   head: ({ params }) => ({
-    meta: [{ title: `${params.symbol} chart — IDX Harmonic Scanner` }],
+    meta: [{ title: `${params.symbol} chart — Analisa Saham Indo` }],
   }),
 });
 

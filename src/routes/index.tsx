@@ -123,7 +123,7 @@ function Landing() {
       {/* Footer */}
       <footer className="bg-muted/30">
         <div className="mx-auto max-w-5xl px-4 py-8 text-center text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} IDX Harmonic Scanner. Educational use only — not investment advice.</p>
+          <p>© {new Date().getFullYear()} Analisa Saham Indo. Educational use only — not investment advice.</p>
           <p className="mt-1">Data: Yahoo Finance (.JK).</p>
         </div>
       </footer>

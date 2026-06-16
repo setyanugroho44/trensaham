@@ -20,7 +20,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/upgrade")({
   component: UpgradePage,
-  head: () => ({ meta: [{ title: "Upgrade ke Pro — IDX Harmonic Scanner" }] }),
+  head: () => ({ meta: [{ title: "Upgrade ke Pro — Analisa Saham Indo" }] }),
 });
 
 type PaymentRow = {
