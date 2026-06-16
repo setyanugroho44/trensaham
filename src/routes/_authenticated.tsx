@@ -31,7 +31,7 @@ function AuthLayout() {
               <span className="text-[10px] text-muted-foreground leading-none">Menu</span>
             </div>
             <Link to="/dashboard" className="text-base font-semibold tracking-tight">
-              IDX Harmonic Scanner
+              Analisa Saham Indo
             </Link>
           </header>
           <main className="flex-1 px-4 py-6">

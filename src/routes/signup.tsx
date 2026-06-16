@@ -11,7 +11,7 @@ import { captureRefFromUrl } from "@/lib/referral-code";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
-  head: () => ({ meta: [{ title: "Daftar — IDX Harmonic Scanner" }] }),
+  head: () => ({ meta: [{ title: "Daftar — Analisa Saham Indo" }] }),
 });
 
 function SignupPage() {

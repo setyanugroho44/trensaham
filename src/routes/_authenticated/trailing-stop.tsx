@@ -12,7 +12,7 @@ import type { Bar } from "@/lib/harmonic/types";
 
 export const Route = createFileRoute("/_authenticated/trailing-stop")({
   component: TrailingStopPage,
-  head: () => ({ meta: [{ title: "Trailing Stop — IDX Harmonic Scanner" }] }),
+  head: () => ({ meta: [{ title: "Trailing Stop — Analisa Saham Indo" }] }),
 });
 
 type Result = {
