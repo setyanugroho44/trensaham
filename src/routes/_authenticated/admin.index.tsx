@@ -167,7 +167,7 @@ function AdminPage() {
     }
   };
 
-  const onSubAction = async (action: "extend_6" | "extend_12" | "set_trial_14" | "deactivate") => {
+  const onSubAction = async (action: "extend_1" | "extend_6" | "extend_12" | "set_trial_14" | "deactivate") => {
     if (!subRow) return;
     setSubBusy(true);
     try {
