@@ -14,7 +14,7 @@ export const Route = createFileRoute('/promo')({
   component: PromoPage,
   head: () => ({
     meta: [
-      { title: 'Daftar Gratis — Scanner Pola Harmonic Saham IDX' },
+      { title: 'Daftar Gratis — Scanner Pola Harmonic Saham Indonesia' },
       {
         name: 'description',
         content:
@@ -76,10 +76,10 @@ function PromoPage() {
             Analisa Saham Indo
           </div>
           <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-            Temukan Pola Harmonic Saham IDX Secara Otomatis
+            Temukan Pola Harmonic Saham Secara Otomatis
           </h1>
           <p className="text-base text-muted-foreground">
-            Scan puluhan saham favorit kamu dalam hitungan detik dan lihat kemana harga akan bergerak. Daftar cukup dengan nama dan email — password
+            Scan saham favorit kamu dalam hitungan detik dan lihat kemana harga akan bergerak. Daftar cukup dengan nama dan email — password
             login langsung kami kirim ke inbox Anda.
           </p>
           <ul className="space-y-3 text-sm">
@@ -139,7 +139,7 @@ function PromoPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       maxLength={100}
-                      placeholder="Nama lengkap"
+                      
                       autoComplete="name"
                       required
                     />
