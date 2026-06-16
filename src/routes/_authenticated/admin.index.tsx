@@ -167,7 +167,7 @@ function AdminPage() {
     }
   };
 
-  const onSubAction = async (action: "extend_6" | "extend_12" | "set_trial_14" | "deactivate") => {
+  const onSubAction = async (action: "extend_1" | "extend_6" | "extend_12" | "set_trial_14" | "deactivate") => {
     if (!subRow) return;
     setSubBusy(true);
     try {
@@ -388,6 +388,7 @@ function AdminPage() {
                 Perpanjangan ditambahkan dari tanggal berakhir saat ini (jika masih aktif) atau dari hari ini.
               </p>
               <div className="grid grid-cols-2 gap-2">
+                <Button disabled={subBusy} className="col-span-2" onClick={() => onSubAction("extend_1")}>🎁 + 1 Bulan Pro Gratis</Button>
                 <Button disabled={subBusy} onClick={() => onSubAction("extend_6")}>+ 6 Bulan Pro</Button>
                 <Button disabled={subBusy} onClick={() => onSubAction("extend_12")}>+ 12 Bulan Pro</Button>
                 <Button disabled={subBusy} variant="outline" onClick={() => onSubAction("set_trial_14")}>Reset Trial 14 hari</Button>

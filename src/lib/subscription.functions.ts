@@ -58,11 +58,14 @@ export const getMyAccess = createServerFn({ method: "GET" })
 export const adminExtendSubscription = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
-    (d: { user_id: string; action: "extend_6" | "extend_12" | "set_trial_14" | "deactivate" }) =>
+    (d: {
+      user_id: string;
+      action: "extend_1" | "extend_6" | "extend_12" | "set_trial_14" | "deactivate";
+    }) =>
       z
         .object({
           user_id: z.string().uuid(),
-          action: z.enum(["extend_6", "extend_12", "set_trial_14", "deactivate"]),
+          action: z.enum(["extend_1", "extend_6", "extend_12", "set_trial_14", "deactivate"]),
         })
         .parse(d),
   )
@@ -97,7 +100,12 @@ export const adminExtendSubscription = createServerFn({ method: "POST" })
       trial_ends_at: existing?.trial_ends_at ?? null,
     };
 
-    if (data.action === "extend_6") {
+    if (data.action === "extend_1") {
+      const end = new Date(base);
+      end.setMonth(end.getMonth() + 1);
+      row.tier = "pro";
+      row.pro_ends_at = end.toISOString();
+    } else if (data.action === "extend_6") {
       const end = new Date(base);
       end.setMonth(end.getMonth() + 6);
       row.tier = "pro";
