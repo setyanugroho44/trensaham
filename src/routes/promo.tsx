@@ -79,13 +79,12 @@ function PromoPage() {
             Temukan Pola Harmonic Saham Secara Otomatis
           </h1>
           <p className="text-base text-muted-foreground">
-            Scan saham favorit kamu dalam hitungan detik dan lihat kemana harga akan bergerak. Daftar cukup dengan nama dan email — password
-            login langsung kami kirim ke inbox Anda.
+            Scan saham favorit kamu dalam hitungan detik dan lihat kemana harga akan bergerak. 
           </p>
           <ul className="space-y-3 text-sm">
             <li className="flex items-start gap-2">
               <Zap className="mt-0.5 h-4 w-4 text-primary" />
-              Deteksi pola Harmonic jangka pendek, menengah dan panjang
+              Deteksi pola jangka pendek, menengah dan panjang
             </li>
             <li className="flex items-start gap-2">
               <ShieldCheck className="mt-0.5 h-4 w-4 text-primary" />
