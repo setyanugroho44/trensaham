@@ -134,10 +134,9 @@ function WatchlistPage() {
 
       <Card className="border-primary/30 bg-primary/5">
         <CardHeader>
-          <CardTitle className="text-base">Bonus: IHSG (^JKSE)</CardTitle>
+          
           <CardDescription>
-            Indeks Harga Saham Gabungan otomatis ikut dipindai bersama watchlist 
-            mengikuti aturan dan parameter scanner utama. Ditampilkan jika scanner menemukan pola.
+            IHSG otomatis ikut dipindai bersama watchlist, ditampilkan jika scanner menemukan pola.
           </CardDescription>
         </CardHeader>
       </Card>
