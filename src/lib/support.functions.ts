@@ -129,7 +129,7 @@ export const createTicket = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
-    const { supabase, userId, claims } = context;
+    const { supabase, userId } = context;
 
     const { data: ticket, error: tErr } = await supabase
       .from("support_tickets")
