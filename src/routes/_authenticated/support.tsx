@@ -212,8 +212,8 @@ function SupportPage() {
   // List view
   return (
     <div className="mx-auto w-full max-w-3xl p-4 space-y-4">
-      <div className="flex items-center gap-2">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="min-w-0 flex-1">
           <h1 className="text-xl font-semibold">Tiket Bantuan</h1>
           <p className="text-sm text-muted-foreground">
             {isAgent
@@ -222,7 +222,10 @@ function SupportPage() {
           </p>
         </div>
         {!isAgent && (
-          <Button className="ml-auto" onClick={() => setCreating((v) => !v)}>
+          <Button
+            className="w-full shrink-0 sm:ml-auto sm:w-auto"
+            onClick={() => setCreating((v) => !v)}
+          >
             <Plus className="mr-1 h-4 w-4" /> Tiket baru
           </Button>
         )}
