@@ -3,36 +3,9 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const SUPPORT_AGENT_EMAILS = ["setyanugroho44@gmail.com", "myadhi70@yahoo.com"];
-const GATEWAY_URL = "https://connector-gateway.lovable.dev/telegram";
 
 function isAgentEmail(email: string | null | undefined): boolean {
   return SUPPORT_AGENT_EMAILS.includes((email ?? "").trim().toLowerCase());
-}
-
-async function notifyTelegram(text: string) {
-  const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
-  const TELEGRAM_API_KEY = process.env.TELEGRAM_API_KEY;
-  const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
-  if (!LOVABLE_API_KEY || !TELEGRAM_API_KEY || !TELEGRAM_CHAT_ID) {
-    console.error("[support] Missing Telegram configuration");
-    return;
-  }
-  try {
-    const res = await fetch(`${GATEWAY_URL}/sendMessage`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "X-Connection-Api-Key": TELEGRAM_API_KEY,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text, parse_mode: "HTML" }),
-    });
-    if (!res.ok) {
-      console.error(`[support] Telegram error [${res.status}]: ${await res.text()}`);
-    }
-  } catch (error) {
-    console.error("[support] Telegram request failed:", error);
-  }
 }
 
 export type TicketStatus = "open" | "closed";
