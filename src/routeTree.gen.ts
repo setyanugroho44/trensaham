@@ -29,6 +29,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as ApiPublicNotifySignupRouteImport } from './routes/api/public/notify-signup'
+import { Route as ApiPublicNotifyEventRouteImport } from './routes/api/public/notify-event'
 import { Route as AuthenticatedChartSymbolRouteImport } from './routes/_authenticated/chart.$symbol'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin.payments'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
@@ -135,6 +136,11 @@ const ApiPublicNotifySignupRoute = ApiPublicNotifySignupRouteImport.update({
   path: '/api/public/notify-signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicNotifyEventRoute = ApiPublicNotifyEventRouteImport.update({
+  id: '/api/public/notify-event',
+  path: '/api/public/notify-event',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedChartSymbolRoute =
   AuthenticatedChartSymbolRouteImport.update({
     id: '/chart/$symbol',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
+  '/api/public/notify-event': typeof ApiPublicNotifyEventRoute
   '/api/public/notify-signup': typeof ApiPublicNotifySignupRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -211,6 +218,7 @@ export interface FileRoutesByTo {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
+  '/api/public/notify-event': typeof ApiPublicNotifyEventRoute
   '/api/public/notify-signup': typeof ApiPublicNotifySignupRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -239,6 +247,7 @@ export interface FileRoutesById {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/_authenticated/chart/$symbol': typeof AuthenticatedChartSymbolRoute
+  '/api/public/notify-event': typeof ApiPublicNotifyEventRoute
   '/api/public/notify-signup': typeof ApiPublicNotifySignupRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -267,6 +276,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/admin/payments'
     | '/chart/$symbol'
+    | '/api/public/notify-event'
     | '/api/public/notify-signup'
     | '/lovable/email/suppression'
     | '/admin/'
@@ -293,6 +303,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/admin/payments'
     | '/chart/$symbol'
+    | '/api/public/notify-event'
     | '/api/public/notify-signup'
     | '/lovable/email/suppression'
     | '/admin'
@@ -320,6 +331,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/_authenticated/admin/payments'
     | '/_authenticated/chart/$symbol'
+    | '/api/public/notify-event'
     | '/api/public/notify-signup'
     | '/lovable/email/suppression'
     | '/_authenticated/admin/'
@@ -339,6 +351,7 @@ export interface RootRouteChildren {
   UnsubscribeRoute: typeof UnsubscribeRoute
   VerifiedRoute: typeof VerifiedRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  ApiPublicNotifyEventRoute: typeof ApiPublicNotifyEventRoute
   ApiPublicNotifySignupRoute: typeof ApiPublicNotifySignupRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -488,6 +501,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicNotifySignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/notify-event': {
+      id: '/api/public/notify-event'
+      path: '/api/public/notify-event'
+      fullPath: '/api/public/notify-event'
+      preLoaderRoute: typeof ApiPublicNotifyEventRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/chart/$symbol': {
       id: '/_authenticated/chart/$symbol'
       path: '/chart/$symbol'
@@ -567,6 +587,7 @@ const rootRouteChildren: RootRouteChildren = {
   UnsubscribeRoute: UnsubscribeRoute,
   VerifiedRoute: VerifiedRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  ApiPublicNotifyEventRoute: ApiPublicNotifyEventRoute,
   ApiPublicNotifySignupRoute: ApiPublicNotifySignupRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
@@ -576,13 +597,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
