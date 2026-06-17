@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle2, LineChart, Mail, ShieldCheck, Zap } from 'lucide-react'
 
-export const Route = createFileRoute('/promo')({
+export const Route = createFileRoute('/daftar')({
   component: PromoPage,
   head: () => ({
     meta: [
