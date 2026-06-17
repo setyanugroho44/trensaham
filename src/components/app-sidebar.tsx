@@ -35,16 +35,34 @@ export function AppSidebar() {
   const isActive = (url: string) => path === url || path.startsWith(url + "/");
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSupportAgent, setIsSupportAgent] = useState(false);
+  const [accessChecked, setAccessChecked] = useState(false);
 
   useEffect(() => {
-  if (!user) return;
-  getMyAccess()
-    .then((access) => {
-      setIsAdmin(access.isAdmin || access.isSuperAdmin);
-      setIsSupportAgent(access.isSupportAgent ?? false);
-    })
-    .catch(() => {});
-}, [user]);
+    if (!user) {
+      setIsAdmin(false);
+      setIsSupportAgent(false);
+      setAccessChecked(false);
+      return;
+    }
+    let active = true;
+    getMyAccess()
+      .then((access) => {
+        if (!active) return;
+        setIsAdmin(access.isAdmin || access.isSuperAdmin);
+        setIsSupportAgent(access.isSupportAgent ?? false);
+      })
+      .catch(() => {
+        if (!active) return;
+        setIsAdmin(false);
+        setIsSupportAgent(false);
+      })
+      .finally(() => {
+        if (active) setAccessChecked(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [user]);
 
 
   const handleNavClick = () => {
