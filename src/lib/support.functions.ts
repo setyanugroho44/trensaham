@@ -146,14 +146,9 @@ export const createTicket = createServerFn({ method: "POST" })
     });
     if (mErr) throw new Error(mErr.message);
 
-    const email = (claims?.email as string | undefined) ?? "pengguna";
-    await notifyTelegram(
-      `🎫 <b>Tiket bantuan baru</b>\n` +
-        `Dari: <code>${email}</code>\n` +
-        `Subjek: ${data.subject}\n` +
-        `Pesan: ${data.body.slice(0, 500)}\n` +
-        `Waktu: ${new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })} WIB`,
-    );
+    // Telegram notification is sent by the DB trigger on support_messages
+    // (notify_support_message -> /api/public/notify-event) so it works even on
+    // the custom Cloudflare domain.
 
     return { ticket: ticket as Ticket };
   });
