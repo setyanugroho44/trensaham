@@ -62,22 +62,9 @@ export const markPaymentSubmitted = createServerFn({ method: "POST" })
       .eq("user_id", context.userId);
     if (error) throw new Error(error.message);
 
-    const { data: req } = await context.supabase
-      .from("payment_requests")
-      .select("plan, total_amount")
-      .eq("id", data.id)
-      .eq("user_id", context.userId)
-      .maybeSingle();
-    const email = (context.claims?.email as string | undefined) ?? "pengguna";
-    const planLabel = req?.plan ? PLANS[req.plan as PlanKey]?.label ?? req.plan : "-";
-    await notifyTelegram(
-      `💳 <b>Permintaan upgrade keanggotaan</b>\n` +
-        `Dari: <code>${email}</code>\n` +
-        `Paket: ${planLabel}\n` +
-        (req?.total_amount ? `Jumlah: ${rupiah(req.total_amount)}\n` : "") +
-        `Status: bukti pembayaran diunggah, menunggu verifikasi\n` +
-        `Waktu: ${nowWib()}`,
-    );
+    // Telegram notification is sent by the DB trigger on payment_requests
+    // (notify_payment_submitted -> /api/public/notify-event) so it works even
+    // on the custom Cloudflare domain.
 
     return { ok: true };
   });
