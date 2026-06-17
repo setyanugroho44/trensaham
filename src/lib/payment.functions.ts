@@ -11,42 +11,6 @@ const PLANS = {
 
 export type PlanKey = keyof typeof PLANS;
 
-const GATEWAY_URL = "https://connector-gateway.lovable.dev/telegram";
-
-async function notifyTelegram(text: string) {
-  const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
-  const TELEGRAM_API_KEY = process.env.TELEGRAM_API_KEY;
-  const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
-  if (!LOVABLE_API_KEY || !TELEGRAM_API_KEY || !TELEGRAM_CHAT_ID) {
-    console.error("[payment] Missing Telegram configuration");
-    return;
-  }
-  try {
-    const res = await fetch(`${GATEWAY_URL}/sendMessage`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "X-Connection-Api-Key": TELEGRAM_API_KEY,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text, parse_mode: "HTML" }),
-    });
-    if (!res.ok) {
-      console.error(`[payment] Telegram error [${res.status}]: ${await res.text()}`);
-    }
-  } catch (error) {
-    console.error("[payment] Telegram request failed:", error);
-  }
-}
-
-function rupiah(n: number) {
-  return "Rp" + n.toLocaleString("id-ID");
-}
-
-function nowWib() {
-  return new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) + " WIB";
-}
-
 export const createPaymentRequest = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { plan: PlanKey }) =>
@@ -98,22 +62,9 @@ export const markPaymentSubmitted = createServerFn({ method: "POST" })
       .eq("user_id", context.userId);
     if (error) throw new Error(error.message);
 
-    const { data: req } = await context.supabase
-      .from("payment_requests")
-      .select("plan, total_amount")
-      .eq("id", data.id)
-      .eq("user_id", context.userId)
-      .maybeSingle();
-    const email = (context.claims?.email as string | undefined) ?? "pengguna";
-    const planLabel = req?.plan ? PLANS[req.plan as PlanKey]?.label ?? req.plan : "-";
-    await notifyTelegram(
-      `💳 <b>Permintaan upgrade keanggotaan</b>\n` +
-        `Dari: <code>${email}</code>\n` +
-        `Paket: ${planLabel}\n` +
-        (req?.total_amount ? `Jumlah: ${rupiah(req.total_amount)}\n` : "") +
-        `Status: bukti pembayaran diunggah, menunggu verifikasi\n` +
-        `Waktu: ${nowWib()}`,
-    );
+    // Telegram notification is sent by the DB trigger on payment_requests
+    // (notify_payment_submitted -> /api/public/notify-event) so it works even
+    // on the custom Cloudflare domain.
 
     return { ok: true };
   });
