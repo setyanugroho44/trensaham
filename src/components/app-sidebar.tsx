@@ -91,7 +91,7 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-              {(isAdmin || isSupportAgent) && (
+              {accessChecked && (isAdmin || isSupportAgent) && (
                 <>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild isActive={path === "/admin"} tooltip="Admin">
