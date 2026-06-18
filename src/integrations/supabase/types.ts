@@ -542,6 +542,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auto_close_stale_tickets: { Args: never; Returns: undefined }
+      auto_delete_old_tickets: { Args: never; Returns: undefined }
       cleanup_duplicate_patterns: { Args: never; Returns: number }
       delete_email: {
         Args: { message_id: number; queue_name: string }
