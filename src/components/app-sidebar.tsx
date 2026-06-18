@@ -138,6 +138,16 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {canInstall && !isStandalone && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Install Aplikasi">
+                    <button onClick={handleInstall} className="w-full text-left">
+                      <Download className="h-5 w-5" />
+                      <span className="text-base">Install Aplikasi</span>
+                    </button>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
               {accessChecked && (isAdmin || isSupportAgent) && (
                 <>
                   <SidebarMenuItem>
