@@ -1,7 +1,7 @@
 {
-  "name": "Harmonic Pattern Finder",
-  "short_name": "Harmonic",
-  "description": "Indonesian Harmonic Scanner identifies and alerts on stock harmonic patterns for the Indonesian market.",
+  "name": "Scanner Pola Harmonik Saham",
+  "short_name": "Scanner Saham",
+  "description": "Deteksi pola harmonik saham Indonesia. Scan dan lihat arah pergerakan harga",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
