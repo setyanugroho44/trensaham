@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Crown, Wallet, LifeBuoy } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Crown, Wallet, LifeBuoy, Download } from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
 import { getMyAccess } from "@/lib/subscription.functions"; // sesuaikan path
 import {
   Sidebar,
@@ -36,6 +36,9 @@ export function AppSidebar() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSupportAgent, setIsSupportAgent] = useState(false);
   const [accessChecked, setAccessChecked] = useState(false);
+  const [canInstall, setCanInstall] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -64,6 +67,50 @@ export function AppSidebar() {
     };
   }, [user]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const checkStandalone = () => {
+      const standalone =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        (window.navigator as any).standalone === true;
+      setIsStandalone(standalone);
+      if (standalone) setCanInstall(false);
+    };
+
+    checkStandalone();
+
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      if (!isStandalone) setCanInstall(true);
+    };
+
+    window.addEventListener("beforeinstallprompt", handler);
+
+    const mediaQuery = window.matchMedia("(display-mode: standalone)");
+    const mqHandler = (e: MediaQueryListEvent) => {
+      setIsStandalone(e.matches);
+      if (e.matches) setCanInstall(false);
+    };
+    mediaQuery.addEventListener("change", mqHandler);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+      mediaQuery.removeEventListener("change", mqHandler);
+    };
+  }, [isStandalone]);
+
+  const handleInstall = useCallback(async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+      setCanInstall(false);
+      setDeferredPrompt(null);
+    }
+  }, [deferredPrompt]);
+
 
   const handleNavClick = () => {
     if (isMobile) setOpenMobile(false);
@@ -91,6 +138,16 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {canInstall && !isStandalone && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Install Aplikasi">
+                    <button onClick={handleInstall} className="w-full text-left">
+                      <Download className="h-5 w-5" />
+                      <span className="text-base">Install Aplikasi</span>
+                    </button>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
               {accessChecked && (isAdmin || isSupportAgent) && (
                 <>
                   <SidebarMenuItem>

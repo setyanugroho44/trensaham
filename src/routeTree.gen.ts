@@ -13,9 +13,9 @@ import { Route as VerifiedRouteImport } from './routes/verified'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as PromoRouteImport } from './routes/promo'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LandingRouteImport } from './routes/landing'
+import { Route as DaftarRouteImport } from './routes/daftar'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
@@ -56,11 +56,6 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PromoRoute = PromoRouteImport.update({
-  id: '/promo',
-  path: '/promo',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -69,6 +64,11 @@ const LoginRoute = LoginRouteImport.update({
 const LandingRoute = LandingRouteImport.update({
   id: '/landing',
   path: '/landing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DaftarRoute = DaftarRouteImport.update({
+  id: '/daftar',
+  path: '/daftar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -174,9 +174,9 @@ const LovableEmailQueueProcessRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/daftar': typeof DaftarRoute
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
-  '/promo': typeof PromoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -201,9 +201,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/daftar': typeof DaftarRoute
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
-  '/promo': typeof PromoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -230,9 +230,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/daftar': typeof DaftarRoute
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
-  '/promo': typeof PromoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -259,9 +259,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/daftar'
     | '/landing'
     | '/login'
-    | '/promo'
     | '/reset-password'
     | '/signup'
     | '/unsubscribe'
@@ -286,9 +286,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/daftar'
     | '/landing'
     | '/login'
-    | '/promo'
     | '/reset-password'
     | '/signup'
     | '/unsubscribe'
@@ -314,9 +314,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/daftar'
     | '/landing'
     | '/login'
-    | '/promo'
     | '/reset-password'
     | '/signup'
     | '/unsubscribe'
@@ -343,9 +343,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  DaftarRoute: typeof DaftarRoute
   LandingRoute: typeof LandingRoute
   LoginRoute: typeof LoginRoute
-  PromoRoute: typeof PromoRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
@@ -389,13 +389,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/promo': {
-      id: '/promo'
-      path: '/promo'
-      fullPath: '/promo'
-      preLoaderRoute: typeof PromoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -408,6 +401,13 @@ declare module '@tanstack/react-router' {
       path: '/landing'
       fullPath: '/landing'
       preLoaderRoute: typeof LandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/daftar': {
+      id: '/daftar'
+      path: '/daftar'
+      fullPath: '/daftar'
+      preLoaderRoute: typeof DaftarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -579,9 +579,9 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  DaftarRoute: DaftarRoute,
   LandingRoute: LandingRoute,
   LoginRoute: LoginRoute,
-  PromoRoute: PromoRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   UnsubscribeRoute: UnsubscribeRoute,
