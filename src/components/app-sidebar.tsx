@@ -67,6 +67,50 @@ export function AppSidebar() {
     };
   }, [user]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const checkStandalone = () => {
+      const standalone =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        (window.navigator as any).standalone === true;
+      setIsStandalone(standalone);
+      if (standalone) setCanInstall(false);
+    };
+
+    checkStandalone();
+
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      if (!isStandalone) setCanInstall(true);
+    };
+
+    window.addEventListener("beforeinstallprompt", handler);
+
+    const mediaQuery = window.matchMedia("(display-mode: standalone)");
+    const mqHandler = (e: MediaQueryListEvent) => {
+      setIsStandalone(e.matches);
+      if (e.matches) setCanInstall(false);
+    };
+    mediaQuery.addEventListener("change", mqHandler);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+      mediaQuery.removeEventListener("change", mqHandler);
+    };
+  }, [isStandalone]);
+
+  const handleInstall = useCallback(async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+      setCanInstall(false);
+      setDeferredPrompt(null);
+    }
+  }, [deferredPrompt]);
+
 
   const handleNavClick = () => {
     if (isMobile) setOpenMobile(false);
