@@ -1,6 +1,6 @@
 {
   "name": "Scanner Pola Harmonik Saham",
-  "short_name": "Scanner Saham",
+  "short_name": "Scan Saham",
   "description": "Deteksi pola harmonik saham Indonesia. Scan dan lihat arah pergerakan harga",
   "start_url": "/",
   "scope": "/",
