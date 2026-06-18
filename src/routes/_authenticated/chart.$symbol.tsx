@@ -26,6 +26,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { ArrowLeft, Info, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Bar } from "@/lib/harmonic/types";
@@ -474,19 +483,22 @@ function ChartPage() {
             <div className="rounded-xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 via-primary/10 to-transparent p-5 shadow-sm">
               <div className="flex items-center gap-2 text-xs font-semibold  tracking-wider text-primary">
                 <span>PRZ — Potential Reversal Zone</span>
-                <TooltipProvider delayDuration={100}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        type="button"
-                        aria-label="Penjelasan PRZ"
-                        className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-primary hover:bg-primary/30"
-                      >
-                        <Info className="h-3.5 w-3.5" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" className="max-w-xs bg-popover text-popover-foreground border">
-                      <p className="text-xs leading-relaxed">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="Penjelasan PRZ"
+                      className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-primary hover:bg-primary/30"
+                    >
+                      <Info className="h-3.5 w-3.5" />
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-sm">
+                    <DialogHeader>
+                      <DialogTitle>PRZ — Potential Reversal Zone</DialogTitle>
+                    </DialogHeader>
+                    <DialogDescription asChild>
+                      <p className="text-sm leading-relaxed text-foreground">
                         <strong>PRZ (Potential Reversal Zone)</strong> adalah zona harga di mana
                         pola harmonik diperkirakan selesai dan harga berpotensi berbalik arah.
                         Zona ini dibentuk dari pertemuan beberapa rasio Fibonacci kunci pada
@@ -494,9 +506,12 @@ function ChartPage() {
                         entry: bullish berarti potensi pantulan naik, bearish berarti potensi
                         koreksi turun. Selalu pakai stop-loss di luar level invalidation.
                       </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                    </DialogDescription>
+                    <DialogFooter>
+                      <Button type="button" className="w-full">OK</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
               <div className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                 {pattern.prz_low != null && pattern.prz_high != null
