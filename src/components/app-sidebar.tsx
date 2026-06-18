@@ -120,7 +120,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <Link to="/dashboard" onClick={handleNavClick} className="px-2 py-1 text-sm font-semibold tracking-tight">
-          IDX Harmonic
+          AnalisaSahamIndo.com
         </Link>
       </SidebarHeader>
       <SidebarContent>
