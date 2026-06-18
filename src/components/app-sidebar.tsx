@@ -36,6 +36,9 @@ export function AppSidebar() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSupportAgent, setIsSupportAgent] = useState(false);
   const [accessChecked, setAccessChecked] = useState(false);
+  const [canInstall, setCanInstall] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
     if (!user) {
