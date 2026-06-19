@@ -112,14 +112,6 @@ function DashboardPage() {
     try { localStorage.setItem("dashboard_minProgress", String(minProgress)); } catch { /* ignore */ }
   }, [minProgress]);
 
-  useEffect(() => {
-    if (!hasSetDefaultTab.current && rows.length > 0) {
-      const hasCompleted = rows.some((r) => r.status === "completed");
-      setActiveTab(hasCompleted ? "completed" : "developing");
-      hasSetDefaultTab.current = true;
-    }
-  }, [rows.length]);
-
   const [scanning, setScanning] = useState(false);
   const [rows, setRows] = useState<PatternRow[]>([]);
   const [watchlistCount, setWatchlistCount] = useState<number | null>(null);
@@ -130,6 +122,14 @@ function DashboardPage() {
   const reevaluateBatchFn = useServerFn(reevaluatePatternsBatch);
   const accessFn = useServerFn(getMyAccess);
   const watchlistToastShown = useRef(false);
+
+  useEffect(() => {
+    if (!hasSetDefaultTab.current && rows.length > 0) {
+      const hasCompleted = rows.some((r) => r.status === "completed");
+      setActiveTab(hasCompleted ? "completed" : "developing");
+      hasSetDefaultTab.current = true;
+    }
+  }, [rows.length]);
 
   const load = async () => {
     const { data, error } = await supabase
