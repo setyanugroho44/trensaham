@@ -115,43 +115,45 @@ function UpgradePage() {
         )}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {(Object.keys(PLAN_META) as PlanKey[]).map((key) => {
-          const m = PLAN_META[key];
-          const isBusy = busyPlan === key;
-          return (
-            <Card key={key} className={key === "pro_12m" ? "border-primary" : ""}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{m.label}</CardTitle>
-                  {key === "pro_12m" && <Badge>Best Value</Badge>}
-                </div>
-                <CardDescription>
-                  <span className="text-2xl font-bold text-foreground">{m.price}</span>{" "}
-                  <span className="text-xs">/ {m.months} bulan</span>
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <ul className="space-y-1 text-sm">
-                  {m.perks.map((p) => (
-                    <li key={p} className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-emerald-600" /> {p}
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  className="w-full"
-                  onClick={() => onChoose(key)}
-                  disabled={!!busyPlan || !!activeRequest}
-                >
-                  {isBusy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                  {activeRequest ? "Selesaikan pesanan aktif dulu" : "Pesan Sekarang"}
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+      {!activeRequest && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {(Object.keys(PLAN_META) as PlanKey[]).map((key) => {
+            const m = PLAN_META[key];
+            const isBusy = busyPlan === key;
+            return (
+              <Card key={key} className={key === "pro_12m" ? "border-primary" : ""}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg">{m.label}</CardTitle>
+                    {key === "pro_12m" && <Badge>Best Value</Badge>}
+                  </div>
+                  <CardDescription>
+                    <span className="text-2xl font-bold text-foreground">{m.price}</span>{" "}
+                    <span className="text-xs">/ {m.months} bulan</span>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <ul className="space-y-1 text-sm">
+                    {m.perks.map((p) => (
+                      <li key={p} className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-emerald-600" /> {p}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    className="w-full"
+                    onClick={() => onChoose(key)}
+                    disabled={!!busyPlan}
+                  >
+                    {isBusy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                    Pesan Sekarang
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
 
       {activeRequest && (
         <ActivePaymentCard
