@@ -116,10 +116,20 @@ function DashboardPage() {
   const [rows, setRows] = useState<PatternRow[]>([]);
   const [watchlistCount, setWatchlistCount] = useState<number | null>(null);
   const [access, setAccess] = useState<AccessInfo | null>(null);
+  const [activeTab, setActiveTab] = useState<"developing" | "completed">("developing");
+  const hasSetDefaultTab = useRef(false);
   const scanFn = useServerFn(runScan);
   const reevaluateBatchFn = useServerFn(reevaluatePatternsBatch);
   const accessFn = useServerFn(getMyAccess);
   const watchlistToastShown = useRef(false);
+
+  useEffect(() => {
+    if (!hasSetDefaultTab.current && rows.length > 0) {
+      const hasCompleted = rows.some((r) => r.status === "completed");
+      setActiveTab(hasCompleted ? "completed" : "developing");
+      hasSetDefaultTab.current = true;
+    }
+  }, [rows.length]);
 
   const load = async () => {
     const { data, error } = await supabase
@@ -278,7 +288,7 @@ function DashboardPage() {
 
 
 
-      <Tabs defaultValue="developing" className="space-y-4">
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)} className="space-y-4">
         <TabsList>
           <TabsTrigger value="developing">Developing ({developing.length})</TabsTrigger>
           <TabsTrigger value="completed">Completed ({completed.length})</TabsTrigger>
