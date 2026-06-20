@@ -36,6 +36,12 @@ type PaymentRow = {
 };
 
 const PLAN_META: Record<PlanKey, { label: string; price: string; months: number; perks: string[] }> = {
+  pro_2m: {
+    label: "Pro 2 Bulan",
+    price: "Rp 48.000",
+    months: 2,
+    perks: ["Akses scanner penuh", "Semua timeframe", "Cocok untuk coba-coba"],
+  },
   pro_6m: {
     label: "Pro 6 Bulan",
     price: "Rp 120.000",
