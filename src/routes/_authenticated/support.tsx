@@ -163,7 +163,23 @@ function SupportPage() {
     }
   };
 
+  if (allowed === null) {
+    return <p className="p-4 text-sm text-muted-foreground">Memuat…</p>;
+  }
+  if (allowed === false) {
+    return (
+      <div className="mx-auto w-full max-w-3xl p-4">
+        <Card>
+          <CardContent className="py-10 text-center text-sm text-muted-foreground">
+            Halaman support hanya tersedia untuk member Pro. Upgrade akun Anda untuk mengakses bantuan.
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   // Detail view
+
   if (selected) {
     return (
       <div className="mx-auto w-full max-w-3xl p-4 space-y-4">
