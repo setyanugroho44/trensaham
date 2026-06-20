@@ -35,6 +35,7 @@ import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authen
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as ApiPublicHooksCleanupPaymentsRouteImport } from './routes/api/public/hooks/cleanup-payments'
 
 const VerifiedRoute = VerifiedRouteImport.update({
   id: '/verified',
@@ -171,6 +172,12 @@ const LovableEmailQueueProcessRoute =
     path: '/lovable/email/queue/process',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksCleanupPaymentsRoute =
+  ApiPublicHooksCleanupPaymentsRouteImport.update({
+    id: '/api/public/hooks/cleanup-payments',
+    path: '/api/public/hooks/cleanup-payments',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/api/public/notify-signup': typeof ApiPublicNotifySignupRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/hooks/cleanup-payments': typeof ApiPublicHooksCleanupPaymentsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
@@ -222,6 +230,7 @@ export interface FileRoutesByTo {
   '/api/public/notify-signup': typeof ApiPublicNotifySignupRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/api/public/hooks/cleanup-payments': typeof ApiPublicHooksCleanupPaymentsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
@@ -251,6 +260,7 @@ export interface FileRoutesById {
   '/api/public/notify-signup': typeof ApiPublicNotifySignupRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/hooks/cleanup-payments': typeof ApiPublicHooksCleanupPaymentsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
@@ -280,6 +290,7 @@ export interface FileRouteTypes {
     | '/api/public/notify-signup'
     | '/lovable/email/suppression'
     | '/admin/'
+    | '/api/public/hooks/cleanup-payments'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
@@ -307,6 +318,7 @@ export interface FileRouteTypes {
     | '/api/public/notify-signup'
     | '/lovable/email/suppression'
     | '/admin'
+    | '/api/public/hooks/cleanup-payments'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
@@ -335,6 +347,7 @@ export interface FileRouteTypes {
     | '/api/public/notify-signup'
     | '/lovable/email/suppression'
     | '/_authenticated/admin/'
+    | '/api/public/hooks/cleanup-payments'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
@@ -354,6 +367,7 @@ export interface RootRouteChildren {
   ApiPublicNotifyEventRoute: typeof ApiPublicNotifyEventRoute
   ApiPublicNotifySignupRoute: typeof ApiPublicNotifySignupRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  ApiPublicHooksCleanupPaymentsRoute: typeof ApiPublicHooksCleanupPaymentsRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
   LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
@@ -543,6 +557,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/cleanup-payments': {
+      id: '/api/public/hooks/cleanup-payments'
+      path: '/api/public/hooks/cleanup-payments'
+      fullPath: '/api/public/hooks/cleanup-payments'
+      preLoaderRoute: typeof ApiPublicHooksCleanupPaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -590,6 +611,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicNotifyEventRoute: ApiPublicNotifyEventRoute,
   ApiPublicNotifySignupRoute: ApiPublicNotifySignupRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  ApiPublicHooksCleanupPaymentsRoute: ApiPublicHooksCleanupPaymentsRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
   LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
@@ -597,13 +619,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
