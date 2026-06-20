@@ -32,12 +32,16 @@ function fmt(ts: string) {
 
 function SupportPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const fnAccess = useServerFn(getMyAccess);
   const fnAmIAgent = useServerFn(amISupportAgent);
   const fnList = useServerFn(listTickets);
   const fnGet = useServerFn(getTicket);
   const fnCreate = useServerFn(createTicket);
   const fnReply = useServerFn(replyTicket);
   const fnSetStatus = useServerFn(setTicketStatus);
+
+  const [allowed, setAllowed] = useState<boolean | null>(null);
 
   const [isAgent, setIsAgent] = useState(false);
   const [tickets, setTickets] = useState<Ticket[]>([]);
