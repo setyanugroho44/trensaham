@@ -122,7 +122,7 @@ function UpgradePage() {
       </div>
 
       {!activeRequest && (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-3">
           {(Object.keys(PLAN_META) as PlanKey[]).map((key) => {
             const m = PLAN_META[key];
             const isBusy = busyPlan === key;
