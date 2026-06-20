@@ -40,13 +40,13 @@ const PLAN_META: Record<PlanKey, { label: string; price: string; months: number;
     label: "Pro 2 Bulan",
     price: "Rp 48.000",
     months: 2,
-    perks: ["Akses scanner penuh", "Semua timeframe", "Cocok untuk coba-coba"],
+    perks: ["Akses scanner penuh", "50 watchlist saham", "Support"],
   },
   pro_6m: {
     label: "Pro 6 Bulan",
     price: "Rp 120.000",
     months: 6,
-    perks: ["Akses scanner penuh", "Semua timeframe", "Trailing stop & watchlist"],
+    perks: ["Akses scanner penuh", "50 watchlist", "Prioritas Support"],
   },
   pro_12m: {
     label: "Pro 12 Bulan",
