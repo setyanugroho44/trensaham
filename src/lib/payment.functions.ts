@@ -5,6 +5,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { assertAdminOrSuper } from "./subscription.server";
 
 const PLANS = {
+  pro_2m: { base: 48000, months: 2, label: "Pro 2 Bulan" },
   pro_6m: { base: 119000, months: 6, label: "Pro 6 Bulan" },
   pro_12m: { base: 199000, months: 12, label: "Pro 12 Bulan" },
 } as const;
