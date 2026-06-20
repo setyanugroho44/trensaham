@@ -15,7 +15,7 @@ export type PlanKey = keyof typeof PLANS;
 export const createPaymentRequest = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { plan: PlanKey }) =>
-    z.object({ plan: z.enum(["pro_6m", "pro_12m"]) }).parse(d),
+    z.object({ plan: z.enum(["pro_2m", "pro_6m", "pro_12m"]) }).parse(d),
   )
   .handler(async ({ data, context }) => {
     const sb = context.supabase;
