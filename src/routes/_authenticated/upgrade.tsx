@@ -279,7 +279,7 @@ function ActivePaymentCard({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-base">
-            Instruksi Pembayaran — {row.plan === "pro_6m" ? "Pro 6 Bulan" : "Pro 12 Bulan"}
+            Instruksi Pembayaran — {PLAN_META[row.plan].label}
           </CardTitle>
           <StatusBadge status={row.status} />
         </div>
