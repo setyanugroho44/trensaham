@@ -74,9 +74,30 @@ function SupportPage() {
   }, [fnList]);
 
   useEffect(() => {
+    let active = true;
+    fnAccess()
+      .then((access) => {
+        if (!active) return;
+        const isAgentOrAdmin =
+          access.isAdmin || access.isSuperAdmin || (access.isSupportAgent ?? false);
+        const ok = isAgentOrAdmin || access.reason !== "trial";
+        setAllowed(ok);
+        if (!ok) navigate({ to: "/dashboard" });
+      })
+      .catch(() => {
+        if (active) setAllowed(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [fnAccess, navigate]);
+
+  useEffect(() => {
+    if (allowed === false) return;
     fnAmIAgent().then((r) => setIsAgent(r.isAgent)).catch(() => {});
     loadList();
-  }, [fnAmIAgent, loadList]);
+  }, [fnAmIAgent, loadList, allowed]);
+
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
