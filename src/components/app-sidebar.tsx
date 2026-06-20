@@ -35,6 +35,7 @@ export function AppSidebar() {
   const isActive = (url: string) => path === url || path.startsWith(url + "/");
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSupportAgent, setIsSupportAgent] = useState(false);
+  const [isTrial, setIsTrial] = useState(false);
   const [accessChecked, setAccessChecked] = useState(false);
   const [canInstall, setCanInstall] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -53,11 +54,13 @@ export function AppSidebar() {
         if (!active) return;
         setIsAdmin(access.isAdmin || access.isSuperAdmin);
         setIsSupportAgent(access.isSupportAgent ?? false);
+        setIsTrial(access.reason === "trial");
       })
       .catch(() => {
         if (!active) return;
         setIsAdmin(false);
         setIsSupportAgent(false);
+        setIsTrial(false);
       })
       .finally(() => {
         if (active) setAccessChecked(true);
@@ -128,7 +131,9 @@ export function AppSidebar() {
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {items
+                .filter((item) => !(item.url === "/support" && isTrial && !isAdmin && !isSupportAgent))
+                .map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
                     <Link to={item.url} onClick={handleNavClick}>

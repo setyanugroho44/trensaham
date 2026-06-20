@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Plus, Send, CheckCircle2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
+import { getMyAccess } from "@/lib/subscription.functions";
 import {
   amISupportAgent,
   listTickets,
@@ -31,12 +32,16 @@ function fmt(ts: string) {
 
 function SupportPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const fnAccess = useServerFn(getMyAccess);
   const fnAmIAgent = useServerFn(amISupportAgent);
   const fnList = useServerFn(listTickets);
   const fnGet = useServerFn(getTicket);
   const fnCreate = useServerFn(createTicket);
   const fnReply = useServerFn(replyTicket);
   const fnSetStatus = useServerFn(setTicketStatus);
+
+  const [allowed, setAllowed] = useState<boolean | null>(null);
 
   const [isAgent, setIsAgent] = useState(false);
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -69,9 +74,30 @@ function SupportPage() {
   }, [fnList]);
 
   useEffect(() => {
+    let active = true;
+    fnAccess()
+      .then((access) => {
+        if (!active) return;
+        const isAgentOrAdmin =
+          access.isAdmin || access.isSuperAdmin || (access.isSupportAgent ?? false);
+        const ok = isAgentOrAdmin || access.reason !== "trial";
+        setAllowed(ok);
+        if (!ok) navigate({ to: "/dashboard" });
+      })
+      .catch(() => {
+        if (active) setAllowed(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [fnAccess, navigate]);
+
+  useEffect(() => {
+    if (allowed === false) return;
     fnAmIAgent().then((r) => setIsAgent(r.isAgent)).catch(() => {});
     loadList();
-  }, [fnAmIAgent, loadList]);
+  }, [fnAmIAgent, loadList, allowed]);
+
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -137,7 +163,23 @@ function SupportPage() {
     }
   };
 
+  if (allowed === null) {
+    return <p className="p-4 text-sm text-muted-foreground">Memuat…</p>;
+  }
+  if (allowed === false) {
+    return (
+      <div className="mx-auto w-full max-w-3xl p-4">
+        <Card>
+          <CardContent className="py-10 text-center text-sm text-muted-foreground">
+            Halaman support hanya tersedia untuk member Pro. Upgrade akun Anda untuk mengakses bantuan.
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   // Detail view
+
   if (selected) {
     return (
       <div className="mx-auto w-full max-w-3xl p-4 space-y-4">
