@@ -5,6 +5,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { assertAdminOrSuper } from "./subscription.server";
 
 const PLANS = {
+  pro_2m: { base: 48000, months: 2, label: "Pro 2 Bulan" },
   pro_6m: { base: 119000, months: 6, label: "Pro 6 Bulan" },
   pro_12m: { base: 199000, months: 12, label: "Pro 12 Bulan" },
 } as const;
@@ -14,7 +15,7 @@ export type PlanKey = keyof typeof PLANS;
 export const createPaymentRequest = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { plan: PlanKey }) =>
-    z.object({ plan: z.enum(["pro_6m", "pro_12m"]) }).parse(d),
+    z.object({ plan: z.enum(["pro_2m", "pro_6m", "pro_12m"]) }).parse(d),
   )
   .handler(async ({ data, context }) => {
     const sb = context.supabase;

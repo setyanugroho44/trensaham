@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/upgrade")({
 
 type PaymentRow = {
   id: string;
-  plan: "pro_6m" | "pro_12m";
+  plan: "pro_2m" | "pro_6m" | "pro_12m";
   base_amount: number;
   unique_code: number;
   total_amount: number;
@@ -36,6 +36,12 @@ type PaymentRow = {
 };
 
 const PLAN_META: Record<PlanKey, { label: string; price: string; months: number; perks: string[] }> = {
+  pro_2m: {
+    label: "Pro 2 Bulan",
+    price: "Rp 48.000",
+    months: 2,
+    perks: ["Akses scanner penuh", "Semua timeframe", "Cocok untuk coba-coba"],
+  },
   pro_6m: {
     label: "Pro 6 Bulan",
     price: "Rp 120.000",
@@ -116,7 +122,7 @@ function UpgradePage() {
       </div>
 
       {!activeRequest && (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-3">
           {(Object.keys(PLAN_META) as PlanKey[]).map((key) => {
             const m = PLAN_META[key];
             const isBusy = busyPlan === key;
@@ -273,7 +279,7 @@ function ActivePaymentCard({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-base">
-            Instruksi Pembayaran — {row.plan === "pro_6m" ? "Pro 6 Bulan" : "Pro 12 Bulan"}
+            Instruksi Pembayaran — {PLAN_META[row.plan].label}
           </CardTitle>
           <StatusBadge status={row.status} />
         </div>
