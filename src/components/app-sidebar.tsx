@@ -35,6 +35,7 @@ export function AppSidebar() {
   const isActive = (url: string) => path === url || path.startsWith(url + "/");
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSupportAgent, setIsSupportAgent] = useState(false);
+  const [isTrial, setIsTrial] = useState(false);
   const [accessChecked, setAccessChecked] = useState(false);
   const [canInstall, setCanInstall] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
