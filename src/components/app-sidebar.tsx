@@ -54,11 +54,13 @@ export function AppSidebar() {
         if (!active) return;
         setIsAdmin(access.isAdmin || access.isSuperAdmin);
         setIsSupportAgent(access.isSupportAgent ?? false);
+        setIsTrial(access.reason === "trial");
       })
       .catch(() => {
         if (!active) return;
         setIsAdmin(false);
         setIsSupportAgent(false);
+        setIsTrial(false);
       })
       .finally(() => {
         if (active) setAccessChecked(true);
