@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/upgrade")({
 
 type PaymentRow = {
   id: string;
-  plan: "pro_6m" | "pro_12m";
+  plan: "pro_2m" | "pro_6m" | "pro_12m";
   base_amount: number;
   unique_code: number;
   total_amount: number;
