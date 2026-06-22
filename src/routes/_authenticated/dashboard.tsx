@@ -235,7 +235,12 @@ function DashboardPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Scanner Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Deteksi Pola Harmonik di Watchlistmu Dengan Mudah.</p>
+          <div className="mt-1 flex items-center gap-2">
+            <p className="text-sm text-muted-foreground">Deteksi Pola Harmonik di Watchlistmu Dengan Mudah.</p>
+            <Badge variant="secondary" className="text-xs">
+              {timeframe === "1d" ? "Daily" : timeframe === "1wk" ? "Weekly" : "Monthly"}
+            </Badge>
+          </div>
         </div>
         <div className="flex flex-col items-end gap-1">
           <div className="flex items-center gap-2">
