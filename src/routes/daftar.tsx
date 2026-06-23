@@ -69,6 +69,7 @@ function PromoPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/40">
+      <FacebookPixel />
       <div className="mx-auto grid max-w-5xl gap-10 px-4 py-12 md:grid-cols-2 md:items-center md:py-20">
         {/* Left: pitch */}
         <div className="space-y-6">
