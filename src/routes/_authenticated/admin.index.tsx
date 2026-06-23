@@ -214,6 +214,20 @@ function AdminPage() {
     return { label: "Expired", tone: "destructive" };
   };
 
+  const onSavePixel = async () => {
+    setSavingPixel(true);
+    try {
+      await adminSetSetting({
+        data: { key: "facebook_pixel_id", value: pixelId.trim() || null },
+      });
+      toast.success("Pixel Facebook disimpan");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Gagal menyimpan pixel");
+    } finally {
+      setSavingPixel(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
