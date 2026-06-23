@@ -83,30 +83,31 @@ function AdminPage() {
   const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   useEffect(() => {
-  (async () => {
-    try {
-      // Cek via getMyAccess agar support agent juga lolos
-      const access = await getMyAccess();
-      const isAdmin = access.isAdmin || access.isSuperAdmin;
-      const isSupport = access.isSupportAgent ?? false;
+    (async () => {
+      try {
+        // Cek via getMyAccess agar support agent juga lolos
+        const access = await getMyAccess();
+        const hasAdmin = access.isAdmin || access.isSuperAdmin;
+        const isSupport = access.isSupportAgent ?? false;
 
-      if (!isAdmin && !isSupport) {
-        toast.error("Akses ditolak");
+        if (!hasAdmin && !isSupport) {
+          toast.error("Akses ditolak");
+          navigate({ to: "/dashboard" });
+          return;
+        }
+
+        setAllowed(true);
+        setIsAdmin(hasAdmin);
+        setIsSuper(access.isSuperAdmin);
+        setIsSupportAgent(isSupport);
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : "Gagal memeriksa akses");
         navigate({ to: "/dashboard" });
-        return;
+      } finally {
+        setChecking(false);
       }
-
-      setAllowed(true);
-      setIsSuper(access.isSuperAdmin);
-      setIsSupportAgent(isSupport);
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Gagal memeriksa akses");
-      navigate({ to: "/dashboard" });
-    } finally {
-      setChecking(false);
-    }
-  })();
-}, [navigate]);
+    })();
+  }, [navigate]);
   const load = async () => {
     setLoading(true);
     try {
