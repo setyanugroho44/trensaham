@@ -302,6 +302,31 @@ function AdminPage() {
         </Card>
       )}
 
+      {(isAdmin || isSuper) && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Pengaturan Pixel Facebook</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-1">
+              <Label htmlFor="facebook_pixel_id">Facebook Pixel ID</Label>
+              <Input
+                id="facebook_pixel_id"
+                value={pixelId}
+                onChange={(e) => setPixelId(e.target.value)}
+                placeholder="123456789012345"
+                disabled={!settingsLoaded}
+              />
+              <p className="text-xs text-muted-foreground">
+                Pixel akan aktif di halaman beranda dan /daftar setelah disimpan.
+              </p>
+            </div>
+            <Button onClick={onSavePixel} disabled={savingPixel || !settingsLoaded}>
+              {savingPixel ? "Menyimpan…" : "Simpan Pixel"}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
