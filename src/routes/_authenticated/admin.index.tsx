@@ -65,6 +65,7 @@ function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [allowed, setAllowed] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isSuper, setIsSuper] = useState(false);
   const [isSupportAgent, setIsSupportAgent] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -77,6 +78,9 @@ function AdminPage() {
   const [saving, setSaving] = useState(false);
   const [promoteEmail, setPromoteEmail] = useState("");
   const [promoting, setPromoting] = useState(false);
+  const [pixelId, setPixelId] = useState("");
+  const [savingPixel, setSavingPixel] = useState(false);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   useEffect(() => {
   (async () => {
