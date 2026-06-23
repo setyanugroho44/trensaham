@@ -23,6 +23,7 @@ function Landing() {
 
   return (
     <div className="min-h-screen bg-background">
+      <FacebookPixel />
       {/* Header */}
       <header className="border-b">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
