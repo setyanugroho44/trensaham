@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
+import { FacebookPixel } from "@/components/facebook-pixel";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, ListChecks, Activity, ShieldCheck } from "lucide-react";
 
