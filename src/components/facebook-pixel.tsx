@@ -4,6 +4,14 @@ import { getPublicSetting } from "@/lib/settings.functions";
 
 const FB_PIXEL_KEY = "facebook_pixel_id";
 
+type FbqFn = ((...args: unknown[]) => void) & {
+  push: (...args: unknown[]) => void;
+  loaded?: boolean;
+  version?: string;
+  queue?: unknown[];
+  callMethod?: (...args: unknown[]) => void;
+};
+
 export function FacebookPixel() {
   const getSetting = useServerFn(getPublicSetting);
   const [pixelId, setPixelId] = useState<string | null>(null);
@@ -24,34 +32,28 @@ export function FacebookPixel() {
 
   useEffect(() => {
     if (!pixelId || typeof window === "undefined") return;
+
     const w = window as typeof window & {
-      fbq?: (...args: unknown[]) => void;
-      _fbq?: unknown;
+      fbq?: FbqFn;
+      _fbq?: FbqFn;
     };
     if (w.fbq) return;
 
-    const n = (w.fbq = function (this: unknown, ...args: unknown[]) {
-      const fbqInstance = w.fbq as unknown as {
-        callMethod?: (...args: unknown[]) => void;
-        queue?: unknown[];
-      };
-      if (fbqInstance.callMethod) {
-        fbqInstance.callMethod.apply(this, args);
+    const n: FbqFn = function (this: unknown, ...args: unknown[]) {
+      if (n.callMethod) {
+        n.callMethod.apply(this, args);
       } else {
-        fbqInstance.queue?.push(args);
+        n.queue?.push(args);
       }
-    });
+    } as FbqFn;
+
     if (!w._fbq) w._fbq = n;
-    const fbqInstance = w.fbq as unknown as {
-      push: typeof n;
-      loaded: boolean;
-      version: string;
-      queue: unknown[];
-    };
-    fbqInstance.push = n;
-    fbqInstance.loaded = true;
-    fbqInstance.version = "2.0";
-    fbqInstance.queue = [];
+    n.push = n;
+    n.loaded = true;
+    n.version = "2.0";
+    n.queue = [];
+
+    w.fbq = n;
 
     const t = document.createElement("script");
     t.async = true;
@@ -59,8 +61,8 @@ export function FacebookPixel() {
     const s = document.getElementsByTagName("script")[0];
     s.parentNode?.insertBefore(t, s);
 
-    fbqInstance("init", pixelId);
-    fbqInstance("track", "PageView");
+    n("init", pixelId);
+    n("track", "PageView");
   }, [pixelId]);
 
   if (!pixelId) return null;
