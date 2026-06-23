@@ -120,9 +120,24 @@ function AdminPage() {
     }
   };
 
+  const loadSettings = async () => {
+    try {
+      const { settings } = await adminGetSettings();
+      const fbPixel = settings.find((s) => s.key === "facebook_pixel_id")?.value ?? "";
+      setPixelId(fbPixel);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Gagal memuat pengaturan");
+    } finally {
+      setSettingsLoaded(true);
+    }
+  };
+
   useEffect(() => {
-    if (allowed) load();
-  }, [allowed]);
+    if (allowed) {
+      load();
+      if (isAdmin || isSuper) loadSettings();
+    }
+  }, [allowed, isAdmin, isSuper]);
 
   if (checking) {
     return <div className="text-sm text-muted-foreground">Memeriksa akses…</div>;
