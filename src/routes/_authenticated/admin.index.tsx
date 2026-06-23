@@ -40,7 +40,8 @@ import {
   isCurrentUserSuperAdmin,
   promoteAdminByEmail,
 } from "@/lib/admin.functions";
-import { adminExtendSubscription, getMyAccess  } from "@/lib/subscription.functions";
+import { adminExtendSubscription, getMyAccess } from "@/lib/subscription.functions";
+import { adminGetSettings, adminSetSetting } from "@/lib/settings.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: AdminPage,
