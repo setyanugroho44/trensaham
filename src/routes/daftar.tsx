@@ -4,6 +4,7 @@ import { useServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { adSignup } from '@/lib/ad-signup.functions'
+import { FacebookPixel } from '@/components/facebook-pixel'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -68,6 +69,7 @@ function PromoPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/40">
+      <FacebookPixel />
       <div className="mx-auto grid max-w-5xl gap-10 px-4 py-12 md:grid-cols-2 md:items-center md:py-20">
         {/* Left: pitch */}
         <div className="space-y-6">

@@ -40,7 +40,8 @@ import {
   isCurrentUserSuperAdmin,
   promoteAdminByEmail,
 } from "@/lib/admin.functions";
-import { adminExtendSubscription, getMyAccess  } from "@/lib/subscription.functions";
+import { adminExtendSubscription, getMyAccess } from "@/lib/subscription.functions";
+import { adminGetSettings, adminSetSetting } from "@/lib/settings.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: AdminPage,
@@ -64,6 +65,7 @@ function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [allowed, setAllowed] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isSuper, setIsSuper] = useState(false);
   const [isSupportAgent, setIsSupportAgent] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -76,32 +78,36 @@ function AdminPage() {
   const [saving, setSaving] = useState(false);
   const [promoteEmail, setPromoteEmail] = useState("");
   const [promoting, setPromoting] = useState(false);
+  const [pixelId, setPixelId] = useState("");
+  const [savingPixel, setSavingPixel] = useState(false);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   useEffect(() => {
-  (async () => {
-    try {
-      // Cek via getMyAccess agar support agent juga lolos
-      const access = await getMyAccess();
-      const isAdmin = access.isAdmin || access.isSuperAdmin;
-      const isSupport = access.isSupportAgent ?? false;
+    (async () => {
+      try {
+        // Cek via getMyAccess agar support agent juga lolos
+        const access = await getMyAccess();
+        const hasAdmin = access.isAdmin || access.isSuperAdmin;
+        const isSupport = access.isSupportAgent ?? false;
 
-      if (!isAdmin && !isSupport) {
-        toast.error("Akses ditolak");
+        if (!hasAdmin && !isSupport) {
+          toast.error("Akses ditolak");
+          navigate({ to: "/dashboard" });
+          return;
+        }
+
+        setAllowed(true);
+        setIsAdmin(hasAdmin);
+        setIsSuper(access.isSuperAdmin);
+        setIsSupportAgent(isSupport);
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : "Gagal memeriksa akses");
         navigate({ to: "/dashboard" });
-        return;
+      } finally {
+        setChecking(false);
       }
-
-      setAllowed(true);
-      setIsSuper(access.isSuperAdmin);
-      setIsSupportAgent(isSupport);
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Gagal memeriksa akses");
-      navigate({ to: "/dashboard" });
-    } finally {
-      setChecking(false);
-    }
-  })();
-}, [navigate]);
+    })();
+  }, [navigate]);
   const load = async () => {
     setLoading(true);
     try {
@@ -114,9 +120,24 @@ function AdminPage() {
     }
   };
 
+  const loadSettings = async () => {
+    try {
+      const { settings } = await adminGetSettings();
+      const fbPixel = settings.find((s) => s.key === "facebook_pixel_id")?.value ?? "";
+      setPixelId(fbPixel);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Gagal memuat pengaturan");
+    } finally {
+      setSettingsLoaded(true);
+    }
+  };
+
   useEffect(() => {
-    if (allowed) load();
-  }, [allowed]);
+    if (allowed) {
+      load();
+      if (isAdmin || isSuper) loadSettings();
+    }
+  }, [allowed, isAdmin, isSuper]);
 
   if (checking) {
     return <div className="text-sm text-muted-foreground">Memeriksa akses…</div>;
@@ -193,6 +214,20 @@ function AdminPage() {
     return { label: "Expired", tone: "destructive" };
   };
 
+  const onSavePixel = async () => {
+    setSavingPixel(true);
+    try {
+      await adminSetSetting({
+        data: { key: "facebook_pixel_id", value: pixelId.trim() || null },
+      });
+      toast.success("Pixel Facebook disimpan");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Gagal menyimpan pixel");
+    } finally {
+      setSavingPixel(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -267,6 +302,31 @@ function AdminPage() {
         </Card>
       )}
 
+      {(isAdmin || isSuper) && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Pengaturan Pixel Facebook</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-1">
+              <Label htmlFor="facebook_pixel_id">Facebook Pixel ID</Label>
+              <Input
+                id="facebook_pixel_id"
+                value={pixelId}
+                onChange={(e) => setPixelId(e.target.value)}
+                placeholder="123456789012345"
+                disabled={!settingsLoaded}
+              />
+              <p className="text-xs text-muted-foreground">
+                Pixel akan aktif di halaman beranda dan /daftar setelah disimpan.
+              </p>
+            </div>
+            <Button onClick={onSavePixel} disabled={savingPixel || !settingsLoaded}>
+              {savingPixel ? "Menyimpan…" : "Simpan Pixel"}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
