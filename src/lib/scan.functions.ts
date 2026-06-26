@@ -411,35 +411,60 @@ export const runScan = createServerFn({ method: "POST" })
         const patterns = Array.from(dedupMap.values());
 
         if (patterns.length > 0) {
-          const rows = patterns.map((p) => ({
-            user_id: userId,
-            scan_run_id: run.id,
-            symbol,
-            timeframe: data.timeframe,
-            pattern_name: p.name,
-            direction: p.direction,
-            status: p.status,
-            confidence: Number(p.confidence.toFixed(4)),
-            x_date: p.X ? new Date(p.X.time * 1000).toISOString() : null,
-            x_price: p.X?.price ?? null,
-            a_date: new Date(p.A.time * 1000).toISOString(),
-            a_price: p.A.price,
-            b_date: new Date(p.B.time * 1000).toISOString(),
-            b_price: p.B.price,
-            c_date: new Date(p.C.time * 1000).toISOString(),
-            c_price: p.C.price,
-            d_date: p.D ? new Date(p.D.time * 1000).toISOString() : null,
-            d_price: p.D?.price ?? null,
-            prz_low: p.prz.low,
-            prz_high: p.prz.high,
-            invalidation: p.invalidation,
-            progress_pct: p.progressPct ?? null,
-            ratios: p.ratios,
-          }));
-          const { error: insErr } = await supabase.from("patterns").insert(rows);
-          if (insErr) errors.push(`${symbol}: ${insErr.message}`);
-          else totalFound += rows.length;
+          const rows = patterns
+            .map((p) => {
+              const cIso = new Date(p.C.time * 1000).toISOString();
+              // Evaluasi status terhadap pergerakan harga SETELAH titik C, sama
+              // seperti yang dilakukan dashboard saat refresh (reevaluatePatternsBatch).
+              // Tanpa ini, pola yang sebenarnya sudah invalid/completed tetap
+              // tersimpan sebagai "developing" lalu hilang saat halaman direfresh.
+              const re = reevaluateStatus(bars, {
+                direction: p.direction,
+                a_price: p.A.price,
+                c_date: cIso,
+                prz_low: p.prz.low,
+                prz_high: p.prz.high,
+                invalidation: p.invalidation,
+                status: p.status,
+              });
+              const dTime = re.d_time ?? (p.D ? p.D.time : null);
+              const dPrice = re.d_price ?? (p.D?.price ?? null);
+              return {
+                user_id: userId,
+                scan_run_id: run.id,
+                symbol,
+                timeframe: data.timeframe,
+                pattern_name: p.name,
+                direction: p.direction,
+                status: re.status,
+                confidence: Number(p.confidence.toFixed(4)),
+                x_date: p.X ? new Date(p.X.time * 1000).toISOString() : null,
+                x_price: p.X?.price ?? null,
+                a_date: new Date(p.A.time * 1000).toISOString(),
+                a_price: p.A.price,
+                b_date: new Date(p.B.time * 1000).toISOString(),
+                b_price: p.B.price,
+                c_date: cIso,
+                c_price: p.C.price,
+                d_date: dTime != null ? new Date(dTime * 1000).toISOString() : null,
+                d_price: dPrice,
+                prz_low: p.prz.low,
+                prz_high: p.prz.high,
+                invalidation: p.invalidation,
+                progress_pct: p.progressPct ?? null,
+                ratios: p.ratios,
+              };
+            })
+            // Jangan simpan pola yang sudah invalid — agar hasil scan konsisten
+            // dengan tampilan setelah refresh.
+            .filter((r) => r.status !== "invalid");
+          if (rows.length > 0) {
+            const { error: insErr } = await supabase.from("patterns").insert(rows);
+            if (insErr) errors.push(`${symbol}: ${insErr.message}`);
+            else totalFound += rows.length;
+          }
         }
+
       } catch (e) {
         errors.push(`${symbol}: ${(e as Error).message}`);
       }
