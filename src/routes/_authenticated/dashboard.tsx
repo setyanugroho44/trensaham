@@ -351,7 +351,7 @@ function SettingsDialog({
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              Rentang waktu tiap candle. Daily untuk swing/harian, Weekly &amp; Monthly untuk tren jangka panjang.
+              Rentang waktu tiap candle. 1 Jam untuk intraday, Daily untuk swing/harian, Weekly &amp; Monthly untuk tren jangka panjang.
             </p>
           </div>
 
