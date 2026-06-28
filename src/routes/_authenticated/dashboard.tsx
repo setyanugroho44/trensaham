@@ -317,8 +317,8 @@ function SettingsDialog({
   minProgress,
   setMinProgress,
 }: {
-  timeframe: "1d" | "1wk" | "1mo";
-  setTimeframe: (v: "1d" | "1wk" | "1mo") => void;
+  timeframe: "1h" | "1d" | "1wk" | "1mo";
+  setTimeframe: (v: "1h" | "1d" | "1wk" | "1mo") => void;
   minConf: number;
   setMinConf: (v: number) => void;
   minProgress: number;
