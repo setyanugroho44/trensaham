@@ -18,11 +18,14 @@ type YahooChart = {
   };
 };
 
-export type Timeframe = "1d" | "4h" | "1wk" | "1mo";
+export type Timeframe = "1h" | "1d" | "4h" | "1wk" | "1mo";
 
 /** Map our timeframe to yahoo (interval, range). */
 function ytfParams(tf: Timeframe): { interval: string; range: string } {
   switch (tf) {
+    case "1h":
+      // Yahoo membatasi data intraday 1 jam maksimal ~730 hari.
+      return { interval: "1h", range: "2y" };
     case "4h":
       return { interval: "4h", range: "1y" };
     case "1wk":
