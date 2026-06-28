@@ -344,6 +344,7 @@ function SettingsDialog({
             <Select value={timeframe} onValueChange={(v) => setTimeframe(v as typeof timeframe)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
+                <SelectItem value="1h">1 Jam</SelectItem>
                 <SelectItem value="1d">Daily</SelectItem>
                 <SelectItem value="1wk">Weekly</SelectItem>
                 <SelectItem value="1mo">Monthly</SelectItem>
