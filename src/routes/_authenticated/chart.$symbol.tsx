@@ -301,8 +301,8 @@ function ChartPage() {
           }
         }
 
-        // Target konservatif hanya untuk pola completed: retracement 0.382 dari kaki A→D
-        if (pattern.status === "completed" && pattern.d_price != null) {
+        // Target konservatif hanya untuk pola completed bullish: retracement 0.382 dari kaki A→D
+        if (pattern.status === "completed" && pattern.d_price != null && pattern.direction !== "bearish") {
           const target = pattern.d_price + 0.382 * (pattern.a_price - pattern.d_price);
           candle.createPriceLine({
             price: target,
@@ -352,9 +352,10 @@ function ChartPage() {
   // lewat ekor (wick) candle.
   useEffect(() => {
     if (!pattern || bars.length === 0) return;
-    // Peringatan target konservatif hanya berlaku untuk pola yang sudah selesai
-    // (developed/completed), bukan pola developing atau invalid.
+    // Peringatan target konservatif hanya berlaku untuk pola completed bullish,
+    // bukan pola developing, invalid, maupun completed bearish.
     if (pattern.status !== "completed") return;
+    if (pattern.direction === "bearish") return;
     if (pattern.prz_low == null || pattern.prz_high == null || !pattern.c_date) return;
     const cTime = Date.parse(pattern.c_date) / 1000;
     if (Number.isNaN(cTime)) return;
@@ -525,7 +526,7 @@ function ChartPage() {
   <ExtensionWarning patternName={pattern.pattern_name} />
 )}
             </div>
-            {pattern.status === "completed" && pattern.d_price != null && bars.length > 0 && (
+            {pattern.status === "completed" && pattern.d_price != null && pattern.direction !== "bearish" && bars.length > 0 && (
               <TargetCard
                 current={roundToIdxTick(bars[bars.length - 1].close)}
                 target={roundToIdxTick(
