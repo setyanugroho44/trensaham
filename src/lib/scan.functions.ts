@@ -6,7 +6,7 @@ import { fetchYahooBars, type Timeframe } from "./yahoo.server";
 import { zigzag } from "./harmonic/zigzag";
 import { detectPatterns } from "./harmonic/detect";
 
-const TF = z.enum(["1d", "1wk", "1mo"]);
+const TF = z.enum(["1h", "1d", "1wk", "1mo"]);
 
 
 async function assertScanAccess(
