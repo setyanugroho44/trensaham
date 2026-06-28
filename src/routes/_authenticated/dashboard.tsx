@@ -238,7 +238,7 @@ function DashboardPage() {
           <div className="mt-1 flex items-center gap-2">
             <p className="text-sm text-muted-foreground">Deteksi Pola Harmonik di Watchlistmu Dengan Mudah.</p>
             <Badge variant="secondary" className="text-xs">
-              {timeframe === "1d" ? "Daily" : timeframe === "1wk" ? "Weekly" : "Monthly"}
+              {timeframe === "1h" ? "1 Jam" : timeframe === "1d" ? "Daily" : timeframe === "1wk" ? "Weekly" : "Monthly"}
             </Badge>
           </div>
         </div>
