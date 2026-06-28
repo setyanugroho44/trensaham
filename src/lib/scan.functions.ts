@@ -395,8 +395,8 @@ export const runScan = createServerFn({ method: "POST" })
             // ±5% yang dipakai banyak harmonic scanner) supaya rasio "titik"
             // seperti Gartley AB=0.618 / AD=0.786 dan Bat AD=0.886 tidak terlalu
             // sering gagal validasi.
-            tolerance: data.tolerance ?? (data.timeframe === "1d" ? 0.05 : 0.04),
-            minConfidence: data.minConfidence ?? (data.timeframe === "1d" ? 0.25 : 0.3),
+            tolerance: data.tolerance ?? (data.timeframe === "1d" || data.timeframe === "1h" ? 0.05 : 0.04),
+            minConfidence: data.minConfidence ?? (data.timeframe === "1d" || data.timeframe === "1h" ? 0.25 : 0.3),
             minBarsSpan,
             minLegPct,
           });
