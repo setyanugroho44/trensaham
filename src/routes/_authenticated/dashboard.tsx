@@ -80,10 +80,10 @@ function playBeep() {
 function DashboardPage() {
   const navigate = useNavigate();
 
-  const [timeframe, setTimeframe] = useState<"1d" | "1wk" | "1mo">(() => {
+  const [timeframe, setTimeframe] = useState<"1h" | "1d" | "1wk" | "1mo">(() => {
     try {
       const v = localStorage.getItem("dashboard_tf");
-      if (v === "1d" || v === "1wk" || v === "1mo") return v;
+      if (v === "1h" || v === "1d" || v === "1wk" || v === "1mo") return v;
     } catch { /* ignore */ }
     return "1d";
   });
