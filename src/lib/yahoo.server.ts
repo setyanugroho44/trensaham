@@ -18,11 +18,14 @@ type YahooChart = {
   };
 };
 
-export type Timeframe = "1d" | "4h" | "1wk" | "1mo";
+export type Timeframe = "1h" | "1d" | "4h" | "1wk" | "1mo";
 
 /** Map our timeframe to yahoo (interval, range). */
 function ytfParams(tf: Timeframe): { interval: string; range: string } {
   switch (tf) {
+    case "1h":
+      // Yahoo membatasi data intraday 1 jam maksimal ~730 hari.
+      return { interval: "1h", range: "2y" };
     case "4h":
       return { interval: "4h", range: "1y" };
     case "1wk":
@@ -104,6 +107,7 @@ export async function fetchYahooBars(symbol: string, tf: Timeframe): Promise<Bar
 /** Stooq fallback: free CSV endpoint. e.g. https://stooq.com/q/d/l/?s=eraa.jk&i=d */
 export async function fetchStooqBars(symbol: string, tf: Timeframe): Promise<Bar[]> {
   if (symbol.startsWith("^")) return []; // index tickers are not available on Stooq fallback
+  if (tf === "1h" || tf === "4h") return []; // Stooq tidak menyediakan data intraday
   const sym = (symbol.includes(".") ? symbol : `${symbol}.jk`).toLowerCase();
   const interval = tf === "1mo" ? "m" : tf === "1wk" ? "w" : "d";
   const url = `https://stooq.com/q/d/l/?s=${encodeURIComponent(sym)}&i=${interval}`;

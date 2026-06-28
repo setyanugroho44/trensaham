@@ -80,10 +80,10 @@ function playBeep() {
 function DashboardPage() {
   const navigate = useNavigate();
 
-  const [timeframe, setTimeframe] = useState<"1d" | "1wk" | "1mo">(() => {
+  const [timeframe, setTimeframe] = useState<"1h" | "1d" | "1wk" | "1mo">(() => {
     try {
       const v = localStorage.getItem("dashboard_tf");
-      if (v === "1d" || v === "1wk" || v === "1mo") return v;
+      if (v === "1h" || v === "1d" || v === "1wk" || v === "1mo") return v;
     } catch { /* ignore */ }
     return "1d";
   });
@@ -238,7 +238,7 @@ function DashboardPage() {
           <div className="mt-1 flex items-center gap-2">
             <p className="text-sm text-muted-foreground">Deteksi Pola Harmonik di Watchlistmu Dengan Mudah.</p>
             <Badge variant="secondary" className="text-xs">
-              {timeframe === "1d" ? "Daily" : timeframe === "1wk" ? "Weekly" : "Monthly"}
+              {timeframe === "1h" ? "1 Jam" : timeframe === "1d" ? "Daily" : timeframe === "1wk" ? "Weekly" : "Monthly"}
             </Badge>
           </div>
         </div>
@@ -317,8 +317,8 @@ function SettingsDialog({
   minProgress,
   setMinProgress,
 }: {
-  timeframe: "1d" | "1wk" | "1mo";
-  setTimeframe: (v: "1d" | "1wk" | "1mo") => void;
+  timeframe: "1h" | "1d" | "1wk" | "1mo";
+  setTimeframe: (v: "1h" | "1d" | "1wk" | "1mo") => void;
   minConf: number;
   setMinConf: (v: number) => void;
   minProgress: number;
@@ -344,13 +344,14 @@ function SettingsDialog({
             <Select value={timeframe} onValueChange={(v) => setTimeframe(v as typeof timeframe)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
+                <SelectItem value="1h">1 Jam</SelectItem>
                 <SelectItem value="1d">Daily</SelectItem>
                 <SelectItem value="1wk">Weekly</SelectItem>
                 <SelectItem value="1mo">Monthly</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              Rentang waktu tiap candle. Daily untuk swing/harian, Weekly &amp; Monthly untuk tren jangka panjang.
+              Rentang waktu tiap candle. 1 Jam untuk intraday, Daily untuk swing/harian, Weekly &amp; Monthly untuk tren jangka panjang.
             </p>
           </div>
 

@@ -40,7 +40,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import type { Bar } from "@/lib/harmonic/types";
 
 const searchSchema = z.object({
-  tf: z.enum(["1d", "1wk", "1mo"]).optional().default("1wk"),
+  tf: z.enum(["1h", "1d", "1wk", "1mo"]).optional().default("1wk"),
   pid: z.string().optional(),
 });
 

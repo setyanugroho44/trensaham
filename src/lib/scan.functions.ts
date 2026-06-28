@@ -6,7 +6,7 @@ import { fetchYahooBars, type Timeframe } from "./yahoo.server";
 import { zigzag } from "./harmonic/zigzag";
 import { detectPatterns } from "./harmonic/detect";
 
-const TF = z.enum(["1d", "1wk", "1mo"]);
+const TF = z.enum(["1h", "1d", "1wk", "1mo"]);
 
 
 async function assertScanAccess(
@@ -377,17 +377,17 @@ export const runScan = createServerFn({ method: "POST" })
         // Scale lebih banyak untuk menangkap pola di berbagai level.
         // Daily disesuaikan khusus untuk meningkatkan deteksi pattern intraday.
         const scales =
-          data.timeframe === "1mo" ? [45, 65, 85] : data.timeframe === "1wk" ? [20, 27, 37, 43] : [ 5, 10, 14, 18];
+          data.timeframe === "1mo" ? [45, 65, 85] : data.timeframe === "1wk" ? [20, 27, 37, 43] : data.timeframe === "1h" ? [5, 8, 12, 16] : [ 5, 10, 14, 18];
         // Minimum bar-span X→C agar pola tidak terlalu sempit di sumbu waktu.
         // Dikurangi untuk menangkap pola yang lebih kecil.
         // Daily lebih agresif untuk meningkatkan deteksi.
-        const minBarsSpan = data.timeframe === "1mo" ? 6 : data.timeframe === "1wk" ? 12 : 15;
+        const minBarsSpan = data.timeframe === "1mo" ? 6 : data.timeframe === "1wk" ? 12 : data.timeframe === "1h" ? 18 : 15;
         // Minimum panjang kaki XA (% terhadap harga X) agar pola tidak sempit di sumbu harga.
         // Dikurangi untuk menangkap pola dengan amplitude lebih kecil.
         // Daily lebih agresif untuk intraday moves.
         
         // (masih di atas noise harian biasa, sesuai praktik harmonic scanner).
-        const minLegPct = data.timeframe === "1mo" ? 0.20 : data.timeframe === "1wk" ? 0.15 : 0.08;
+        const minLegPct = data.timeframe === "1mo" ? 0.20 : data.timeframe === "1wk" ? 0.15 : data.timeframe === "1h" ? 0.05 : 0.08;
         const allPatterns = scales.flatMap((th) => {
           const pivots = zigzag(bars, th);
           return detectPatterns(pivots, bars, {
@@ -395,8 +395,8 @@ export const runScan = createServerFn({ method: "POST" })
             // ±5% yang dipakai banyak harmonic scanner) supaya rasio "titik"
             // seperti Gartley AB=0.618 / AD=0.786 dan Bat AD=0.886 tidak terlalu
             // sering gagal validasi.
-            tolerance: data.tolerance ?? (data.timeframe === "1d" ? 0.05 : 0.04),
-            minConfidence: data.minConfidence ?? (data.timeframe === "1d" ? 0.25 : 0.3),
+            tolerance: data.tolerance ?? (data.timeframe === "1d" || data.timeframe === "1h" ? 0.05 : 0.04),
+            minConfidence: data.minConfidence ?? (data.timeframe === "1d" || data.timeframe === "1h" ? 0.25 : 0.3),
             minBarsSpan,
             minLegPct,
           });
