@@ -559,7 +559,7 @@ function ChartPage() {
                       </TooltipTrigger>
                       <TooltipContent side="top" className="max-w-xs bg-popover text-popover-foreground border">
                         <p className="text-xs leading-relaxed">
-                          Level harga kritis yang, jika ditembus, membatalkan pola harmonik ini. Pasang stop-loss di luar level ini untuk melindungi posisi Anda.
+                          Level harga kritis yang, jika ditembus, membatalkan pola harmonik ini.
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -569,7 +569,7 @@ function ChartPage() {
                   {floorToIdxTick(pattern.invalidation)}
                 </div>
                 <div className="mt-0.5 text-[11px] text-muted-foreground">
-                  Batas kritis — stop-loss jika harga ditutup di luar level ini.
+                  Batas kritis — pola tidak valid jika harga ditutup di luar level ini.
                 </div>
               </div>
             )}
