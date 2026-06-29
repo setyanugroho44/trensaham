@@ -134,12 +134,12 @@ const credValue = {
 }
 
 const button = {
-  backgroundColor: '#1e293b',
+  backgroundColor: '#3B82F6',
   borderRadius: '8px',
   color: '#ffffff',
   fontSize: '15px',
   fontWeight: '600',
-  textDecoration: 'none',
+  textDecoration: 'underline',
   padding: '12px 28px',
   display: 'inline-block',
 }
