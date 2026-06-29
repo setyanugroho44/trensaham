@@ -8,11 +8,11 @@ export const Route = createFileRoute("/")({
   component: Landing,
   head: () => ({
     meta: [
-      { title: "Analisa Saham Indonesia — Deteksi pola harmonik saham Indonesia" },
+      { title: "Analisa Saham yang Akan Naik — Scanner pola saham Indonesia" },
       {
         name: "description",
         content:
-          "Scanner saham otomatis pola harmonik (Gartley, Bat, Crab, Butterfly, AB=CD) untuk saham Indo. Mudah dan Cepat Cocok untuk yang sibuk dan tidak ingin ribet.",
+          "Scanner teknikal harga saham Indonesia. Analisisa pergerakan saham yang Mudah dan Cepat Cocok untuk yang sibuk dan tidak ingin ribet. Metode Analisa Saham Harmonic Pattern",
       },
     ],
   }),
@@ -45,11 +45,11 @@ function Landing() {
       <section className="border-b bg-gradient-to-b from-primary/5 to-transparent">
         <div className="mx-auto max-w-4xl px-4 py-20 text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            Scanner Pola Harmonik Saham Indonesia
+            Scanner Saham Indonesia - Pola Harmonik 
           </h1>
   
           <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground">
-            Lihat kemana harga akan bergerak hanya dengan satu tombol.
+            Analisa Saham yang Akan Naik. Prediksi kemana harga akan bergerak hanya dengan satu tombol.
             Deteksi otomatis pola harmonik saham.
             Hemat waktu analisa, fokus pada eksekusi.
           </p>
@@ -89,7 +89,7 @@ function Landing() {
             <BenefitCard title="Cepat" desc="Scan puluhan saham IDX dalam hitungan detik." />
             <BenefitCard title="Mudah" desc="Validasi rasio Fibonacci sesuai aturan masing-masing pola." />
             <BenefitCard title="Watchlist & Trailing Stop" desc="Pantau saham favorit dan kelola risiko." />
-            <BenefitCard title="Chart Interaktif" desc="Visualisasi pola XABCD lengkap dengan zona PRZ." />
+            <BenefitCard title="Chart Interaktif" desc="Visualisasi pola lengkap dengan zona Pembalikan harga saham." />
           </div>
         </div>
       </section>
@@ -125,7 +125,7 @@ function Landing() {
       {/* Footer */}
       <footer className="bg-muted/30">
         <div className="mx-auto max-w-5xl px-4 py-8 text-center text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} Analisa Saham Indo. Educational use only — not investment advice.</p>
+          <p>© {new Date().getFullYear()} Analisa saham yang akan naik. Educational use only — not investment advice.</p>
           <p className="mt-1">Data: Yahoo Finance (.JK).</p>
         </div>
       </footer>
