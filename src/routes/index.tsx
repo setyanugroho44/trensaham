@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Scanner teknikal harga saham Indonesia. Analisisa pergerakan saham yang Mudah dan Cepat Cocok untuk yang sibuk dan tidak ingin ribet. Metode Analisa Saham Harmonic Pattern",
+          "Scanner teknikal harga saham Indonesia. Analisis pergerakan saham yang Mudah dan Cepat Cocok untuk yang sibuk dan tidak ingin ribet. Metode Analisa Saham Harmonic Pattern",
       },
     ],
   }),
