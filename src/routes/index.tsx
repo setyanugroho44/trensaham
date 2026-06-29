@@ -84,7 +84,7 @@ function Landing() {
       {/* How it works */}
       <section className="border-b">
         <div className="mx-auto max-w-5xl px-4 py-16">
-          <h2 className="text-center text-3xl font-semibold tracking-tight">Mengapa IDX Harmonic?</h2>
+          <h2 className="text-center text-3xl font-semibold tracking-tight">Mengapa AnalisaSahamIndo.com?</h2>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <BenefitCard title="Cepat" desc="Scan puluhan saham IDX dalam hitungan detik." />
             <BenefitCard title="Mudah" desc="Validasi rasio Fibonacci sesuai aturan masing-masing pola." />
