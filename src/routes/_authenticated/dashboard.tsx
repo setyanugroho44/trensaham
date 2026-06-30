@@ -145,10 +145,12 @@ function DashboardPage() {
   // Evaluasi ulang status pola untuk timeframe aktif lalu muat ulang, agar tab
   // Developing/Completed mencerminkan status terkini (bukan status scan lama).
   const reevaluateAndLoad = async () => {
+    setLoading(true);
     try {
       await reevaluateBatchFn({ data: { timeframe } });
     } catch { /* ignore — tetap tampilkan data tersimpan */ }
     await load();
+    setLoading(false);
   };
 
   const loadWatchlistCount = async () => {
