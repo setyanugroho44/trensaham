@@ -6,6 +6,7 @@ import { runScan, reevaluatePatternsBatch } from "@/lib/scan.functions";
 import { getMyAccess, type AccessInfo } from "@/lib/subscription.functions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -113,6 +114,7 @@ function DashboardPage() {
   }, [minProgress]);
 
   const [scanning, setScanning] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<PatternRow[]>([]);
   const [watchlistCount, setWatchlistCount] = useState<number | null>(null);
   const [access, setAccess] = useState<AccessInfo | null>(null);
@@ -144,10 +146,12 @@ function DashboardPage() {
   // Evaluasi ulang status pola untuk timeframe aktif lalu muat ulang, agar tab
   // Developing/Completed mencerminkan status terkini (bukan status scan lama).
   const reevaluateAndLoad = async () => {
+    setLoading(true);
     try {
       await reevaluateBatchFn({ data: { timeframe } });
     } catch { /* ignore — tetap tampilkan data tersimpan */ }
     await load();
+    setLoading(false);
   };
 
   const loadWatchlistCount = async () => {
@@ -293,19 +297,41 @@ function DashboardPage() {
 
 
 
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)} className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="developing">Developing ({developing.length})</TabsTrigger>
-          <TabsTrigger value="completed">Completed ({completed.length})</TabsTrigger>
-        </TabsList>
-        <TabsContent value="developing">
-          <PatternsTable rows={developing} kind="developing" timeframe={timeframe} onDeleted={load} />
-        </TabsContent>
-        <TabsContent value="completed">
-          <PatternsTable rows={completed} kind="completed" timeframe={timeframe} onDeleted={load} />
-        </TabsContent>
-      </Tabs>
+      {loading ? (
+        <LoadingPatterns />
+      ) : (
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)} className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="developing">Developing ({developing.length})</TabsTrigger>
+            <TabsTrigger value="completed">Completed ({completed.length})</TabsTrigger>
+          </TabsList>
+          <TabsContent value="developing">
+            <PatternsTable rows={developing} kind="developing" timeframe={timeframe} onDeleted={load} />
+          </TabsContent>
+          <TabsContent value="completed">
+            <PatternsTable rows={completed} kind="completed" timeframe={timeframe} onDeleted={load} />
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
+  );
+}
+
+function LoadingPatterns() {
+  return (
+    <Card>
+      <CardContent className="space-y-4 py-8">
+        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Menyiapkan hasil scan…
+        </div>
+        <div className="space-y-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-10 w-full" />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
