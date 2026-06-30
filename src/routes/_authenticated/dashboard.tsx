@@ -113,6 +113,7 @@ function DashboardPage() {
   }, [minProgress]);
 
   const [scanning, setScanning] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<PatternRow[]>([]);
   const [watchlistCount, setWatchlistCount] = useState<number | null>(null);
   const [access, setAccess] = useState<AccessInfo | null>(null);
