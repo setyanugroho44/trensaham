@@ -296,19 +296,41 @@ function DashboardPage() {
 
 
 
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)} className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="developing">Developing ({developing.length})</TabsTrigger>
-          <TabsTrigger value="completed">Completed ({completed.length})</TabsTrigger>
-        </TabsList>
-        <TabsContent value="developing">
-          <PatternsTable rows={developing} kind="developing" timeframe={timeframe} onDeleted={load} />
-        </TabsContent>
-        <TabsContent value="completed">
-          <PatternsTable rows={completed} kind="completed" timeframe={timeframe} onDeleted={load} />
-        </TabsContent>
-      </Tabs>
+      {loading ? (
+        <LoadingPatterns />
+      ) : (
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)} className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="developing">Developing ({developing.length})</TabsTrigger>
+            <TabsTrigger value="completed">Completed ({completed.length})</TabsTrigger>
+          </TabsList>
+          <TabsContent value="developing">
+            <PatternsTable rows={developing} kind="developing" timeframe={timeframe} onDeleted={load} />
+          </TabsContent>
+          <TabsContent value="completed">
+            <PatternsTable rows={completed} kind="completed" timeframe={timeframe} onDeleted={load} />
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
+  );
+}
+
+function LoadingPatterns() {
+  return (
+    <Card>
+      <CardContent className="space-y-4 py-8">
+        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Menyiapkan hasil scan…
+        </div>
+        <div className="space-y-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-10 w-full" />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
