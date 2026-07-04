@@ -125,8 +125,8 @@ function Landing() {
       {/* Footer */}
       <footer className="bg-muted/30">
         <div className="mx-auto max-w-5xl px-4 py-8 text-center text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} Analisa saham yang akan naik. Educational use only — not investment advice.</p>
-          <p className="mt-1">Data: Yahoo Finance (.JK).</p>
+          <p>© {new Date().getFullYear()} Analisa <a href="https://analisasahamindo.my.id">saham</a> yang akan naik. </p>
+          <p className="mt-1">Kami sajikan data keputusan investasi tanggung jawab investor</p>
         </div>
       </footer>
     </div>
