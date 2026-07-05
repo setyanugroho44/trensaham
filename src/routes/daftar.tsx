@@ -75,7 +75,7 @@ function PromoPage() {
         <div className="space-y-6">
           <div className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
             <LineChart className="h-3.5 w-3.5 text-primary" />
-            Analisa Saham Indo
+            <a href="https://analisasahamindo.com">Analisa Saham Indo</a>
           </div>
           <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
             Temukan Pola Harmonic Saham Secara Otomatis
