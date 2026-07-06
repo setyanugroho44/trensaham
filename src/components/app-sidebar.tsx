@@ -171,6 +171,16 @@ export function AppSidebar() {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                  {isAdmin && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild isActive={path === "/admin/analytics"} tooltip="Analitik Trafik">
+                        <Link to="/admin/analytics" onClick={handleNavClick}>
+                          <BarChart3 className="h-5 w-5" />
+                          <span className="text-base">Analitik Trafik</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
                 </>
               )}
             </SidebarMenu>
