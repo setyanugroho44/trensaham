@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Crown, Wallet, LifeBuoy, Download } from "lucide-react";
+import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Crown, Wallet, LifeBuoy, Download, BarChart3 } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import { getMyAccess } from "@/lib/subscription.functions"; // sesuaikan path
 import {

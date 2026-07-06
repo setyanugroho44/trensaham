@@ -32,6 +32,7 @@ import { Route as ApiPublicNotifySignupRouteImport } from './routes/api/public/n
 import { Route as ApiPublicNotifyEventRouteImport } from './routes/api/public/notify-event'
 import { Route as AuthenticatedChartSymbolRouteImport } from './routes/_authenticated/chart.$symbol'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin.payments'
+import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -154,6 +155,12 @@ const AuthenticatedAdminPaymentsRoute =
     path: '/admin/payments',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAdminAnalyticsRoute =
+  AuthenticatedAdminAnalyticsRouteImport.update({
+    id: '/admin/analytics',
+    path: '/admin/analytics',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const LovableEmailTransactionalSendRoute =
   LovableEmailTransactionalSendRouteImport.update({
     id: '/lovable/email/transactional/send',
@@ -196,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/api/public/notify-event': typeof ApiPublicNotifyEventRoute
@@ -224,6 +232,7 @@ export interface FileRoutesByTo {
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/api/public/notify-event': typeof ApiPublicNotifyEventRoute
@@ -254,6 +263,7 @@ export interface FileRoutesById {
   '/_authenticated/upgrade': typeof AuthenticatedUpgradeRoute
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/_authenticated/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/api/public/notify-event': typeof ApiPublicNotifyEventRoute
@@ -284,6 +294,7 @@ export interface FileRouteTypes {
     | '/upgrade'
     | '/watchlist'
     | '/email/unsubscribe'
+    | '/admin/analytics'
     | '/admin/payments'
     | '/chart/$symbol'
     | '/api/public/notify-event'
@@ -312,6 +323,7 @@ export interface FileRouteTypes {
     | '/upgrade'
     | '/watchlist'
     | '/email/unsubscribe'
+    | '/admin/analytics'
     | '/admin/payments'
     | '/chart/$symbol'
     | '/api/public/notify-event'
@@ -341,6 +353,7 @@ export interface FileRouteTypes {
     | '/_authenticated/upgrade'
     | '/_authenticated/watchlist'
     | '/email/unsubscribe'
+    | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/payments'
     | '/_authenticated/chart/$symbol'
     | '/api/public/notify-event'
@@ -536,6 +549,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPaymentsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/analytics': {
+      id: '/_authenticated/admin/analytics'
+      path: '/admin/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AuthenticatedAdminAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/lovable/email/transactional/send': {
       id: '/lovable/email/transactional/send'
       path: '/lovable/email/transactional/send'
@@ -575,6 +595,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedTrailingStopRoute: typeof AuthenticatedTrailingStopRoute
   AuthenticatedUpgradeRoute: typeof AuthenticatedUpgradeRoute
   AuthenticatedWatchlistRoute: typeof AuthenticatedWatchlistRoute
+  AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
   AuthenticatedChartSymbolRoute: typeof AuthenticatedChartSymbolRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -588,6 +609,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedTrailingStopRoute: AuthenticatedTrailingStopRoute,
   AuthenticatedUpgradeRoute: AuthenticatedUpgradeRoute,
   AuthenticatedWatchlistRoute: AuthenticatedWatchlistRoute,
+  AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
   AuthenticatedChartSymbolRoute: AuthenticatedChartSymbolRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
