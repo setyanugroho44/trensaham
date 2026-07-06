@@ -11,6 +11,7 @@ import {
 import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
+import { VisitTracker } from "@/components/visit-tracker";
 import { installAuthFetch } from "@/lib/server-fn-fetch";
 
 if (typeof window !== "undefined") installAuthFetch();
@@ -128,6 +129,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <VisitTracker />
         <Outlet />
         <Toaster richColors position="top-right" />
       </AuthProvider>

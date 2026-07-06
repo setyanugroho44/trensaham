@@ -555,6 +555,54 @@ export type Database = {
         }
         Relationships: []
       }
+      web_visits: {
+        Row: {
+          created_at: string
+          id: string
+          landing_path: string | null
+          referrer_domain: string | null
+          referrer_url: string | null
+          search_engine: string | null
+          search_keyword: string | null
+          source_type: string
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          landing_path?: string | null
+          referrer_domain?: string | null
+          referrer_url?: string | null
+          search_engine?: string | null
+          search_keyword?: string | null
+          source_type?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          landing_path?: string | null
+          referrer_domain?: string | null
+          referrer_url?: string | null
+          search_engine?: string | null
+          search_keyword?: string | null
+          source_type?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -567,6 +615,7 @@ export type Database = {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
+      email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number

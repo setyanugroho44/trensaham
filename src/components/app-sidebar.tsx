@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Crown, Wallet, LifeBuoy, Download } from "lucide-react";
+import { Activity, ListChecks, TrendingDown, User, LogOut, Shield, Crown, Wallet, LifeBuoy, Download, BarChart3 } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import { getMyAccess } from "@/lib/subscription.functions"; // sesuaikan path
 import {
@@ -171,6 +171,16 @@ export function AppSidebar() {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                  {isAdmin && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild isActive={path === "/admin/analytics"} tooltip="Analitik Trafik">
+                        <Link to="/admin/analytics" onClick={handleNavClick}>
+                          <BarChart3 className="h-5 w-5" />
+                          <span className="text-base">Analitik Trafik</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
                 </>
               )}
             </SidebarMenu>
